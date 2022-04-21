@@ -74,7 +74,7 @@ func NewLingXing(config config.Config) *LingXing {
 		SetTimeout(10 * time.Second).
 		OnBeforeRequest(func(client *resty.Client, request *resty.Request) error {
 			timestamp := time.Now().Unix()
-			if lx.auth.ExpiresIn > timestamp || lx.auth.AccessToken == "" {
+			if lx.auth.ExpiresIn <= timestamp || lx.auth.AccessToken == "" {
 				if auth, err := lx.Auth(lx.appId, lx.appSecret, config.Debug); err != nil {
 					logger.Printf("auth error: %s", err.Error())
 					return err
@@ -90,14 +90,13 @@ func NewLingXing(config config.Config) *LingXing {
 			if err != nil {
 				return err
 			}
-			qp := map[string]string{
+
+			request.SetQueryParams(map[string]string{
 				"app_key":      config.AppId,
 				"sign":         sign,
 				"access_token": lx.accessToken,
 				"timestamp":    strconv.FormatInt(timestamp, 10),
-			}
-			request.SetQueryParams(qp)
-			// request.SetQueryString(fmt.Sprintf("access_token=%s&app_key=%s&timestamp=%s&sign=%s", lx.accessToken, config.AppId, strconv.FormatInt(timestamp, 10), sign))
+			})
 			return nil
 		}).
 		OnAfterResponse(func(client *resty.Client, response *resty.Response) (err error) {
