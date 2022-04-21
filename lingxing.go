@@ -73,8 +73,8 @@ func NewLingXing(config config.Config) *LingXing {
 		SetTimeout(10 * time.Second).
 		OnBeforeRequest(func(client *resty.Client, request *resty.Request) error {
 			timestamp := time.Now().Unix()
-			if lx.auth.ExpiresIn > timestamp {
-				if auth, err := lx.Auth(lx.appId, lx.appSecret); err != nil {
+			if lx.auth.ExpiresIn > timestamp || lx.auth.AccessToken == "" {
+				if auth, err := lx.Auth(lx.appId, lx.appSecret, config.Debug); err != nil {
 					logger.Printf("auth error: %s", err.Error())
 					return err
 				} else {
@@ -96,13 +96,14 @@ func NewLingXing(config config.Config) *LingXing {
 				"timestamp":    strconv.FormatInt(timestamp, 10),
 			}
 			request.SetQueryParams(qp)
+			// request.SetQueryString(fmt.Sprintf("access_token=%s&app_key=%s&timestamp=%s&sign=%s", lx.accessToken, config.AppId, strconv.FormatInt(timestamp, 10), sign))
 			return nil
 		}).
 		OnAfterResponse(func(client *resty.Client, response *resty.Response) (err error) {
 			if response.IsSuccess() {
 				r := struct {
 					Code    string `json:"code"`
-					Message string `json:"message"`
+					Message string `json:"msg"`
 				}{}
 				if err = json.Unmarshal(response.Body(), &r); err != nil {
 					return
@@ -153,12 +154,20 @@ type AuthResponse struct {
 	ExpiresIn    int64  `json:"expires_in"`
 }
 
-func (lx *LingXing) Auth(appId, appSecret string) (ar AuthResponse, err error) {
+func (lx *LingXing) Auth(appId, appSecret string, debug bool) (ar AuthResponse, err error) {
 	result := struct {
 		NormalResponse
 		Data AuthResponse `json:"data"`
 	}{}
-	resp, err := lx.Client.R().
+
+	resp, err := resty.New().
+		SetDebug(debug).
+		SetBaseURL("https://openapi.lingxing.com").
+		SetHeaders(map[string]string{
+			"Content-Type": "application/json",
+			"Accept":       "application/json",
+		}).
+		R().
 		SetResult(&result).
 		Post(fmt.Sprintf("/api/auth-server/oauth/access-token?appId=%s&appSecret=%s", appId, appSecret))
 	if err != nil {
