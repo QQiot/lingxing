@@ -27,6 +27,9 @@ func (s service) Auth(appId, appSecret string) (ar AuthResponse, err error) {
 
 	if resp.IsSuccess() {
 		err = lingxing.ErrorWrap(result.Code, result.Message)
+		if err == nil {
+			ar = result.Data
+		}
 	} else {
 		if e := json.Unmarshal(resp.Body(), &result); e == nil {
 			err = lingxing.ErrorWrap(result.Code, result.Message)
@@ -37,6 +40,29 @@ func (s service) Auth(appId, appSecret string) (ar AuthResponse, err error) {
 	return
 }
 
-func (s service) Refresh() (ar AuthResponse, err error) {
+func (s service) Refresh(appId, refreshToken string) (ar AuthResponse, err error) {
+	result := struct {
+		lingxing.NormalResponse
+		Data AuthResponse `json:"data"`
+	}{}
+	resp, err := s.lingXing.Client.R().
+		SetResult(&result).
+		Post(fmt.Sprintf("/api/auth-server/oauth/refresh?appId=%s&refreshToken=%s", appId, refreshToken))
+	if err != nil {
+		return
+	}
+
+	if resp.IsSuccess() {
+		err = lingxing.ErrorWrap(result.Code, result.Message)
+		if err == nil {
+			ar = result.Data
+		}
+	} else {
+		if e := json.Unmarshal(resp.Body(), &result); e == nil {
+			err = lingxing.ErrorWrap(result.Code, result.Message)
+		} else {
+			err = errors.New(resp.Status())
+		}
+	}
 	return
 }
