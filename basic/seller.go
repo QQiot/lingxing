@@ -6,6 +6,9 @@ import (
 	"github.com/hiscaler/lingxing"
 )
 
+// 查询亚马逊店铺信息
+// https://openapidoc.lingxing.com/#/docs/BasicData/SellerLists
+
 type Seller struct {
 	SID      string `json:"sid"`       // 店铺 ID（领星ERP对企业已授权店铺的唯一标识）
 	MID      string `json:"mid"`       // 站点ID

@@ -8,6 +8,7 @@ type service struct {
 
 type Service interface {
 	Sellers() (items []Seller, err error)
+	Accounts() (items []Account, err error)
 }
 
 func NewService(lx *lingxing.LingXing) Service {
