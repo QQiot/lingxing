@@ -6,6 +6,7 @@ import (
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/hiscaler/lingxing"
 	"github.com/hiscaler/lingxing/constant"
+	jsoniter "github.com/json-iterator/go"
 	"time"
 )
 
@@ -48,7 +49,7 @@ type AmazonOrder struct {
 
 type AmazonOrderQueryParams struct {
 	lingxing.Paging
-	SID       string `json:"sid"`                 // 店铺 ID
+	SID       int    `json:"sid"`                 // 店铺 ID
 	StartDate string `json:"start_date"`          // 查询时间左闭区间，可精确到时分秒，格式：Y-m-d或Y-m-d H:i:s
 	EndDate   string `json:"end_date"`            // 查询时间右开区间，可精确到时分秒，格式：Y-m-d或Y-m-d H:i:s
 	DateType  int    `json:"date_type,omitempty"` // 日期类型，1：下单日期，2：订单更新时间，不填默认1
@@ -56,10 +57,7 @@ type AmazonOrderQueryParams struct {
 
 func (m AmazonOrderQueryParams) Validate() error {
 	return validation.ValidateStruct(&m,
-		validation.Field(&m.SID,
-			validation.Required.Error("店铺 ID 不能为空"),
-			validation.Date("2006-01").Error("费率月份格式有误，正确的格式为：2006-01"),
-		),
+		validation.Field(&m.SID, validation.Required.Error("店铺 ID 不能为空")),
 		validation.Field(&m.StartDate,
 			validation.Required.Error("查询开始时间不能为空"),
 			validation.Date(constant.DatetimeFormat).Error("查询开始时间格式有误"),
@@ -84,14 +82,13 @@ func (s service) AmazonOrders(params AmazonOrderQueryParams) (items []AmazonOrde
 	}{}
 	resp, err := s.lingXing.Client.R().
 		SetBody(params).
-		SetResult(&res).
 		Post("/data/mws/orders")
 	if err != nil {
 		return
 	}
 
 	if resp.IsSuccess() {
-		if err = lingxing.ErrorWrap(res.Code, res.Message); err == nil {
+		if err = jsoniter.Unmarshal(resp.Body(), &res); err == nil {
 			items = res.Data
 			nextOffset = params.NextOffset
 			isLastPage = res.Total <= params.Offset
