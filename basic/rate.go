@@ -5,6 +5,7 @@ import (
 	"errors"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/hiscaler/lingxing"
+	jsoniter "github.com/json-iterator/go"
 	"time"
 )
 
@@ -23,7 +24,7 @@ type Rate struct {
 
 type RatesQueryParams struct {
 	lingxing.Paging
-	Date time.Time `json:"date"` // 汇率月份（格式为：2021-08）
+	Date string `json:"date"` // 汇率月份（格式为：2021-08）
 }
 
 func (m RatesQueryParams) Validate() error {
@@ -47,17 +48,18 @@ func (s service) Rates(params RatesQueryParams) (items []Rate, nextOffset int, i
 	}{}
 	resp, err := s.lingXing.Client.R().
 		SetBody(params).
-		SetResult(&res).
 		Post("/routing/finance/currency/currencyMonth")
 	if err != nil {
 		return
 	}
 
 	if resp.IsSuccess() {
-		if err = lingxing.ErrorWrap(res.Code, res.Message); err == nil {
-			items = res.Data
-			nextOffset = params.NextOffset
-			isLastPage = res.Total <= params.Offset
+		if err = jsoniter.Unmarshal(resp.Body(), &res); err == nil {
+			if err = lingxing.ErrorWrap(res.Code, res.Message); err == nil {
+				items = res.Data
+				nextOffset = params.NextOffset
+				isLastPage = res.Total <= params.Offset
+			}
 		}
 	} else {
 		if e := json.Unmarshal(resp.Body(), &res); e == nil {

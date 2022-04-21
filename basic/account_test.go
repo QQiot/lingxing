@@ -29,10 +29,10 @@ func TestMain(m *testing.M) {
 }
 
 func TestService_Accounts(t *testing.T) {
-	sellers, err := lxService.Accounts()
+	items, err := lxService.Accounts()
 	if err != nil {
 		t.Errorf("lxService.Accounts error: %s", err.Error())
 	} else {
-		t.Log(jsonx.ToJson(sellers, "[]"))
+		t.Log(jsonx.ToJson(items, "[]"))
 	}
 }
