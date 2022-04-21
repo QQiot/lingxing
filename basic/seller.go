@@ -3,6 +3,7 @@ package basic
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"github.com/hiscaler/lingxing"
 )
 
@@ -24,16 +25,18 @@ func (s service) Sellers() (items []Seller, err error) {
 		Data []Seller `json:"data"`
 	}{}
 	resp, err := s.lingXing.Client.R().
-		SetResult(&res).
 		Post("/data/seller/lists")
 	if err != nil {
+		fmt.Println("ddd", err.Error())
 		return
 	}
 
 	if resp.IsSuccess() {
 		err = lingxing.ErrorWrap(res.Code, res.Message)
 		if err == nil {
-			items = res.Data
+			json.Unmarshal(resp.Body(), &res)
+			// res  = resp.RawResponse.
+			// items = res.Data
 		}
 	} else {
 		if e := json.Unmarshal(resp.Body(), &res); e == nil {

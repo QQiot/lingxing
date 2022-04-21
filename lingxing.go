@@ -4,12 +4,15 @@ import (
 	"crypto/md5"
 	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/go-resty/resty/v2"
+	"github.com/hiscaler/lingxing/config"
 	"log"
 	"net/http"
 	"os"
 	"sort"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -46,14 +49,14 @@ type LingXing struct {
 	MerchantId         string             // 商户 ID
 	Logger             *log.Logger        // 日志
 	DefaultQueryParams defaultQueryParams // 查询默认值
+	auth               AuthResponse
 }
 
-func NewLingXing(host, appId, appSecret string) LingXing {
-	logger := log.New(os.Stdout, "[ TongTool ] ", log.LstdFlags|log.Llongfile)
-	lx := LingXing{
-		host:      host,
-		appId:     appId,
-		appSecret: appSecret,
+func NewLingXing(config config.Config) *LingXing {
+	logger := log.New(os.Stdout, "[ LingXing ] ", log.LstdFlags|log.Llongfile)
+	lx := &LingXing{
+		appId:     config.AppId,
+		appSecret: config.AppSecret,
 		Logger:    logger,
 		DefaultQueryParams: defaultQueryParams{
 			Offset:   0,
@@ -61,13 +64,53 @@ func NewLingXing(host, appId, appSecret string) LingXing {
 			MaxLimit: 1000,
 		},
 	}
-	client := resty.New().
-		SetBaseURL("https://openapi.lingxing.com").
+	client := resty.New().SetDebug(true).
+		SetBaseURL("https://openapi.lingxing.com/erp/sc").
 		SetHeaders(map[string]string{
 			"Content-Type": "application/json",
 			"Accept":       "application/json",
 		}).
 		SetTimeout(10 * time.Second).
+		OnBeforeRequest(func(client *resty.Client, request *resty.Request) error {
+			timestamp := time.Now().Unix()
+			if lx.auth.ExpiresIn > timestamp {
+				if auth, err := lx.Auth(lx.appId, lx.appSecret); err != nil {
+					logger.Printf("auth error: %s", err.Error())
+					return err
+				} else {
+					lx.auth = auth
+				}
+			}
+			sign, err := lx.generateSign(map[string]interface{}{
+				"app_key":      config.AppId,
+				"access_token": lx.accessToken,
+				"timestamp":    timestamp,
+			})
+			if err != nil {
+				return err
+			}
+			qp := map[string]string{
+				"app_key":      config.AppId,
+				"sign":         sign,
+				"access_token": lx.accessToken,
+				"timestamp":    strconv.FormatInt(timestamp, 10),
+			}
+			request.SetQueryParams(qp)
+			return nil
+		}).
+		OnAfterResponse(func(client *resty.Client, response *resty.Response) (err error) {
+			if response.IsSuccess() {
+				r := struct {
+					Code    string `json:"code"`
+					Message string `json:"message"`
+				}{}
+				if err = json.Unmarshal(response.Body(), &r); err != nil {
+					return
+				}
+				err = ErrorWrap(r.Code, r.Message)
+			}
+			return
+		}).
 		SetRetryCount(2).
 		SetRetryWaitTime(5 * time.Second).
 		SetRetryMaxWaitTime(10 * time.Second).
@@ -95,7 +138,7 @@ func NewLingXing(host, appId, appSecret string) LingXing {
 }
 
 type NormalResponse struct {
-	Code         int         `json:"code"`
+	Code         string      `json:"code"`
 	Message      string      `json:"message"`
 	ErrorDetails interface{} `json:"error_details"`
 	RequestId    string      `json:"request_id"`
@@ -104,7 +147,40 @@ type NormalResponse struct {
 	Total        int         `json:"total"`
 }
 
-func (o *LingXing) generateSign(params map[string]interface{}) (sign string, err error) {
+type AuthResponse struct {
+	AccessToken  string `json:"access_token"`
+	RefreshToken string `json:"refresh_token"`
+	ExpiresIn    int64  `json:"expires_in"`
+}
+
+func (lx *LingXing) Auth(appId, appSecret string) (ar AuthResponse, err error) {
+	result := struct {
+		NormalResponse
+		Data AuthResponse `json:"data"`
+	}{}
+	resp, err := lx.Client.R().
+		SetResult(&result).
+		Post(fmt.Sprintf("/api/auth-server/oauth/access-token?appId=%s&appSecret=%s", appId, appSecret))
+	if err != nil {
+		return
+	}
+
+	if resp.IsSuccess() {
+		err = ErrorWrap(result.Code, result.Message)
+		if err == nil {
+			ar = result.Data
+		}
+	} else {
+		if e := json.Unmarshal(resp.Body(), &result); e == nil {
+			err = ErrorWrap(result.Code, result.Message)
+		} else {
+			err = errors.New(resp.Status())
+		}
+	}
+	return
+}
+
+func (lx *LingXing) generateSign(params map[string]interface{}) (sign string, err error) {
 	var keys []string
 	for k := range params {
 		keys = append(keys, k)
@@ -127,7 +203,7 @@ func (o *LingXing) generateSign(params map[string]interface{}) (sign string, err
 	}
 
 	md5Str := strings.ToUpper(fmt.Sprintf("%x", md5.Sum([]byte(strings.Join(qStrList, "&")))))
-	key := o.appId
+	key := lx.appId
 	aesTool := NewAesTool([]byte(key), len(key))
 	aesEncrypted, err := aesTool.ECBEncrypt([]byte(md5Str))
 	if err != nil {
@@ -139,14 +215,15 @@ func (o *LingXing) generateSign(params map[string]interface{}) (sign string, err
 }
 
 // ErrorWrap 错误包装
-func ErrorWrap(code int, message string) error {
-	if code == OK {
+func ErrorWrap(code string, message string) error {
+	c, _ := strconv.Atoi(code)
+	if c == OK {
 		return nil
 	}
 
 	message = strings.TrimSpace(message)
 	if message == "" {
-		switch code {
+		switch c {
 		case AppIdNotExistError:
 			message = "appId 不存在"
 		case InvalidAppSecretError:
@@ -175,5 +252,5 @@ func ErrorWrap(code int, message string) error {
 			message = "未知错误"
 		}
 	}
-	return fmt.Errorf("%d: %s", code, message)
+	return fmt.Errorf("%s: %s", code, message)
 }

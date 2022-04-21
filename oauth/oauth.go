@@ -10,7 +10,7 @@ import (
 type AuthResponse struct {
 	AccessToken  string `json:"access_token"`
 	RefreshToken string `json:"refresh_token"`
-	ExpiresIn    int    `json:"expires_in"`
+	ExpiresIn    int64  `json:"expires_in"`
 }
 
 func (s service) Auth(appId, appSecret string) (ar AuthResponse, err error) {
