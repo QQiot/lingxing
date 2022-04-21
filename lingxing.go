@@ -17,13 +17,14 @@ import (
 	"time"
 )
 
+// https://openapidoc.lingxing.com/#/docs/Guidance/ErrorCode
 const (
-	OK                       = 200     // 无错误
+	OK                       = 0       // 无错误
 	AppIdNotExistError       = 2001001 // appId 不存在
 	InvalidAppSecretError    = 2001002 // appSecret 不正确或者 urlencode 需要进行编码
-	AccessTokenExpireError   = 2001003 // token不存在或者已经过期
-	UnauthorizedError        = 2001004 // api未授权
-	InvalidAccessTokenError  = 2001005 // token不正确
+	AccessTokenExpireError   = 2001003 // token 不存在或者已经过期
+	UnauthorizedError        = 2001004 // api 未授权
+	InvalidAccessTokenError  = 2001005 // token 不正确
 	SignError                = 2001006 // 签名错误
 	SignExpiredError         = 2001007 // 签名过期
 	RefreshTokenExpiredError = 2001008 // RefreshToken 过期
@@ -236,13 +237,13 @@ func ErrorWrap(code string, message string) error {
 		case AppIdNotExistError:
 			message = "appId 不存在"
 		case InvalidAppSecretError:
-			message = "appSecret 不正确或者 urlencode 需要进行编码"
+			message = "appSecret 不正确或者未编码"
 		case AccessTokenExpireError:
-			message = "token不存在或者已经过期"
+			message = "token 不存在或者已经过期"
 		case UnauthorizedError:
-			message = "api未授权"
+			message = "api 未授权"
 		case InvalidAccessTokenError:
-			message = "token不正确"
+			message = "token 不正确"
 		case SignError:
 			message = "签名错误"
 		case SignExpiredError:
@@ -254,7 +255,7 @@ func ErrorWrap(code string, message string) error {
 		case InvalidQueryParamsError:
 			message = "查询参数缺失"
 		case InvalidIPError:
-			message = "IP 不在白名单内"
+			message = "访问 IP 不在白名单内"
 		case TooManyRequestsError:
 			message = "接口请求超请求次数限额"
 		default:
