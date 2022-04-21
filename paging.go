@@ -1,9 +1,9 @@
 package lingxing
 
 type Paging struct {
-	Offset     int `json:"offset,omitempty"` // 分页偏移索引，默认0
+	Offset     int `json:"offset,omitempty"` // 分页偏移索引（默认0）
 	NextOffset int `json:"-"`                // 下一次偏移索引
-	Limit      int `json:"length,omitempty"` // 分页偏移长度，默认1000
+	Limit      int `json:"length,omitempty"` // 分页偏移长度（默认1000）
 }
 
 func (p *Paging) SetPagingVars(offset, limit, maxLimit int) *Paging {

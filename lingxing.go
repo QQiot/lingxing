@@ -7,8 +7,11 @@ import (
 	"fmt"
 	"github.com/go-resty/resty/v2"
 	"log"
+	"net/http"
+	"os"
 	"sort"
 	"strings"
+	"time"
 )
 
 const (
@@ -28,9 +31,9 @@ const (
 )
 
 type defaultQueryParams struct {
-	Offset   int // 当前页
-	Limit    int // 每页数据量
-	MaxLimit int
+	Offset   int // 分页偏移索引（默认0）
+	Limit    int // 分页偏移长度（默认1000）
+	MaxLimit int // 最大偏移长度
 }
 
 type LingXing struct {
@@ -46,11 +49,49 @@ type LingXing struct {
 }
 
 func NewLingXing(host, appId, appSecret string) LingXing {
-	return LingXing{
+	logger := log.New(os.Stdout, "[ TongTool ] ", log.LstdFlags|log.Llongfile)
+	lx := LingXing{
 		host:      host,
 		appId:     appId,
 		appSecret: appSecret,
+		Logger:    logger,
+		DefaultQueryParams: defaultQueryParams{
+			Offset:   0,
+			Limit:    1000,
+			MaxLimit: 1000,
+		},
 	}
+	client := resty.New().
+		SetBaseURL("https://openapi.lingxing.com").
+		SetHeaders(map[string]string{
+			"Content-Type": "application/json",
+			"Accept":       "application/json",
+		}).
+		SetTimeout(10 * time.Second).
+		SetRetryCount(2).
+		SetRetryWaitTime(5 * time.Second).
+		SetRetryMaxWaitTime(10 * time.Second).
+		AddRetryCondition(func(response *resty.Response, err error) bool {
+			if response == nil {
+				return false
+			}
+
+			retry := response.StatusCode() == http.StatusTooManyRequests
+			if !retry {
+				r := struct{ Code int }{}
+				retry = json.Unmarshal(response.Body(), &r) == nil && r.Code == TooManyRequestsError
+			}
+			if retry {
+				text := response.Request.URL
+				if err != nil {
+					text += fmt.Sprintf(", error: %s", err.Error())
+				}
+				logger.Printf("Retry request: %s", text)
+			}
+			return retry
+		})
+	lx.Client = client
+	return lx
 }
 
 type NormalResponse struct {

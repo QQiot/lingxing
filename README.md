@@ -1,6 +1,10 @@
 领星 ERP 开放平台 SDK
 ====================
 
+## 文档地址
+
+https://openapidoc.lingxing.com
+
 ## 支持的方法
 
 ### 授权
