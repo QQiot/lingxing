@@ -35,11 +35,12 @@ func (m RatesQueryParams) Validate() error {
 	)
 }
 
-func (s service) Rates(params RatesQueryParams) (items []Rate, isLastPage bool, err error) {
+func (s service) Rates(params RatesQueryParams) (items []Rate, nextOffset int, isLastPage bool, err error) {
 	if err = params.Validate(); err != nil {
 		return
 	}
 
+	params.SetPagingVars(params.Offset, params.Limit, s.lingXing.DefaultQueryParams.MaxLimit)
 	res := struct {
 		lingxing.NormalResponse
 		Data []Rate `json:"data"`
@@ -55,7 +56,8 @@ func (s service) Rates(params RatesQueryParams) (items []Rate, isLastPage bool, 
 	if resp.IsSuccess() {
 		if err = lingxing.ErrorWrap(res.Code, res.Message); err == nil {
 			items = res.Data
-			isLastPage = res.Total <= params.PageSize*params.PageNo
+			nextOffset = params.NextOffset
+			isLastPage = res.Total <= params.Offset
 		}
 	} else {
 		if e := json.Unmarshal(resp.Body(), &res); e == nil {

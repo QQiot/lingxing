@@ -1,18 +1,20 @@
 package lingxing
 
 type Paging struct {
-	PageNo   int `json:"pageNo,omitempty"`   // 查询页数
-	PageSize int `json:"pageSize,omitempty"` // 每页返回数量，默认值：100, 最大值：100，超过最大值以最大值数量返回
+	Offset     int `json:"offset,omitempty"` // 分页偏移索引，默认0
+	NextOffset int `json:"-"`                // 下一次偏移索引
+	Limit      int `json:"length,omitempty"` // 分页偏移长度，默认1000
 }
 
-func (p *Paging) SetPagingVars(page, pageSize, maxPageSize int) *Paging {
-	if page <= 0 {
-		page = 1
+func (p *Paging) SetPagingVars(offset, limit, maxLimit int) *Paging {
+	if offset < 0 {
+		offset = 0
 	}
-	if pageSize <= 0 || pageSize > maxPageSize {
-		pageSize = maxPageSize
+	if limit <= 0 || limit > maxLimit {
+		limit = maxLimit
 	}
-	p.PageNo = page
-	p.PageSize = pageSize
+	p.Offset = offset
+	p.Limit = limit
+	p.NextOffset = p.Offset + p.Limit
 	return p
 }

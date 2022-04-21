@@ -27,16 +27,22 @@ const (
 	TooManyRequestsError     = 3001008 // 接口请求超请求次数限额
 )
 
-type LingXing struct {
-	host        string
-	appId       string
-	appSecret   string
-	accessToken string
-	Debug       bool          // 是否调试模式
-	Client      *resty.Client // HTTP 客户端
-	MerchantId  string        // 商户 ID
-	Logger      *log.Logger   // 日志
+type defaultQueryParams struct {
+	Offset   int // 当前页
+	Limit    int // 每页数据量
+	MaxLimit int
+}
 
+type LingXing struct {
+	host               string
+	appId              string
+	appSecret          string
+	accessToken        string
+	Debug              bool               // 是否调试模式
+	Client             *resty.Client      // HTTP 客户端
+	MerchantId         string             // 商户 ID
+	Logger             *log.Logger        // 日志
+	DefaultQueryParams defaultQueryParams // 查询默认值
 }
 
 func NewLingXing(host, appId, appSecret string) LingXing {
