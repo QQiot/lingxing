@@ -10,6 +10,7 @@ import (
 	"github.com/hiscaler/lingxing/config"
 	"log"
 	"net/http"
+	"net/url"
 	"os"
 	"sort"
 	"strconv"
@@ -19,7 +20,7 @@ import (
 
 // https://openapidoc.lingxing.com/#/docs/Guidance/ErrorCode
 const (
-	OK                       = 0       // 无错误
+	OK                       = 200     // 无错误
 	AppIdNotExistError       = 2001001 // appId 不存在
 	InvalidAppSecretError    = 2001002 // appSecret 不正确或者 urlencode 需要进行编码
 	AccessTokenExpireError   = 2001003 // token 不存在或者已经过期
@@ -65,16 +66,21 @@ func NewLingXing(config config.Config) *LingXing {
 			MaxLimit: 1000,
 		},
 	}
-	client := resty.New().SetDebug(true).
-		SetBaseURL("https://openapi.lingxing.com/erp/sc").
+	client := resty.New().SetDebug(config.Debug).
 		SetHeaders(map[string]string{
 			"Content-Type": "application/json",
 			"Accept":       "application/json",
-		}).
-		SetTimeout(10 * time.Second).
+		})
+	if config.Debug {
+		client.SetBaseURL("https://openapisandbox.lingxing.com")
+	} else {
+		client.SetBaseURL("https://openapi.lingxing.com")
+	}
+
+	client.SetTimeout(10 * time.Second).
 		OnBeforeRequest(func(client *resty.Client, request *resty.Request) error {
 			timestamp := time.Now().Unix()
-			if lx.auth.ExpiresIn <= timestamp || lx.auth.AccessToken == "" {
+			if lx.auth.ExpiresIn <= 0 || lx.auth.AccessToken == "" {
 				if auth, err := lx.Auth(lx.appId, lx.appSecret, config.Debug); err != nil {
 					logger.Printf("auth error: %s", err.Error())
 					return err
@@ -84,7 +90,7 @@ func NewLingXing(config config.Config) *LingXing {
 			}
 			sign, err := lx.generateSign(map[string]interface{}{
 				"app_key":      config.AppId,
-				"access_token": lx.accessToken,
+				"access_token": lx.auth.AccessToken,
 				"timestamp":    timestamp,
 			})
 			if err != nil {
@@ -94,7 +100,7 @@ func NewLingXing(config config.Config) *LingXing {
 			request.SetQueryParams(map[string]string{
 				"app_key":      config.AppId,
 				"sign":         sign,
-				"access_token": lx.accessToken,
+				"access_token": lx.auth.AccessToken,
 				"timestamp":    strconv.FormatInt(timestamp, 10),
 			})
 			return nil
@@ -151,7 +157,7 @@ type NormalResponse struct {
 type AuthResponse struct {
 	AccessToken  string `json:"access_token"`
 	RefreshToken string `json:"refresh_token"`
-	ExpiresIn    int64  `json:"expires_in"`
+	ExpiresIn    int    `json:"expires_in"`
 }
 
 func (lx *LingXing) Auth(appId, appSecret string, debug bool) (ar AuthResponse, err error) {
@@ -160,16 +166,20 @@ func (lx *LingXing) Auth(appId, appSecret string, debug bool) (ar AuthResponse, 
 		Data AuthResponse `json:"data"`
 	}{}
 
-	resp, err := resty.New().
+	client := resty.New().
 		SetDebug(debug).
-		SetBaseURL("https://openapi.lingxing.com").
 		SetHeaders(map[string]string{
 			"Content-Type": "application/json",
 			"Accept":       "application/json",
-		}).
-		R().
+		})
+	if debug {
+		client.SetBaseURL("https://openapisandbox.lingxing.com")
+	} else {
+		client.SetBaseURL("https://openapi.lingxing.com")
+	}
+	resp, err := client.R().
 		SetResult(&result).
-		Post(fmt.Sprintf("/api/auth-server/oauth/access-token?appId=%s&appSecret=%s", appId, appSecret))
+		Post(fmt.Sprintf("/api/auth-server/oauth/access-token?appId=%s&appSecret=%s", appId, url.QueryEscape(appSecret)))
 	if err != nil {
 		return
 	}
