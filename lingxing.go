@@ -21,6 +21,7 @@ import (
 // https://openapidoc.lingxing.com/#/docs/Guidance/ErrorCode
 const (
 	OK                       = 200     // 无错误
+	NotFoundError            = 500     // Not Found
 	AppIdNotExistError       = 2001001 // appId 不存在
 	InvalidAppSecretError    = 2001002 // appSecret 不正确或者 urlencode 需要进行编码
 	AccessTokenExpireError   = 2001003 // token 不存在或者已经过期
@@ -72,9 +73,9 @@ func NewLingXing(config config.Config) *LingXing {
 			"Accept":       "application/json",
 		})
 	if config.Debug {
-		client.SetBaseURL("https://openapisandbox.lingxing.com")
+		client.SetBaseURL("https://openapisandbox.lingxing.com/erp/sc")
 	} else {
-		client.SetBaseURL("https://openapi.lingxing.com")
+		client.SetBaseURL("https://openapi.lingxing.com/erp/sc")
 	}
 
 	client.SetTimeout(10 * time.Second).
@@ -99,7 +100,7 @@ func NewLingXing(config config.Config) *LingXing {
 
 			request.SetQueryParams(map[string]string{
 				"app_key":      config.AppId,
-				"sign":         sign,
+				"sign":         url.QueryEscape(sign),
 				"access_token": lx.auth.AccessToken,
 				"timestamp":    strconv.FormatInt(timestamp, 10),
 			})
@@ -108,13 +109,16 @@ func NewLingXing(config config.Config) *LingXing {
 		OnAfterResponse(func(client *resty.Client, response *resty.Response) (err error) {
 			if response.IsSuccess() {
 				r := struct {
-					Code    string `json:"code"`
+					Code    int    `json:"code"`
 					Message string `json:"msg"`
 				}{}
 				if err = json.Unmarshal(response.Body(), &r); err != nil {
 					return
 				}
 				err = ErrorWrap(r.Code, r.Message)
+			}
+			if err != nil {
+				logger.Printf("OnAfterResponse error: %s", err.Error())
 			}
 			return
 		}).
@@ -145,7 +149,7 @@ func NewLingXing(config config.Config) *LingXing {
 }
 
 type NormalResponse struct {
-	Code         string      `json:"code"`
+	Code         int         `json:"code"`
 	Message      string      `json:"message"`
 	ErrorDetails interface{} `json:"error_details"`
 	RequestId    string      `json:"request_id"`
@@ -162,12 +166,13 @@ type AuthResponse struct {
 
 func (lx *LingXing) Auth(appId, appSecret string, debug bool) (ar AuthResponse, err error) {
 	result := struct {
-		NormalResponse
-		Data AuthResponse `json:"data"`
+		Code    string       `json:"code"`
+		Message string       `json:"msg"`
+		Data    AuthResponse `json:"data"`
 	}{}
 
 	client := resty.New().
-		SetDebug(debug).
+		SetDebug(true).
 		SetHeaders(map[string]string{
 			"Content-Type": "application/json",
 			"Accept":       "application/json",
@@ -184,14 +189,15 @@ func (lx *LingXing) Auth(appId, appSecret string, debug bool) (ar AuthResponse, 
 		return
 	}
 
+	code, _ := strconv.ParseInt(result.Code, 10, 32)
 	if resp.IsSuccess() {
-		err = ErrorWrap(result.Code, result.Message)
+		err = ErrorWrap(int(code), result.Message)
 		if err == nil {
 			ar = result.Data
 		}
 	} else {
 		if e := json.Unmarshal(resp.Body(), &result); e == nil {
-			err = ErrorWrap(result.Code, result.Message)
+			err = ErrorWrap(int(code), result.Message)
 		} else {
 			err = errors.New(resp.Status())
 		}
@@ -234,15 +240,16 @@ func (lx *LingXing) generateSign(params map[string]interface{}) (sign string, er
 }
 
 // ErrorWrap 错误包装
-func ErrorWrap(code string, message string) error {
-	c, _ := strconv.Atoi(code)
-	if c == OK {
+func ErrorWrap(code int, message string) error {
+	if code == OK || code == 0 {
 		return nil
 	}
 
 	message = strings.TrimSpace(message)
 	if message == "" {
-		switch c {
+		switch code {
+		case NotFoundError:
+			message = "Not Found"
 		case AppIdNotExistError:
 			message = "appId 不存在"
 		case InvalidAppSecretError:
@@ -271,5 +278,5 @@ func ErrorWrap(code string, message string) error {
 			message = "未知错误"
 		}
 	}
-	return fmt.Errorf("%s: %s", code, message)
+	return fmt.Errorf("%d: %s", code, message)
 }
