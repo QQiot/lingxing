@@ -212,28 +212,38 @@ func (lx *LingXing) Auth(appId, appSecret string, debug bool) (ar AuthResponse, 
 }
 
 func (lx *LingXing) generateSign(params map[string]interface{}) (sign string, err error) {
-	var keys []string
+	n := len(params)
+	keys := make([]string, n)
+	i := 0
 	for k := range params {
-		keys = append(keys, k)
+		keys[i] = k
+		i++
 	}
 	sort.Strings(keys)
 
-	var qStrList []string
+	sb := strings.Builder{}
 	for _, key := range keys {
+		sb.WriteString(key)
+		sb.WriteRune('=')
 		switch v := params[key].(type) {
 		case string:
-			qStrList = append(qStrList, fmt.Sprintf("%s=%s", key, v))
+			sb.WriteString(v)
 		default:
-			var jsonV []byte
-			jsonV, err = jsoniter.Marshal(v)
-			if err != nil {
+			var b []byte
+			b, err = jsoniter.Marshal(v)
+			if err == nil {
+				sb.Write(b)
+			} else {
 				return
 			}
-			qStrList = append(qStrList, fmt.Sprintf("%s=%s", key, string(jsonV)))
 		}
+		sb.WriteRune('&')
 	}
-
-	md5Str := strings.ToUpper(fmt.Sprintf("%x", md5.Sum([]byte(strings.Join(qStrList, "&")))))
+	s := sb.String()
+	if s != "" {
+		s = s[0 : len(s)-1]
+	}
+	md5Str := strings.ToUpper(fmt.Sprintf("%x", md5.Sum([]byte(s))))
 	key := lx.appId
 	aesTool := NewAesTool([]byte(key), len(key))
 	aesEncrypted, err := aesTool.ECBEncrypt([]byte(md5Str))
