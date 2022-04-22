@@ -9,7 +9,7 @@ type service struct {
 }
 
 type Service interface {
-	AmazonOrders(params AmazonOrderQueryParams) (items []AmazonOrder, nextOffset int, isLastPage bool, err error) // 亚马逊订单列表
+	AmazonOrders(params AmazonOrdersQueryParams) (items []AmazonOrder, nextOffset int, isLastPage bool, err error) // 亚马逊订单列表
 }
 
 func NewService(lx *lingxing.LingXing) Service {
