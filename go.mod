@@ -7,6 +7,7 @@ require (
 	github.com/go-resty/resty/v2 v2.7.0
 	github.com/hiscaler/gox v0.0.0-20220420054406-60bd4b683a68
 	github.com/json-iterator/go v1.1.12
+	github.com/spf13/cast v1.4.1
 )
 
 require (

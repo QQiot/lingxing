@@ -7,7 +7,10 @@ import (
 	"errors"
 	"fmt"
 	"github.com/go-resty/resty/v2"
+	"github.com/hiscaler/gox/jsonx"
 	"github.com/hiscaler/lingxing/config"
+	jsoniter "github.com/json-iterator/go"
+	"github.com/spf13/cast"
 	"log"
 	"net/http"
 	"net/url"
@@ -89,11 +92,15 @@ func NewLingXing(config config.Config) *LingXing {
 					lx.auth = auth
 				}
 			}
-			sign, err := lx.generateSign(map[string]interface{}{
-				"app_key":      config.AppId,
-				"access_token": lx.auth.AccessToken,
-				"timestamp":    timestamp,
-			})
+
+			params := cast.ToStringMap(jsonx.ToJson(request.Body, "{}")) // Body
+			if params == nil {
+				params = make(map[string]interface{}, 0)
+			}
+			params["app_key"] = config.AppId
+			params["access_token"] = lx.auth.AccessToken
+			params["timestamp"] = timestamp
+			sign, err := lx.generateSign(params)
 			if err != nil {
 				return err
 			}
@@ -109,13 +116,12 @@ func NewLingXing(config config.Config) *LingXing {
 		OnAfterResponse(func(client *resty.Client, response *resty.Response) (err error) {
 			if response.IsSuccess() {
 				r := struct {
-					Code    int    `json:"code"`
-					Message string `json:"msg"`
+					Code    interface{} `json:"code"`
+					Message string      `json:"msg"`
 				}{}
-				if err = json.Unmarshal(response.Body(), &r); err != nil {
-					return
+				if err = jsoniter.Unmarshal(response.Body(), &r); err == nil {
+					err = ErrorWrap(cast.ToInt(r.Code), r.Message)
 				}
-				err = ErrorWrap(r.Code, r.Message)
 			}
 			if err != nil {
 				logger.Printf("OnAfterResponse error: %s", err.Error())
@@ -133,7 +139,7 @@ func NewLingXing(config config.Config) *LingXing {
 			retry := response.StatusCode() == http.StatusTooManyRequests
 			if !retry {
 				r := struct{ Code int }{}
-				retry = json.Unmarshal(response.Body(), &r) == nil && r.Code == TooManyRequestsError
+				retry = jsoniter.Unmarshal(response.Body(), &r) == nil && r.Code == TooManyRequestsError
 			}
 			if retry {
 				text := response.Request.URL
@@ -196,7 +202,7 @@ func (lx *LingXing) Auth(appId, appSecret string, debug bool) (ar AuthResponse, 
 			ar = result.Data
 		}
 	} else {
-		if e := json.Unmarshal(resp.Body(), &result); e == nil {
+		if e := jsoniter.Unmarshal(resp.Body(), &result); e == nil {
 			err = ErrorWrap(int(code), result.Message)
 		} else {
 			err = errors.New(resp.Status())
@@ -219,7 +225,7 @@ func (lx *LingXing) generateSign(params map[string]interface{}) (sign string, er
 			qStrList = append(qStrList, fmt.Sprintf("%s=%s", key, v))
 		default:
 			var jsonV []byte
-			jsonV, err = json.Marshal(v)
+			jsonV, err = jsoniter.Marshal(v)
 			if err != nil {
 				return
 			}
