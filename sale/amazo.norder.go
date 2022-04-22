@@ -47,7 +47,7 @@ type AmazonOrder struct {
 	ItemList               []AmazonOrderItem `json:"item_list"`                 // 商品列表
 }
 
-type AmazonOrderQueryParams struct {
+type AmazonOrdersQueryParams struct {
 	lingxing.Paging
 	SID       int    `json:"sid"`                 // 店铺 ID
 	StartDate string `json:"start_date"`          // 查询时间左闭区间，可精确到时分秒，格式：Y-m-d或Y-m-d H:i:s
@@ -55,7 +55,7 @@ type AmazonOrderQueryParams struct {
 	DateType  int    `json:"date_type,omitempty"` // 日期类型，1：下单日期，2：订单更新时间，不填默认1
 }
 
-func (m AmazonOrderQueryParams) Validate() error {
+func (m AmazonOrdersQueryParams) Validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.SID, validation.Required.Error("店铺 ID 不能为空")),
 		validation.Field(&m.StartDate,
@@ -70,7 +70,7 @@ func (m AmazonOrderQueryParams) Validate() error {
 	)
 }
 
-func (s service) AmazonOrders(params AmazonOrderQueryParams) (items []AmazonOrder, nextOffset int, isLastPage bool, err error) {
+func (s service) AmazonOrders(params AmazonOrdersQueryParams) (items []AmazonOrder, nextOffset int, isLastPage bool, err error) {
 	if err = params.Validate(); err != nil {
 		return
 	}

@@ -29,7 +29,7 @@ func TestMain(m *testing.M) {
 }
 
 func TestService_AmazonOrders(t *testing.T) {
-	params := AmazonOrderQueryParams{
+	params := AmazonOrdersQueryParams{
 		StartDate: "2022-01-01 00:00:00",
 		EndDate:   "2022-01-01 23:59:59",
 		SID:       168,
