@@ -41,3 +41,15 @@ func TestService_AmazonOrders(t *testing.T) {
 		t.Log(jsonx.ToJson(items, "[]"))
 	}
 }
+
+func TestService_AmazonOrder(t *testing.T) {
+	params := AmazonOrderQueryParams{
+		OrderId: "123",
+	}
+	detail, err := lxService.AmazonOrder(params)
+	if err != nil {
+		t.Errorf("lxService.AmazonOrder error: %s", err.Error())
+	} else {
+		t.Log(jsonx.ToJson(detail, "[]"))
+	}
+}
