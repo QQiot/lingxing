@@ -1,13 +1,14 @@
 package lingxing
 
 import (
-	"crypto/md5"
 	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/go-resty/resty/v2"
+	"github.com/hiscaler/gox/cryptox"
 	"github.com/hiscaler/gox/jsonx"
+	"github.com/hiscaler/gox/stringx"
 	"github.com/hiscaler/lingxing/config"
 	jsoniter "github.com/json-iterator/go"
 	"github.com/spf13/cast"
@@ -241,13 +242,12 @@ func (lx *LingXing) generateSign(params map[string]interface{}) (sign string, er
 		sb.WriteRune('&')
 	}
 	s := sb.String()
-	if s != "" {
-		s = s[0 : len(s)-1]
+	if n = len(s); n > 0 {
+		s = s[0 : n-1]
 	}
-	md5Str := strings.ToUpper(fmt.Sprintf("%x", md5.Sum([]byte(s))))
-	key := lx.appId
-	aesTool := NewAesTool([]byte(key), len(key))
-	aesEncrypted, err := aesTool.ECBEncrypt([]byte(md5Str))
+
+	aesTool := NewAesTool(stringx.ToBytes(lx.appId), len(lx.appId))
+	aesEncrypted, err := aesTool.ECBEncrypt(stringx.ToBytes(strings.ToUpper(cryptox.Md5(s))))
 	if err != nil {
 		return
 	}
