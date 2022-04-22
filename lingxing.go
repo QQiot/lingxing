@@ -93,24 +93,25 @@ func NewLingXing(config config.Config) *LingXing {
 				}
 			}
 
+			queryParams := map[string]string{
+				"app_key":      config.AppId,
+				"access_token": lx.auth.AccessToken,
+				"timestamp":    strconv.FormatInt(timestamp, 10),
+			}
 			params := cast.ToStringMap(jsonx.ToJson(request.Body, "{}")) // Body
 			if params == nil {
-				params = make(map[string]interface{}, 0)
+				params = make(map[string]interface{}, 3)
 			}
-			params["app_key"] = config.AppId
-			params["access_token"] = lx.auth.AccessToken
-			params["timestamp"] = timestamp
+			for k, v := range queryParams {
+				params[k] = v
+			}
 			sign, err := lx.generateSign(params)
 			if err != nil {
 				return err
 			}
 
-			request.SetQueryParams(map[string]string{
-				"app_key":      config.AppId,
-				"sign":         url.QueryEscape(sign),
-				"access_token": lx.auth.AccessToken,
-				"timestamp":    strconv.FormatInt(timestamp, 10),
-			})
+			queryParams["sign"] = url.QueryEscape(sign)
+			request.SetQueryParams(queryParams)
 			return nil
 		}).
 		OnAfterResponse(func(client *resty.Client, response *resty.Response) (err error) {
