@@ -35,7 +35,7 @@ const (
 	RefreshTokenExpiredError = 2001008 // RefreshToken 过期
 	InvalidRefreshTokenError = 2001009 // 无效的 RefreshToken
 	InvalidQueryParamsError  = 3001001 // 查询参数缺失
-	InvalidIPError           = 3001002 // IP 不在白名单内
+	InvalidIPError           = 3001002 // 应用所在服务器的 ip 不在白名单中
 	TooManyRequestsError     = 3001008 // 接口请求超请求次数限额
 )
 
@@ -288,7 +288,7 @@ func ErrorWrap(code int, message string) error {
 		case InvalidQueryParamsError:
 			message = "查询参数缺失"
 		case InvalidIPError:
-			message = "访问 IP 不在白名单内"
+			message = "应用所在服务器的 ip 不在白名单中"
 		case TooManyRequestsError:
 			message = "接口请求超请求次数限额"
 		default:
