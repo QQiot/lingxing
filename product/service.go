@@ -8,7 +8,7 @@ type service struct {
 
 type Service interface {
 	Products(params ProductsQueryParams) (items []Product, nextOffset int, isLastPage bool, err error) // 本地产品列表
-	Product(id int) (item Product, err error)                                                          // 本地产品详情
+	Product(id int) (item ProductDetail, err error)                                                          // 本地产品详情
 }
 
 func NewService(lx *lingxing.LingXing) Service {

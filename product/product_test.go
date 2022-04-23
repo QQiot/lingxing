@@ -1,6 +1,7 @@
 package product
 
 import (
+	"errors"
 	"fmt"
 	"github.com/hiscaler/gox/jsonx"
 	"github.com/hiscaler/lingxing"
@@ -38,10 +39,17 @@ func TestService_Products(t *testing.T) {
 	}
 }
 
+func TestService_ProductNotFound(t *testing.T) {
+	_, err := lxService.Product(0)
+	if !errors.Is(err, lingxing.ErrNotFound) {
+		t.Error("lxService.Product error is 'not found error'")
+	}
+}
+
 func TestService_Product(t *testing.T) {
-	item, err := lxService.Product(0)
+	item, err := lxService.Product(63286)
 	if err != nil {
-		t.Errorf("lxService.Product error: %s", err.Error())
+		t.Errorf("lxService.Product error %s", err.Error())
 	} else {
 		t.Log(jsonx.ToJson(item, "[]"))
 	}

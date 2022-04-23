@@ -24,7 +24,6 @@ import (
 // https://openapidoc.lingxing.com/#/docs/Guidance/ErrorCode
 const (
 	OK                       = 200     // 无错误
-	NotFoundError            = 500     // Not Found
 	AppIdNotExistError       = 2001001 // appId 不存在
 	InvalidAppSecretError    = 2001002 // appSecret 不正确或者 urlencode 需要进行编码
 	AccessTokenExpireError   = 2001003 // token 不存在或者已经过期
@@ -38,6 +37,8 @@ const (
 	InvalidIPError           = 3001002 // 应用所在服务器的 ip 不在白名单中
 	TooManyRequestsError     = 3001008 // 接口请求超请求次数限额
 )
+
+var ErrNotFound = errors.New("lingxing: not found")
 
 type defaultQueryParams struct {
 	Offset   int // 分页偏移索引（默认0）
@@ -263,8 +264,6 @@ func ErrorWrap(code int, message string) error {
 	message = strings.TrimSpace(message)
 	if message == "" {
 		switch code {
-		case NotFoundError:
-			message = "Not Found"
 		case AppIdNotExistError:
 			message = "appId 不存在"
 		case InvalidAppSecretError:

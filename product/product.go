@@ -45,10 +45,10 @@ type Product struct {
 	ProductName      string          `json:"product_name"`       // 品名
 	PicURL           string          `json:"pic_url"`            // 图片链接
 	CgDelivery       int             `json:"cg_delivery"`        // 采购：交期
-	CgTransportCosts float64         `json:"cg_transport_costs"` // 采购：运输成本
-	CgPrice          float64         `json:"cg_price"`           // 采购：采购价格（RMB）
+	CgTransportCosts string          `json:"cg_transport_costs"` // 采购：运输成本
+	CgPrice          string          `json:"cg_price"`           // 采购：采购价格（RMB）
 	Status           int             `json:"status"`             // 状态编码
-	StatusText       int             `json:"status_text"`        // 状态文本
+	StatusText       string          `json:"status_text"`        // 状态文本
 	IsCombo          int             `json:"is_combo"`           // 是否为组合商品，0 = 否，1 = 是
 	CreateTime       int             `json:"create_time"`        // 创建时间
 	ProductDeveloper string          `json:"product_developer"`  // 开发人员
@@ -113,10 +113,10 @@ type ProductPicture struct {
 
 // ProductLogistic 物流关联
 type ProductLogistic struct {
-	USCgTransportCosts float64 `json:"US_cg_transport_costs"` // 美国默认头程成本(含税)
-	USCurrency         string  `json:"US_currency"`           // 美国官方汇率code
-	USBgimportHsCode   string  `json:"US_bg_import_hs_code"`  // 报关：美国HS Code（进口国）
-	USBgtaxRate        float64 `json:"US_bg_tax_rate"`        // 报关：美国税率
+	USCgTransportCosts string `json:"US_cg_transport_costs"` // 美国默认头程成本(含税)
+	USCurrency         string `json:"US_currency"`           // 美国官方汇率code
+	USBgImportHsCode   string `json:"US_bg_import_hs_code"`  // 报关：美国HS Code（进口国）
+	USBgTaxRate        string `json:"US_bg_tax_rate"`        // 报关：美国税率
 }
 
 type ProductDetail struct {
@@ -131,13 +131,13 @@ type ProductDetail struct {
 	CID                      int               `json:"cid"`                        // 分类ID
 	BID                      int               `json:"bid"`                        // 品牌ID
 	ProductDeveloper         string            `json:"product_developer"`          // 开发者
-	ProductDeveloperUid      string            `json:"product_developer_uid"`      // 开发人
+	ProductDeveloperUid      int               `json:"product_developer_uid"`      // 开发人
 	Description              string            `json:"description"`                // 商品描述
 	IsCombo                  int               `json:"is_combo"`                   // 1=组合商品；0=非组合商品
 	Currency                 string            `json:"currency"`                   // 中国官方汇率code
 	CgOptUsername            string            `json:"cg_opt_username"`            // 采购：采购员
 	CgDelivery               int               `json:"cg_delivery"`                // 采购：交期
-	CgPrice                  float64           `json:"cg_price"`                   // 采购：采购价格（RMB）
+	CgPrice                  string            `json:"cg_price"`                   // 采购：采购价格（RMB）
 	CgProductMaterial        string            `json:"cg_product_material"`        // 采购：材质
 	CgProductLength          string            `json:"cg_product_length"`          // 采购：产品规格（CM）
 	CgProductWidth           string            `json:"cg_product_width"`           // 采购：产品规格（CM）
@@ -165,10 +165,10 @@ type ProductDetail struct {
 	ProductLogisticsRelation []ProductLogistic `json:"product_logistics_relation"` // 物流关联
 }
 
-func (s service) Product(id int) (item Product, err error) {
+func (s service) Product(id int) (item ProductDetail, err error) {
 	res := struct {
 		lingxing.NormalResponse
-		Data Product `json:"data"`
+		Data ProductDetail `json:"data"`
 	}{}
 	resp, err := s.lingXing.Client.R().
 		SetBody(map[string]int{"id": id}).
@@ -181,6 +181,9 @@ func (s service) Product(id int) (item Product, err error) {
 		if err = jsoniter.Unmarshal(resp.Body(), &res); err == nil {
 			if err = lingxing.ErrorWrap(res.Code, res.Message); err == nil {
 				item = res.Data
+				if item.ID == 0 {
+					err = lingxing.ErrNotFound
+				}
 			}
 		}
 	} else {
@@ -190,9 +193,5 @@ func (s service) Product(id int) (item Product, err error) {
 			err = errors.New(resp.Status())
 		}
 	}
-	if err != nil {
-		return
-	}
-
 	return
 }
