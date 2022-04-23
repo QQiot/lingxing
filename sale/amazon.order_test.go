@@ -1,11 +1,11 @@
 package sale
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/hiscaler/gox/jsonx"
 	"github.com/hiscaler/lingxing"
 	"github.com/hiscaler/lingxing/config"
+	jsoniter "github.com/json-iterator/go"
 	"os"
 	"testing"
 )

@@ -2,7 +2,6 @@ package lingxing
 
 import (
 	"encoding/base64"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/go-resty/resty/v2"

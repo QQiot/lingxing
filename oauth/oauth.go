@@ -1,7 +1,6 @@
 package oauth
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/hiscaler/lingxing"
