@@ -2,6 +2,7 @@ package product
 
 import (
 	"errors"
+	"github.com/hiscaler/gox/stringx"
 	"github.com/hiscaler/lingxing"
 	jsoniter "github.com/json-iterator/go"
 )
@@ -282,7 +283,7 @@ func (s service) Product(id int) (item ProductDetail, err error) {
 					err = lingxing.ErrNotFound
 				} else {
 					fnValid := func(costs float64, hsCode string, taxRate float64) bool {
-						if costs == 0 && hsCode == "" && taxRate == 0 {
+						if costs == 0 && stringx.IsBlank(hsCode) && taxRate == 0 {
 							return false
 						}
 						return true

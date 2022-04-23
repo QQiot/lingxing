@@ -31,6 +31,7 @@ func TestMain(m *testing.M) {
 
 func TestService_Products(t *testing.T) {
 	params := ProductsQueryParams{}
+	params.Limit = 1
 	items, _, _, err := lxService.Products(params)
 	if err != nil {
 		t.Errorf("lxService.Products error: %s", err.Error())
