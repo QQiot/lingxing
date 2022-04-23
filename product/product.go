@@ -113,10 +113,15 @@ type ProductPicture struct {
 
 // ProductLogistic 物流关联
 type ProductLogistic struct {
-	USCgTransportCosts string `json:"US_cg_transport_costs"` // 美国默认头程成本(含税)
-	USCurrency         string `json:"US_currency"`           // 美国官方汇率code
-	USBgImportHsCode   string `json:"US_bg_import_hs_code"`  // 报关：美国HS Code（进口国）
-	USBgTaxRate        string `json:"US_bg_tax_rate"`        // 报关：美国税率
+	USCgTransportCosts float64 `json:"US_cg_transport_costs,omitempty"` // 美国默认头程成本(含税)
+	USCurrency         string  `json:"US_currency,omitempty"`           // 美国官方汇率code
+	USBgImportHsCode   string  `json:"US_bg_import_hs_code,omitempty"`  // 报关：美国HS Code（进口国）
+	USBgTaxRate        float64 `json:"US_bg_tax_rate,omitempty"`        // 报关：美国税率
+
+	JPCgTransportCosts float64 `json:"JP_cg_transport_costs,omitempty"` // 美国默认头程成本(含税)
+	JPCurrency         string  `json:"JP_currency,omitempty"`           // 美国官方汇率code
+	JPBgImportHsCode   string  `json:"JP_bg_import_hs_code,omitempty"`  // 报关：美国HS Code（进口国）
+	JPBgTaxRate        float64 `json:"JP_bg_tax_rate,omitempty"`        // 报关：美国税率
 }
 
 type ProductDetail struct {
@@ -148,13 +153,13 @@ type ProductDetail struct {
 	CgBoxLength              string            `json:"cg_box_length"`              // 采购：外箱规格（CM）
 	CgBoxWidth               string            `json:"cg_box_width"`               // 采购：外箱规格（CM）
 	CgBoxHeight              string            `json:"cg_box_height"`              // 采购：外箱规格（CM）
-	CgProductNetWeight       string            `json:"cg_product_net_weight"`      // 采购：产品净重（G）
-	CgProductGrossWeight     string            `json:"cg_product_gross_weight"`    // 采购：产品毛重（G）
-	CgBoxWeight              string            `json:"cg_box_weight"`              // 采购：外箱实重（KG）
+	CgProductNetWeight       float64           `json:"cg_product_net_weight"`      // 采购：产品净重（G）
+	CgProductGrossWeight     float64           `json:"cg_product_gross_weight"`    // 采购：产品毛重（G）
+	CgBoxWeight              float64           `json:"cg_box_weight"`              // 采购：外箱实重（KG）
 	CgBoxPcs                 int               `json:"cg_box_pcs"`                 // 采购：单箱数量（包装数量）
 	BgCustomsExportName      string            `json:"bg_customs_export_name"`     // 报关：申报品名（中文）【中文报关名】
 	BgCustomsImportName      string            `json:"bg_customs_import_name"`     // 报关：申报品名（英文）【英文报关名】
-	BgCustomsImportPrice     string            `json:"bg_customs_import_price"`    // 报关：申报金额（进口国）【申报单价】
+	BgCustomsImportPrice     float64           `json:"bg_customs_import_price"`    // 报关：申报金额（进口国）【申报单价】
 	BgExportHsCode           string            `json:"bg_export_hs_code"`          // 报关：HS Code（出口国）【中国HS Code】
 	BgImportHsCode           string            `json:"bg_import_hs_code"`          // 报关：HS Code（进口国）【美国HS Code】
 	BgTaxRate                string            `json:"bg_tax_rate"`                // 报关：税率【美国税率】
