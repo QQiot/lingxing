@@ -25,6 +25,7 @@ import (
 // https://openapidoc.lingxing.com/#/docs/Guidance/ErrorCode
 const (
 	OK                       = 200     // 无错误
+	InternalError            = 500     // 内部错误，数据库异常
 	AppIdNotExistError       = 2001001 // appId 不存在
 	InvalidAppSecretError    = 2001002 // appSecret 不正确或者 urlencode 需要进行编码
 	AccessTokenExpireError   = 2001003 // token 不存在或者已经过期
@@ -269,6 +270,8 @@ func ErrorWrap(code int, message string) error {
 	message = strings.TrimSpace(message)
 	if message == "" {
 		switch code {
+		case InternalError:
+			message = "内部错误，数据库异常"
 		case AppIdNotExistError:
 			message = "appId 不存在"
 		case InvalidAppSecretError:
