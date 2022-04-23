@@ -87,7 +87,7 @@ func (s service) Products(params ProductsQueryParams) (items []Product, nextOffs
 			if err = lingxing.ErrorWrap(res.Code, res.Message); err == nil {
 				items = res.Data
 				nextOffset = params.NextOffset
-				isLastPage = res.Total <= params.Offset
+				isLastPage = len(items) < params.Limit
 			}
 		}
 	} else {

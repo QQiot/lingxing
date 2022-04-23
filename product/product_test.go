@@ -32,12 +32,20 @@ func TestMain(m *testing.M) {
 func TestService_Products(t *testing.T) {
 	params := ProductsQueryParams{}
 	params.Limit = 1
-	items, _, _, err := lxService.Products(params)
-	if err != nil {
-		t.Errorf("lxService.Products error: %s", err.Error())
-	} else {
-		t.Log(jsonx.ToJson(items, "[]"))
+	var products []Product
+	for {
+		items, nextOffset, isLastPage, err := lxService.Products(params)
+		if err != nil {
+			t.Errorf("lxService.Products error: %s", err.Error())
+		} else {
+			products = append(products, items...)
+		}
+		if isLastPage {
+			break
+		}
+		params.Offset = nextOffset
 	}
+	t.Log(jsonx.ToJson(products, "[]"))
 }
 
 func TestService_ProductNotFound(t *testing.T) {
