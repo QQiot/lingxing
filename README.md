@@ -26,4 +26,5 @@ https://openapidoc.lingxing.com
 
 ### 产品
 
--- Products(params ProductsQueryParams) (items []Product, nextOffset int, isLastPage bool, err error) // 本地产品列表
+- Products(params ProductsQueryParams) (items []Product, nextOffset int, isLastPage bool, err error) // 本地产品列表
+- Product(id int) (item Product, err error)                                                          // 本地产品详情

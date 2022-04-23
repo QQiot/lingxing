@@ -28,12 +28,21 @@ func TestMain(m *testing.M) {
 	m.Run()
 }
 
-func TestService_Accounts(t *testing.T) {
+func TestService_Products(t *testing.T) {
 	params := ProductsQueryParams{}
 	items, _, _, err := lxService.Products(params)
 	if err != nil {
 		t.Errorf("lxService.Products error: %s", err.Error())
 	} else {
 		t.Log(jsonx.ToJson(items, "[]"))
+	}
+}
+
+func TestService_Product(t *testing.T) {
+	item, err := lxService.Product(0)
+	if err != nil {
+		t.Errorf("lxService.Product error: %s", err.Error())
+	} else {
+		t.Log(jsonx.ToJson(item, "[]"))
 	}
 }
