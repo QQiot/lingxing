@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/hiscaler/lingxing"
+	jsoniter "github.com/json-iterator/go"
 )
 
 type AuthResponse struct {
@@ -31,7 +32,7 @@ func (s service) Auth(appId, appSecret string) (ar AuthResponse, err error) {
 			ar = result.Data
 		}
 	} else {
-		if e := json.Unmarshal(resp.Body(), &result); e == nil {
+		if e := jsoniter.Unmarshal(resp.Body(), &result); e == nil {
 			err = lingxing.ErrorWrap(result.Code, result.Message)
 		} else {
 			err = errors.New(resp.Status())
@@ -58,7 +59,7 @@ func (s service) Refresh(appId, refreshToken string) (ar AuthResponse, err error
 			ar = result.Data
 		}
 	} else {
-		if e := json.Unmarshal(resp.Body(), &result); e == nil {
+		if e := jsoniter.Unmarshal(resp.Body(), &result); e == nil {
 			err = lingxing.ErrorWrap(result.Code, result.Message)
 		} else {
 			err = errors.New(resp.Status())

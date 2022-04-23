@@ -75,7 +75,7 @@ func (s service) AmazonFBMOrders(params AmazonFBMOrdersQueryParams) (items []Ama
 			isLastPage = res.Total <= params.Offset
 		}
 	} else {
-		if e := json.Unmarshal(resp.Body(), &res); e == nil {
+		if e := jsoniter.Unmarshal(resp.Body(), &res); e == nil {
 			err = lingxing.ErrorWrap(res.Code, res.Message)
 		} else {
 			err = errors.New(resp.Status())

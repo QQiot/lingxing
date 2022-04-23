@@ -19,7 +19,7 @@ func TestMain(m *testing.M) {
 		panic(fmt.Sprintf("Read config error: %s", err.Error()))
 	}
 	var c config.Config
-	err = json.Unmarshal(b, &c)
+	err = jsoniter.Unmarshal(b, &c)
 	if err != nil {
 		panic(fmt.Sprintf("Parse config file error: %s", err.Error()))
 	}

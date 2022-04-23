@@ -38,7 +38,7 @@ func (s service) Sellers() (items []Seller, err error) {
 			}
 		}
 	} else {
-		if e := json.Unmarshal(resp.Body(), &res); e == nil {
+		if e := jsoniter.Unmarshal(resp.Body(), &res); e == nil {
 			err = lingxing.ErrorWrap(res.Code, res.Message)
 		} else {
 			err = errors.New(resp.Status())

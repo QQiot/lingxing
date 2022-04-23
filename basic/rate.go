@@ -62,7 +62,7 @@ func (s service) Rates(params RatesQueryParams) (items []Rate, nextOffset int, i
 			}
 		}
 	} else {
-		if e := json.Unmarshal(resp.Body(), &res); e == nil {
+		if e := jsoniter.Unmarshal(resp.Body(), &res); e == nil {
 			err = lingxing.ErrorWrap(res.Code, res.Message)
 		} else {
 			err = errors.New(resp.Status())
