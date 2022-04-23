@@ -137,7 +137,7 @@ type ProductDetail struct {
 	Currency                 string            `json:"currency"`                   // 中国官方汇率code
 	CgOptUsername            string            `json:"cg_opt_username"`            // 采购：采购员
 	CgDelivery               int               `json:"cg_delivery"`                // 采购：交期
-	CgPrice                  string            `json:"cg_price"`                   // 采购：采购价格（RMB）
+	CgPrice                  float64           `json:"cg_price"`                   // 采购：采购价格（RMB）
 	CgProductMaterial        string            `json:"cg_product_material"`        // 采购：材质
 	CgProductLength          string            `json:"cg_product_length"`          // 采购：产品规格（CM）
 	CgProductWidth           string            `json:"cg_product_width"`           // 采购：产品规格（CM）

@@ -10,6 +10,7 @@ import (
 	"github.com/hiscaler/gox/stringx"
 	"github.com/hiscaler/lingxing/config"
 	jsoniter "github.com/json-iterator/go"
+	"github.com/json-iterator/go/extra"
 	"github.com/spf13/cast"
 	"log"
 	"net/http"
@@ -57,6 +58,10 @@ type LingXing struct {
 	Logger             *log.Logger        // 日志
 	DefaultQueryParams defaultQueryParams // 查询默认值
 	auth               AuthResponse
+}
+
+func init() {
+	extra.RegisterFuzzyDecoders()
 }
 
 func NewLingXing(config config.Config) *LingXing {
