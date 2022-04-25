@@ -49,10 +49,8 @@ type defaultQueryParams struct {
 }
 
 type LingXing struct {
-	host               string
 	appId              string
 	appSecret          string
-	accessToken        string
 	Debug              bool               // 是否调试模式
 	Client             *resty.Client      // HTTP 客户端
 	MerchantId         string             // 商户 ID
