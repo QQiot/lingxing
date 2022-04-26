@@ -207,9 +207,5 @@ func (s service) AmazonOrder(params AmazonOrderQueryParams) (detail AmazonOrderD
 			err = errors.New(resp.Status())
 		}
 	}
-	if err != nil {
-		return
-	}
-
 	return
 }

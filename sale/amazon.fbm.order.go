@@ -80,11 +80,5 @@ func (s service) AmazonFBMOrders(params AmazonFBMOrdersQueryParams) (items []Ama
 			err = errors.New(resp.Status())
 		}
 	}
-	if err != nil {
-		return
-	}
-
-	return
-
 	return
 }

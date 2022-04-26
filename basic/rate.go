@@ -67,9 +67,5 @@ func (s service) Rates(params RatesQueryParams) (items []Rate, nextOffset int, i
 			err = errors.New(resp.Status())
 		}
 	}
-	if err != nil {
-		return
-	}
-
 	return
 }
