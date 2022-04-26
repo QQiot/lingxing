@@ -13,9 +13,9 @@ import (
 // SupplierQuote 供应商报价发
 type SupplierQuote struct {
 	PsqId              int                 `json:"psq_id"`
-	ProductId          int                 `json:"product_id"`           // 产品ID
-	SupplierId         int                 `json:"supplier_id"`          // 供应商ID
-	IsPrimary          int                 `json:"is_primary"`           // 是否为首选供应商 0否 1是
+	ProductId          int                 `json:"product_id"`           // 产品 ID
+	SupplierId         int                 `json:"supplier_id"`          // 供应商 ID
+	IsPrimary          int                 `json:"is_primary"`           // 是否为首选供应商（0：否、1：是）
 	SupplierProductURL string              `json:"supplier_product_url"` // 采购链接
 	SupplierName       string              `json:"supplier_name"`        // 供应商名称
 	Quotes             []SupplierQuoteItem `json:"quotes"`               //	报价数据
@@ -25,7 +25,7 @@ type SupplierQuote struct {
 type SupplierQuoteItem struct {
 	Currency     string                       `json:"currency"`      // 报价币种
 	CurrencyIcon string                       `json:"currency_icon"` // 报价币种符号
-	IsTax        int                          `json:"is_tax"`        // 是否含税 0否 1是
+	IsTax        int                          `json:"is_tax"`        // 是否含税（0：否、1：是）
 	TaxRate      int                          `json:"tax_rate"`      // 税率（百分比）0-99整数
 	StepPrices   []SupplierQuoteItemStepPrice `json:"step_prices"`   // 报价梯度
 }
@@ -50,7 +50,7 @@ type Product struct {
 	CgPrice          string          `json:"cg_price"`           // 采购：采购价格（RMB）
 	Status           int             `json:"status"`             // 状态编码
 	StatusText       string          `json:"status_text"`        // 状态文本
-	IsCombo          int             `json:"is_combo"`           // 是否为组合商品，0 = 否，1 = 是
+	IsCombo          int             `json:"is_combo"`           // 是否为组合商品（0：否、1：是）
 	CreateTime       int             `json:"create_time"`        // 创建时间
 	ProductDeveloper string          `json:"product_developer"`  // 开发人员
 	CgOptUsername    string          `json:"cg_opt_username"`    // 采购：采购员
@@ -224,14 +224,14 @@ type ProductDetail struct {
 	PicUrl                   string            `json:"pic_url"`                    // 上传的图片地址
 	PictureList              []ProductPicture  `json:"picture_list"`               // 产品图片数组
 	Model                    string            `json:"model"`                      // 产品型号
-	Unit                     string            `json:"unit"`                       // 商品单位：套、个、台
-	Status                   int               `json:"status"`                     // 状态：1-停售 2-在售 3-开发中 4-清仓
+	Unit                     string            `json:"unit"`                       // 商品单位（套、个、台）
+	Status                   int               `json:"status"`                     // 状态（1：停售、2：在售、3：开发中、4：清仓）
 	CID                      int               `json:"cid"`                        // 分类ID
 	BID                      int               `json:"bid"`                        // 品牌ID
 	ProductDeveloper         string            `json:"product_developer"`          // 开发者
 	ProductDeveloperUid      int               `json:"product_developer_uid"`      // 开发人
 	Description              string            `json:"description"`                // 商品描述
-	IsCombo                  int               `json:"is_combo"`                   // 1=组合商品；0=非组合商品
+	IsCombo                  int               `json:"is_combo"`                   // 是否组合商品（1：组合商品、0：非组合商品）
 	Currency                 string            `json:"currency"`                   // 中国官方汇率code
 	CgOptUsername            string            `json:"cg_opt_username"`            // 采购：采购员
 	CgDelivery               int               `json:"cg_delivery"`                // 采购：交期

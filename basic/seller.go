@@ -16,8 +16,8 @@ type Seller struct {
 	Country         string `json:"country"`           // 国家
 	Region          string `json:"region"`            // 站点简称
 	SellerId        string `json:"seller_id"`         // SELLER_ID
-	SellerAccountId int    `json:"seller_account_id"` // SELLER_ID
-	AccountName     string `json:"account_name"`
+	SellerAccountId int    `json:"seller_account_id"` // 销售帐号 ID
+	AccountName     string `json:"account_name"`      // 帐号名称
 }
 
 func (s service) Sellers() (items []Seller, err error) {

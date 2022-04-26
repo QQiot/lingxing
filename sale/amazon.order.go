@@ -30,11 +30,11 @@ type AmazonOrder struct {
 	OrderStatus            string            `json:"order_status"`              // 订单状态
 	OrderTotalCurrencyCode string            `json:"order_total_currency_code"` // 币种
 	OrderTotalAmount       float64           `json:"order_total_amount"`        // 订单金额
-	FulfillmentChannel     string            `json:"fulfillment_channel"`       // 发货渠道（亚马逊订单：AFN，自发货：MFN）
+	FulfillmentChannel     string            `json:"fulfillment_channel"`       // 发货渠道（AFN：亚马逊订单、MFN：自发货）
 	BuyerEmail             string            `json:"buyer_email"`               // 买家邮件（应平台要求，不再返回数据）
 	IsReturn               int               `json:"is_return"`                 // 是否退款（0：未退款、1：退款中、2：退款完成）
-	IsMcfOrder             bool              `json:"is_mcf_order"`              // 是否多渠道订单（1：是、0：否）
-	IsAssessed             bool              `json:"is_assessed"`               // 是否评测订单（1：是、0：否）
+	IsMcfOrder             bool              `json:"is_mcf_order"`              // 是否多渠道订单（0：否、1：是）
+	IsAssessed             bool              `json:"is_assessed"`               // 是否评测订单（0：否、1：是）
 	EarliestShipDate       time.Time         `json:"earliest_ship_date"`        // 发货时限（2020-11-02T08:00:00Z）
 	ShipmentDate           time.Time         `json:"shipment_date"`             // 发货日期
 	LastUpdateDate         time.Time         `json:"last_update_date"`          // 订单更新站点时间
@@ -135,19 +135,19 @@ type AmazonOrderDetailItem struct {
 	FeeCost                    float64 `json:"fee_cost"`                      // 其他费金额，比如测评费
 	FeeCurrency                string  `json:"fee_currency"`                  // 其他费币种，比如测评费
 	FeeIcon                    string  `json:"fee_icon"`                      // 其他费币种符号，比如测评费
-	Profit                     float64 `json:"profit"`                        //	毛利润
-	ItemPriceAmount            float64 `json:"item_price_amount"`             //	商品支付金额
-	ItemTaxAmount              float64 `json:"item_tax_amount"`               //	商品税
-	ShippingPriceAmount        float64 `json:"shipping_price_amount"`         //	商品运费配送费
-	ShippingTaxAmount          float64 `json:"shipping_tax_amount"`           //	商品运费税
-	GiftWrapPriceAmount        float64 `json:"gift_wrap_price_amount"`        //	礼品包装费
+	Profit                     float64 `json:"profit"`                        // 毛利润
+	ItemPriceAmount            float64 `json:"item_price_amount"`             // 商品支付金额
+	ItemTaxAmount              float64 `json:"item_tax_amount"`               // 商品税
+	ShippingPriceAmount        float64 `json:"shipping_price_amount"`         // 商品运费配送费
+	ShippingTaxAmount          float64 `json:"shipping_tax_amount"`           // 商品运费税
+	GiftWrapPriceAmount        float64 `json:"gift_wrap_price_amount"`        // 礼品包装费
 	GiftWrapTaxAmount          float64 `json:"gift_wrap_tax_amount"`          // 礼品包装税
 	ShippingDiscountAmount     float64 `json:"shipping_discount_amount"`      // 配送折扣
-	ShippingDiscountTaxAmount  float64 `json:"shipping_discount_tax_amount"`  //	配送折扣税
-	PromotionDiscountAmount    float64 `json:"promotion_discount_amount"`     //	商品促销折扣
-	PromotionDiscountTaxAmount float64 `json:"promotion_discount_tax_amount"` //	商品促销折扣税
-	CodFeeAmount               float64 `json:"cod_fee_amount"`                //	COD服务费用（货到付款服务费）
-	CodFeeDiscountAmount       float64 `json:"cod_fee_discount_amount"`       //	COD服务费用折扣
+	ShippingDiscountTaxAmount  float64 `json:"shipping_discount_tax_amount"`  // 配送折扣税
+	PromotionDiscountAmount    float64 `json:"promotion_discount_amount"`     // 商品促销折扣
+	PromotionDiscountTaxAmount float64 `json:"promotion_discount_tax_amount"` // 商品促销折扣税
+	CodFeeAmount               float64 `json:"cod_fee_amount"`                // COD服务费用（货到付款服务费）
+	CodFeeDiscountAmount       float64 `json:"cod_fee_discount_amount"`       // COD服务费用折扣
 }
 
 type AmazonOrderDetail struct {
@@ -156,14 +156,14 @@ type AmazonOrderDetail struct {
 	City              string              `json:"city"`                // 城市（应平台要求，不再返回数据）
 	District          string              `json:"district"`            // 地区（应平台要求，不再返回数据）
 	OrderStatus       string              `json:"order_status"`        // 订单状态
-	IsAssessed        int                 `json:"is_assessed"`         // 是否评测订单（1：是、0：否）
+	IsAssessed        int                 `json:"is_assessed"`         // 是否评测订单（0：否、1：是）
 	OrderTotalAmount  float64             `json:"order_total_amount"`  // 订单总金额
 	Currency          string              `json:"currency"`            // 订单金额币种
 	Icon              string              `json:"icon"`                // 订单金额币种符号
 	Phone             string              `json:"phone"`               // 手机号（应平台要求，不再返回数据）
 	PostalCode        string              `json:"postal_code"`         // 邮编（应平台要求，不再返回数据）
 	IsMcfOrder        int                 `json:"is_mcf_order"`        // 0普通订单,1多渠道订单
-	IsBusinessOrder   int                 `json:"is_business_order"`   // 是否为B2B订单，1是，0不是
+	IsBusinessOrder   int                 `json:"is_business_order"`   // 是否为B2B订单（0：否、1：是）
 	CountryCode       string              `json:"country_code"`        // 国家代码（应平台要求，不再返回数据）
 	PurchaseDateLocal string              `json:"purchase_date_local"` // 订购时间（站点时间）
 	LastUpdateDate    string              `json:"last_update_date"`    // 订单更新站点时间
