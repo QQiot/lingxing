@@ -73,3 +73,18 @@ type ShipmentSheet struct {
 	Logistics            []ShipmentLogistics `json:"logistics"`              // 物流列表
 	Relatelist           []Shipment          `json:"relate_list"`            // 关联货件列表
 }
+
+type ShipmentSheetsQueryParams struct {
+	SearchValue   string   `json:"search_value,omitempty"`   // 	搜索的值
+	SearchField   string   `json:"search_field,omitempty"`   // 搜索字段（shipment_sn：发货单号、sku：sku、shipment_id：货件单号）
+	SIDs          []string `json:"sids,omitempty"`           // 店铺id
+	MIDs          []string `json:"mids,omitempty"`           // 国家id
+	WIDs          []string `json:"wid,omitempty"`            // 	仓库id
+	LogisticsType []string `json:"logistics_type,omitempty"` // 物流方式id
+	Status        int      `json:"status,omitempty"`         // 发货单状态，-1 : 待配货 0：待发货，1：已发货，3：已作废
+	PrintStatus   string   `json:"print_status,omitempty"`   // 打印状态（0：未打印、1：已打印）
+	PickStatus    string   `json:"pick_status,omitempty"`    // 拣货状态（0：未拣货、1：已拣货）
+	TimeType      int      `json:"time_type,omitempty"`      // 按时间查询时必传时间类型（ 0：发货时间、 1：到货时间、2：创建时间 ）
+	StartDate     string   `json:"start_date,omitempty"`     // 开始日期
+	EndDate       string   `json:"end_date,omitempty"`       // 结束日期
+}
