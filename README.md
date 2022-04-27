@@ -31,3 +31,4 @@ https://openapidoc.lingxing.com
 - Brands(params BrandsQueryParams) (items []Brand, nextOffset int, isLastPage bool, err error)            // 本地产品品牌列表
 - UpsertBrand(req UpsertBrandRequest) (items []Brand, err error)                                          // 新增/更新品牌
 - Categories(params CategoriesQueryParams) (items []Category, nextOffset int, isLastPage bool, err error) // 产品分类列表
+- UpsertCategory(req UpsertCategoryRequest) (items []Category, err error)                                 // 新增/更新分类

@@ -8,7 +8,7 @@ import (
 
 func TestService_Brands(t *testing.T) {
 	params := BrandsQueryParams{}
-	params.Limit = 11
+	params.Limit = 10
 	var brands []Brand
 	for {
 		items, nextOffset, isLastPage, err := lxService.Brands(params)
