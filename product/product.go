@@ -39,9 +39,9 @@ type SupplierQuoteItemStepPrice struct {
 
 type Product struct {
 	ID               int             `json:"id"`                 // 商品 ID
-	CID              int             `json:"cid"`                // 类别ID
-	CategoryName     string          `json:"category_name"`      // 类别ID
-	BID              int             `json:"bid"`                // 品牌ID
+	CID              int             `json:"cid"`                // 类别 ID
+	CategoryName     string          `json:"category_name"`      // 类别 ID
+	BID              int             `json:"bid"`                // 品牌 ID
 	BrandName        string          `json:"brand_name"`         // 品牌
 	SKU              string          `json:"sku"`                // SKU
 	ProductName      string          `json:"product_name"`       // 品名
@@ -110,7 +110,7 @@ func (s service) Products(params ProductsQueryParams) (items []Product, nextOffs
 
 type ProductPicture struct {
 	PicURL    string `json:"pic_url"`    // 图片链接
-	IsPrimary int    `json:"is_primary"` // 是否产品主图 0-否 1-是
+	IsPrimary int    `json:"is_primary"` // 是否产品主图（0：否、1：是）
 }
 
 // ProductLogistic 物流关联
@@ -118,7 +118,7 @@ type ProductLogistic struct {
 	CountryCode string `json:"country_code"`
 
 	// US
-	USCgTransportCosts float64 `json:"US_cg_transport_costs,omitempty"` // 美国默认头程成本(含税)
+	USCgTransportCosts float64 `json:"US_cg_transport_costs,omitempty"` // 美国默认头程成本（含税）
 	USCurrency         string  `json:"US_currency,omitempty"`           // 美国官方汇率code
 	USBgImportHsCode   string  `json:"US_bg_import_hs_code,omitempty"`  // 报关：美国HS Code（进口国）
 	USBgTaxRate        float64 `json:"US_bg_tax_rate,omitempty"`        // 报关：美国税率
@@ -221,7 +221,7 @@ type ProductLogistic struct {
 }
 
 type ProductDetail struct {
-	ID                       int               `json:"id"`                         // 产品id
+	ID                       int               `json:"id"`                         // 产品 ID
 	ProductName              string            `json:"product_name"`               // 产品名称
 	SKU                      string            `json:"sku"`                        // SKU
 	PicUrl                   string            `json:"pic_url"`                    // 上传的图片地址
@@ -235,7 +235,7 @@ type ProductDetail struct {
 	ProductDeveloperUid      int               `json:"product_developer_uid"`      // 开发人
 	Description              string            `json:"description"`                // 商品描述
 	IsCombo                  int               `json:"is_combo"`                   // 是否组合商品（1：组合商品、0：非组合商品）
-	Currency                 string            `json:"currency"`                   // 中国官方汇率code
+	Currency                 string            `json:"currency"`                   // 中国官方汇率 code
 	CgOptUsername            string            `json:"cg_opt_username"`            // 采购：采购员
 	CgDelivery               int               `json:"cg_delivery"`                // 采购：交期
 	CgPrice                  float64           `json:"cg_price"`                   // 采购：采购价格（RMB）
