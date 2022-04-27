@@ -14,11 +14,11 @@ type Shipment struct {
 	MID                            int      `json:"mid"`                               // 国家 ID
 	DestinationFulfillmentCenterId int      `json:"destination_fulfillment_center_id"` // 物流中心编码
 	QuantityShipped                int      `json:"quantity_shipped"`                  // 申报量
-	Wname                          string   `json:"wname"`                             // 	仓库名称
-	ShipmentSn                     string   `json:"shipment_sn"`                       // 	发货单号
-	ShipmentId                     string   `json:"shipment_id"`                       // 	货件id
-	Wid                            string   `json:"wid"`                               // 	仓库id
-	Pid                            int      `json:"pid"`                               // 	货件明细ID
+	Wname                          string   `json:"wname"`                             // 仓库名称
+	ShipmentSn                     string   `json:"shipment_sn"`                       // 发货单号
+	ShipmentId                     string   `json:"shipment_id"`                       // 货件id
+	Wid                            string   `json:"wid"`                               // 仓库id
+	Pid                            int      `json:"pid"`                               // 货件明细 ID
 	Sname                          string   `json:"sname"`                             // 店铺名称
 	ProductName                    string   `json:"product_name"`                      // 产品名称
 	Num                            string   `json:"num"`                               // 发货数量
@@ -30,10 +30,10 @@ type Shipment struct {
 	MSKU                           string   `json:"msku"`                              // seller_sku
 	Nation                         string   `json:"nation"`                            // 国家名称
 	ApplyNum                       string   `json:"apply_num"`                         // 关联货件量
-	ProductId                      string   `json:"product_id"`                        // 商品id
+	ProductId                      string   `json:"product_id"`                        // 商品 ID
 	Remark                         string   `json:"remark"`                            // 备注
 	Status                         int      `json:"status"`                            // 状态
-	SID                            int      `json:"sid"`                               // 店铺id
+	SID                            int      `json:"sid"`                               // 店铺 ID
 	IsCombo                        int      `json:"is_combo"`                          // 是否组合商品
 	CreateByMWS                    int      `json:"create_by_mws"`                     // 创建发货单的途径
 	WhbCodeList                    int      `json:"whb_code_list"`                     // 仓位编码列表
@@ -50,7 +50,7 @@ type Shipment struct {
 type ShipmentSheet struct {
 	ID                   int                 `json:"id"`                     // 发货单 ID
 	ShipmentSN           string              `json:"shipment_sn"`            // 发货单号
-	Status               int                 `json:"status"`                 // 发货单状态，-1 : 待配货 0：待发货，1：已发货，2：已完成，3：已作废
+	Status               int                 `json:"status"`                 // 发货单状态（-1：待配货、0：待发货、1：已发货、2：已完成、3：已作废）
 	ShipmentTime         string              `json:"shipment_time"`          // 发货时间
 	WarehouseName        string              `json:"wname"`                  // 仓库名称
 	CreateUser           string              `json:"create_user"`            // 创建用户
@@ -75,13 +75,13 @@ type ShipmentSheet struct {
 }
 
 type ShipmentSheetsQueryParams struct {
-	SearchValue   string   `json:"search_value,omitempty"`   // 	搜索的值
+	SearchValue   string   `json:"search_value,omitempty"`   // 搜索的值
 	SearchField   string   `json:"search_field,omitempty"`   // 搜索字段（shipment_sn：发货单号、sku：sku、shipment_id：货件单号）
 	SIDs          []string `json:"sids,omitempty"`           // 店铺id
 	MIDs          []string `json:"mids,omitempty"`           // 国家id
-	WIDs          []string `json:"wid,omitempty"`            // 	仓库id
+	WIDs          []string `json:"wid,omitempty"`            // 仓库id
 	LogisticsType []string `json:"logistics_type,omitempty"` // 物流方式id
-	Status        int      `json:"status,omitempty"`         // 发货单状态，-1 : 待配货 0：待发货，1：已发货，3：已作废
+	Status        int      `json:"status,omitempty"`         // 发货单状态（-1：待配货、0：待发货、1：已发货、3：已作废）
 	PrintStatus   string   `json:"print_status,omitempty"`   // 打印状态（0：未打印、1：已打印）
 	PickStatus    string   `json:"pick_status,omitempty"`    // 拣货状态（0：未拣货、1：已拣货）
 	TimeType      int      `json:"time_type,omitempty"`      // 按时间查询时必传时间类型（ 0：发货时间、 1：到货时间、2：创建时间 ）
