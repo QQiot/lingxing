@@ -96,6 +96,7 @@ func NewLingXing(config config.Config) *LingXing {
 					lx.auth = auth
 				}
 			}
+			client.SetAuthToken(lx.auth.AccessToken)
 
 			queryParams := map[string]string{
 				"app_key":      lx.appId,
