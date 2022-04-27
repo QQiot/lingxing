@@ -6,23 +6,24 @@ import (
 	jsoniter "github.com/json-iterator/go"
 )
 
-// 本地产品品牌
-// https://openapidoc.lingxing.com/#/docs/Product/Brand
+// 产品分类
+// https://openapidoc.lingxing.com/#/docs/Product/Category
 
-type Brand struct {
-	BID   int    `json:"bid"`   // 品牌 ID
-	Title string `json:"title"` // 品牌名称
+type Category struct {
+	CID       int    `json:"cid"`        // 分类 ID
+	ParentCID int    `json:"parent_cid"` // 父级分类 ID
+	Title     string `json:"title"`      // 分类名称
 }
 
-type BrandsQueryParams struct {
+type CategoriesQueryParams struct {
 	lingxing.Paging
 }
 
-func (m BrandsQueryParams) Validate() error {
+func (m CategoriesQueryParams) Validate() error {
 	return nil
 }
 
-func (s service) Brands(params BrandsQueryParams) (items []Brand, nextOffset int, isLastPage bool, err error) {
+func (s service) Categories(params CategoriesQueryParams) (items []Category, nextOffset int, isLastPage bool, err error) {
 	if err = params.Validate(); err != nil {
 		return
 	}
@@ -30,11 +31,11 @@ func (s service) Brands(params BrandsQueryParams) (items []Brand, nextOffset int
 	params.SetPagingVars(params.Offset, params.Limit, s.lingXing.DefaultQueryParams.MaxLimit)
 	res := struct {
 		lingxing.NormalResponse
-		Data []Brand `json:"data"`
+		Data []Category `json:"data"`
 	}{}
 	resp, err := s.lingXing.Client.R().
 		SetBody(params).
-		Post("/data/local_inventory/brand")
+		Post("/routing/data/local_inventory/category")
 	if err != nil {
 		return
 	}

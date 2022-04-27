@@ -12,7 +12,7 @@ func TestService_Brands(t *testing.T) {
 	for {
 		items, nextOffset, isLastPage, err := lxService.Brands(params)
 		if err != nil {
-			t.Errorf("lxService.Products error: %s", err.Error())
+			t.Errorf("lxService.Brands error: %s", err.Error())
 		} else {
 			brands = append(brands, items...)
 		}
