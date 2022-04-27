@@ -60,6 +60,6 @@ func TestService_Product(t *testing.T) {
 	if err != nil {
 		t.Errorf("lxService.Product error %s", err.Error())
 	} else {
-		t.Log(jsonx.ToJson(item, "[]"))
+		t.Log(jsonx.ToPrettyJson(item))
 	}
 }
