@@ -67,8 +67,8 @@ func (s service) Brands(params BrandsQueryParams) (items []Brand, nextOffset int
 // https://openapidoc.lingxing.com/#/docs/Product/SetBrand
 
 type UpsertBrand struct {
-	ID    int    `json:"id,omitempty"` // 为空时表新增，不为空时表编辑
-	Title string `json:"title"`        // 品牌名称
+	ID    int    `json:"id"`    // 为零表示新增，不为零时表示编辑
+	Title string `json:"title"` // 品牌名称
 }
 
 type UpsertBrandRequest struct {
@@ -80,7 +80,13 @@ func (m UpsertBrandRequest) Validate() error {
 		validation.Field(&m.Data,
 			validation.Required.Error("品牌列表不能为空"),
 			validation.Each(validation.WithContext(func(ctx context.Context, value interface{}) error {
-				return validation.Validate(value, validation.Required.Error("品牌名称不能为空"))
+				item, ok := value.(UpsertBrand)
+				if !ok {
+					return errors.New("无效的品牌信息")
+				}
+				return validation.ValidateStruct(&item,
+					validation.Field(&item.Title, validation.Required.Error("品牌名称不能为空")),
+				)
 			})),
 		),
 	)
