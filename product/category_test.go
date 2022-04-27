@@ -17,7 +17,7 @@ func TestService_Categories(t *testing.T) {
 		} else {
 			categories = append(categories, items...)
 		}
-		if isLastPage {
+		if isLastPage || err != nil {
 			break
 		}
 		params.Offset = nextOffset

@@ -40,7 +40,7 @@ func TestService_Products(t *testing.T) {
 		} else {
 			products = append(products, items...)
 		}
-		if isLastPage {
+		if isLastPage || err != nil {
 			break
 		}
 		params.Offset = nextOffset
