@@ -32,3 +32,8 @@ https://openapidoc.lingxing.com
 - UpsertBrand(req UpsertBrandRequest) (items []Brand, err error)                                          // 新增/更新品牌
 - Categories(params CategoriesQueryParams) (items []Category, nextOffset int, isLastPage bool, err error) // 产品分类列表
 - UpsertCategory(req UpsertCategoryRequest) (items []Category, err error)                                 // 新增/更新分类
+
+### 客服
+
+- Emails(params EmailsQueryParams) (items []Email, nextOffset int, isLastPage bool, err error) // 邮件列表
+- Email(webMailUUID string) (item EmailDetail, err error)                                      // 邮件详情

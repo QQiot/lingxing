@@ -103,7 +103,10 @@ func NewLingXing(config config.Config) *LingXing {
 				"access_token": lx.auth.AccessToken,
 				"timestamp":    strconv.FormatInt(time.Now().Unix(), 10),
 			}
-			params := cast.ToStringMap(jsonx.ToJson(request.Body, "{}")) // Body
+			var params map[string]interface{}
+			if request.Method == http.MethodPost {
+				params = cast.ToStringMap(jsonx.ToJson(request.Body, "{}")) // Body
+			}
 			if params == nil {
 				params = make(map[string]interface{}, 3)
 			}
