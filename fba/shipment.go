@@ -60,11 +60,11 @@ type ShipmentSheet struct {
 	ETADate              string              `json:"eta_date"`               // 预计到港时间
 	DeliveryDate         string              `json:"delivery_date"`          // 实际妥投时间
 	CreateTime           string              `json:"create_time"`            // 创建时间
-	IsPick               string              `json:"is_pick"`                // 拣货状态 0 未拣货 1已拣货
+	IsPick               string              `json:"is_pick"`                // 拣货状态（0：未拣货、1：已拣货）
 	IsPrint              string              `json:"is_print"`               // 是否打印
 	PickTime             string              `json:"pick_time"`              // 拣货时间
 	PrintNum             string              `json:"print_num"`              // 打印次数
-	HeadFeeType          int                 `json:"head_fee_type"`          // 头程费分配方式，0：按计费重；1：按实重；2：按体积重；3：按SKU数量；4：自定义；5：按箱子体积
+	HeadFeeType          int                 `json:"head_fee_type"`          // 头程费分配方式（0：按计费重、1：按实重、2：按体积重、3：按SKU数量、4：自定义、5：按箱子体积）
 	FileId               string              `json:"file_id"`                // 附件文件
 	GMTModified          string              `json:"gmt_modified"`           // 更新时间
 	Remark               string              `json:"remark"`                 // 备注
@@ -76,7 +76,7 @@ type ShipmentSheet struct {
 
 type ShipmentSheetsQueryParams struct {
 	SearchValue   string   `json:"search_value,omitempty"`   // 搜索的值
-	SearchField   string   `json:"search_field,omitempty"`   // 搜索字段（shipment_sn：发货单号、sku：sku、shipment_id：货件单号）
+	SearchField   string   `json:"search_field,omitempty"`   // 搜索字段（shipment_sn：发货单号、sku：SKU、shipment_id：货件单号）
 	SIDs          []string `json:"sids,omitempty"`           // 店铺id
 	MIDs          []string `json:"mids,omitempty"`           // 国家id
 	WIDs          []string `json:"wid,omitempty"`            // 仓库id
@@ -84,7 +84,7 @@ type ShipmentSheetsQueryParams struct {
 	Status        int      `json:"status,omitempty"`         // 发货单状态（-1：待配货、0：待发货、1：已发货、3：已作废）
 	PrintStatus   string   `json:"print_status,omitempty"`   // 打印状态（0：未打印、1：已打印）
 	PickStatus    string   `json:"pick_status,omitempty"`    // 拣货状态（0：未拣货、1：已拣货）
-	TimeType      int      `json:"time_type,omitempty"`      // 按时间查询时必传时间类型（ 0：发货时间、 1：到货时间、2：创建时间 ）
+	TimeType      int      `json:"time_type,omitempty"`      // 按时间查询时必传时间类型（ 0：发货时间、1：到货时间、2：创建时间 ）
 	StartDate     string   `json:"start_date,omitempty"`     // 开始日期
 	EndDate       string   `json:"end_date,omitempty"`       // 结束日期
 }

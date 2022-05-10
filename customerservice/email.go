@@ -18,7 +18,7 @@ type Email struct {
 	FromAddress   string `json:"from_address"`   // 发件人地址
 	ToName        string `json:"to_name"`        // 接收人
 	ToAddress     string `json:"to_address"`     // 接收人地址
-	HasAttachment int    `json:"has_attachment"` // 是否存在附件（1：存在、0：不存在）
+	HasAttachment int    `json:"has_attachment"` // 是否存在附件（0：不存在、1：存在）
 }
 
 type EmailsQueryParams struct {
