@@ -14,5 +14,7 @@ type service struct {
 
 // API Services
 type services struct {
-	BasicData basicDataService
+	BasicData       basicDataService
+	CustomerService customerServiceService
+	Product         productService
 }
