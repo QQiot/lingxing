@@ -5,35 +5,124 @@
 
 https://openapidoc.lingxing.com
 
-## 支持的方法
+## 安装
 
-### 授权
+```go
+go get github.com/hiscaler/lingxing
+```
 
-- Auth(appId, appSecret string) (ar AuthResponse, err error)
-- Refresh(appId, refreshToken string) (ar AuthResponse, err error)
+## 使用
+
+```
+var lingXingClient *LingXing
+b, err := os.ReadFile("./config/config_test.json")
+if err != nil {
+    panic(fmt.Sprintf("Read config error: %s", err.Error()))
+}
+var c config.Config
+err = jsoniter.Unmarshal(b, &c)
+if err != nil {
+    panic(fmt.Sprintf("Parse config file error: %s", err.Error()))
+}
+lingXingClient = NewLingXing(c)
+m.Run()
+```
+
+## 服务
+
+### ~~授权~~
+
+- ~~Auth(appId, appSecret string) (ar AuthResponse, err error)~~
+- ~~Refresh(appId, refreshToken string) (ar AuthResponse, err error)~~
 
 ### 基础数据
 
-- Sellers() (items []Seller, err error)                                                     // 亚马逊店铺信息
-- Accounts() (items []Account, err error)                                                   // ERP账号列表
-- Rates(params RatesQueryParams) (items []Rate, nextOffset int, isLastPage bool, err error) // 汇率
+- 亚马逊店铺信息
+
+```go
+lingXingClient.Services.BasicData.Sellers()
+```
+
+- ERP 账号列表
+
+```go
+lingXingClient.Services.BasicData.Accounts()
+```
+
+- 汇率
+
+```go
+lingXingClient.Services.BasicData.Rates()
+```
 
 ### 销售
 
-- AmazonOrders(params AmazonOrdersQueryParams) (items []AmazonOrder, nextOffset int, isLastPage bool, err error)          // 亚马逊订单列表
-- AmazonOrder(params AmazonOrderQueryParams) (detail AmazonOrderDetail, err error)                                        // 亚马逊订单详情
-- AmazonFBMOrders(params AmazonFBMOrdersQueryParams) (items []AmazonFBMOrder, nextOffset int, isLastPage bool, err error) // 亚马逊自发货订单（FBM）列表
+- 亚马逊订单列表
+
+```go
+lingXingClient.Services.Sale.AmazonOrders()
+```
+
+- 亚马逊订单详情
+
+```go
+lingXingClient.Services.Sale.AmazonOrder()
+```
+
+- 亚马逊自发货订单（FBM）列表
+
+```go
+lingXingClient.Services.Sale.AmazonFBMOrders()
+```
 
 ### 产品
 
-- Products(params ProductsQueryParams) (items []Product, nextOffset int, isLastPage bool, err error)      // 本地产品列表
-- Product(id int) (item ProductDetail, err error)                                                         // 本地产品详情
-- Brands(params BrandsQueryParams) (items []Brand, nextOffset int, isLastPage bool, err error)            // 本地产品品牌列表
-- UpsertBrand(req UpsertBrandRequest) (items []Brand, err error)                                          // 新增/更新品牌
-- Categories(params CategoriesQueryParams) (items []Category, nextOffset int, isLastPage bool, err error) // 产品分类列表
-- UpsertCategory(req UpsertCategoryRequest) (items []Category, err error)                                 // 新增/更新分类
+- 本地产品列表
+
+```go
+lingXingClient.Services.Product.Products()
+```
+
+- 本地产品详情
+
+```go
+lingXingClient.Services.Product.Product()
+```
+
+- 本地产品品牌列表
+
+```go
+lingXingClient.Services.Product.Brands()
+```
+
+- 新增/更新品牌
+
+```go
+lingXingClient.Services.Product.UpsertBrand()
+```
+
+- 产品分类列表
+
+```go
+lingXingClient.Services.Product.Categories()
+```
+
+- 新增/更新分类
+
+```go
+lingXingClient.Services.Product.UpsertCategory()
+```
 
 ### 客服
 
-- Emails(params EmailsQueryParams) (items []Email, nextOffset int, isLastPage bool, err error) // 邮件列表
-- Email(webMailUUID string) (item EmailDetail, err error)                                      // 邮件详情
+- 邮件列表
+
+```go
+lingXingClient.Services.CustomerService.Emails()
+```
+
+- 邮件详情
+
+```go
+lingXingClient.Services.CustomerService.Email()
+```
