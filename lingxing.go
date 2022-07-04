@@ -57,6 +57,7 @@ type LingXing struct {
 	Logger             *log.Logger        // 日志
 	DefaultQueryParams defaultQueryParams // 查询默认值
 	auth               AuthResponse
+	Services           services // API Services
 }
 
 func init() {
@@ -65,7 +66,7 @@ func init() {
 
 func NewLingXing(config config.Config) *LingXing {
 	logger := log.New(os.Stdout, "[ LingXing ] ", log.LstdFlags|log.Llongfile)
-	lx := &LingXing{
+	lingXingClient := &LingXing{
 		appId:     config.AppId,
 		appSecret: config.AppSecret,
 		Debug:     config.Debug,
@@ -76,32 +77,32 @@ func NewLingXing(config config.Config) *LingXing {
 			MaxLimit: 1000,
 		},
 	}
-	client := resty.New().SetDebug(config.Debug).
+	httpClient := resty.New().SetDebug(config.Debug).
 		SetHeaders(map[string]string{
 			"Content-Type": "application/json",
 			"Accept":       "application/json",
 		})
 	if config.Debug {
-		client.SetBaseURL("https://openapisandbox.lingxing.com/erp/sc")
+		httpClient.SetBaseURL("https://openapisandbox.lingxing.com/erp/sc")
 	} else {
-		client.SetBaseURL("https://openapi.lingxing.com/erp/sc")
+		httpClient.SetBaseURL("https://openapi.lingxing.com/erp/sc")
 	}
 
-	client.SetTimeout(10 * time.Second).
+	httpClient.SetTimeout(10 * time.Second).
 		OnBeforeRequest(func(client *resty.Client, request *resty.Request) error {
-			if lx.auth.ExpiresIn <= 0 || lx.auth.AccessToken == "" {
-				if auth, err := lx.Auth(); err != nil {
+			if lingXingClient.auth.ExpiresIn <= 0 || lingXingClient.auth.AccessToken == "" {
+				if auth, err := lingXingClient.Auth(); err != nil {
 					logger.Printf("auth error: %s", err.Error())
 					return err
 				} else {
-					lx.auth = auth
+					lingXingClient.auth = auth
 				}
 			}
-			client.SetAuthToken(lx.auth.AccessToken)
+			client.SetAuthToken(lingXingClient.auth.AccessToken)
 
 			queryParams := map[string]string{
-				"app_key":      lx.appId,
-				"access_token": lx.auth.AccessToken,
+				"app_key":      lingXingClient.appId,
+				"access_token": lingXingClient.auth.AccessToken,
 				"timestamp":    strconv.FormatInt(time.Now().Unix(), 10),
 			}
 			var params map[string]interface{}
@@ -114,7 +115,7 @@ func NewLingXing(config config.Config) *LingXing {
 			for k, v := range queryParams {
 				params[k] = v
 			}
-			sign, err := generateSign(lx.appId, params)
+			sign, err := generateSign(lingXingClient.appId, params)
 			if err != nil {
 				return err
 			}
@@ -160,8 +161,21 @@ func NewLingXing(config config.Config) *LingXing {
 			}
 			return retry
 		})
-	lx.Client = client
-	return lx
+	lingXingClient.Client = httpClient
+	xService := service{
+		debug:      config.Debug,
+		logger:     logger,
+		httpClient: httpClient,
+		defaultQueryParams: defaultQueryParams{
+			Offset:   0,
+			Limit:    1000,
+			MaxLimit: 1000,
+		},
+	}
+	lingXingClient.Services = services{
+		BasicData: (basicDataService)(xService),
+	}
+	return lingXingClient
 }
 
 type NormalResponse struct {
