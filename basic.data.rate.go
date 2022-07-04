@@ -1,7 +1,6 @@
 package lingxing
 
 import (
-	"errors"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/hiscaler/lingxing/entity"
 	jsoniter "github.com/json-iterator/go"
@@ -41,20 +40,10 @@ func (s basicDataService) Rates(params RatesQueryParams) (items []entity.Rate, n
 		return
 	}
 
-	if resp.IsSuccess() {
-		if err = jsoniter.Unmarshal(resp.Body(), &res); err == nil {
-			if err = ErrorWrap(res.Code, res.Message); err == nil {
-				items = res.Data
-				nextOffset = params.NextOffset
-				isLastPage = res.Total <= params.Offset
-			}
-		}
-	} else {
-		if e := jsoniter.Unmarshal(resp.Body(), &res); e == nil {
-			err = ErrorWrap(res.Code, res.Message)
-		} else {
-			err = errors.New(resp.Status())
-		}
+	if err = jsoniter.Unmarshal(resp.Body(), &res); err == nil {
+		items = res.Data
+		nextOffset = params.NextOffset
+		isLastPage = res.Total <= params.Offset
 	}
 	return
 }

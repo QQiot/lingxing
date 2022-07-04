@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func TestService_Emails(t *testing.T) {
+func TestCustomerServiceService_Emails(t *testing.T) {
 	params := EmailsQueryParams{
 		Flag:  "1",
 		Email: "1@gmail.com",

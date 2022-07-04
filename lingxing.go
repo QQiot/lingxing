@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/go-resty/resty/v2"
+	"github.com/hiscaler/gox/bytex"
 	"github.com/hiscaler/gox/cryptox"
 	"github.com/hiscaler/gox/jsonx"
 	"github.com/hiscaler/gox/stringx"
@@ -125,15 +126,39 @@ func NewLingXing(config config.Config) *LingXing {
 			return nil
 		}).
 		OnAfterResponse(func(client *resty.Client, response *resty.Response) (err error) {
-			if response.IsSuccess() {
-				r := struct {
-					Code    interface{} `json:"code"`
-					Message string      `json:"msg"`
-				}{}
-				if err = jsoniter.Unmarshal(response.Body(), &r); err == nil {
-					err = ErrorWrap(cast.ToInt(r.Code), r.Message)
+			if response.IsError() {
+				return fmt.Errorf("%s: %s", response.Status(), bytex.ToString(response.Body()))
+			}
+
+			r := struct {
+				Code         interface{} `json:"code"`
+				Message      string      `json:"message"`
+				ErrorDetails []struct {
+					Message string `json:"message"`
+				} `json:"error_details"`
+			}{}
+			if err = jsoniter.Unmarshal(response.Body(), &r); err == nil {
+				if r.Code != 0 {
+					if len(r.ErrorDetails) == 0 {
+						err = ErrorWrap(cast.ToInt(r.Code), r.Message)
+					} else {
+						removeString := "错误："
+						n := len(removeString)
+						errorMessages := make([]string, 0)
+						for i := range r.ErrorDetails {
+							message := r.ErrorDetails[i].Message
+							if message != "" {
+								if index := strings.Index(message, removeString); index == 0 {
+									message = message[n:]
+								}
+								errorMessages = append(errorMessages, message)
+							}
+						}
+						err = ErrorWrap(cast.ToInt(r.Code), strings.Join(errorMessages, "；"))
+					}
 				}
 			}
+
 			if err != nil {
 				logger.Printf("OnAfterResponse error: %s", err.Error())
 			}

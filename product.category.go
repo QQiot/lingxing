@@ -41,23 +41,10 @@ func (s productService) Categories(params CategoriesQueryParams) (items []Catego
 		return
 	}
 
-	if resp.IsSuccess() {
-		if err = jsoniter.Unmarshal(resp.Body(), &res); err == nil {
-			if err = ErrorWrap(res.Code, res.Message); err == nil {
-				items = res.Data
-				nextOffset = params.NextOffset
-				isLastPage = len(items) < params.Limit
-			}
-		}
-	} else {
-		if e := jsoniter.Unmarshal(resp.Body(), &res); e == nil {
-			err = ErrorWrap(res.Code, res.Message)
-		} else {
-			err = errors.New(resp.Status())
-		}
-	}
-	if err != nil {
-		return
+	if err = jsoniter.Unmarshal(resp.Body(), &res); err == nil {
+		items = res.Data
+		nextOffset = params.NextOffset
+		isLastPage = len(items) < params.Limit
 	}
 
 	return
@@ -109,27 +96,15 @@ func (s productService) UpsertCategory(req UpsertCategoryRequest) (items []Categ
 		return
 	}
 
-	if resp.IsSuccess() {
-		if err = jsoniter.Unmarshal(resp.Body(), &res); err == nil {
-			if err = ErrorWrap(res.Code, res.Message); err == nil {
-				for i := range res.Data {
-					items = append(items, Category{
-						CID:       res.Data[i].ID,
-						ParentCID: res.Data[i].ParentCID,
-						Title:     res.Data[i].Title,
-					})
-				}
+	if err = jsoniter.Unmarshal(resp.Body(), &res); err == nil {
+		items = make([]Category, len(res.Data))
+		for i := range res.Data {
+			items[i] = Category{
+				CID:       res.Data[i].ID,
+				ParentCID: res.Data[i].ParentCID,
+				Title:     res.Data[i].Title,
 			}
 		}
-	} else {
-		if e := jsoniter.Unmarshal(resp.Body(), &res); e == nil {
-			err = ErrorWrap(res.Code, res.Message)
-		} else {
-			err = errors.New(resp.Status())
-		}
-	}
-	if err != nil {
-		return
 	}
 
 	return

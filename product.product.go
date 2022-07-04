@@ -1,7 +1,6 @@
 package lingxing
 
 import (
-	"errors"
 	"github.com/hiscaler/gox/stringx"
 	"github.com/hiscaler/lingxing/constant"
 	jsoniter "github.com/json-iterator/go"
@@ -82,25 +81,11 @@ func (s productService) Products(params ProductsQueryParams) (items []Product, n
 		return
 	}
 
-	if resp.IsSuccess() {
-		if err = jsoniter.Unmarshal(resp.Body(), &res); err == nil {
-			if err = ErrorWrap(res.Code, res.Message); err == nil {
-				items = res.Data
-				nextOffset = params.NextOffset
-				isLastPage = len(items) < params.Limit
-			}
-		}
-	} else {
-		if e := jsoniter.Unmarshal(resp.Body(), &res); e == nil {
-			err = ErrorWrap(res.Code, res.Message)
-		} else {
-			err = errors.New(resp.Status())
-		}
+	if err = jsoniter.Unmarshal(resp.Body(), &res); err == nil {
+		items = res.Data
+		nextOffset = params.NextOffset
+		isLastPage = len(items) < params.Limit
 	}
-	if err != nil {
-		return
-	}
-
 	return
 }
 
@@ -277,66 +262,56 @@ func (s productService) Product(id int) (item ProductDetail, err error) {
 		return
 	}
 
-	if resp.IsSuccess() {
-		if err = jsoniter.Unmarshal(resp.Body(), &res); err == nil {
-			if err = ErrorWrap(res.Code, res.Message); err == nil {
-				item = res.Data
-				if item.ID == 0 {
-					err = ErrNotFound
-				} else {
-					fnParse := func(costs float64, hsCode string, taxRate float64, countryCode string) (bool, string) {
-						if costs == 0 && stringx.IsBlank(hsCode) && taxRate == 0 {
-							return false, ""
-						}
-						return true, countryCode
+	if err = jsoniter.Unmarshal(resp.Body(), &res); err == nil {
+		item = res.Data
+		if item.ID == 0 {
+			err = ErrNotFound
+		} else {
+			fnParse := func(costs float64, hsCode string, taxRate float64, countryCode string) (bool, string) {
+				if costs == 0 && stringx.IsBlank(hsCode) && taxRate == 0 {
+					return false, ""
+				}
+				return true, countryCode
+			}
+			logistics := make([]ProductLogistic, 0)
+			for _, logistic := range item.ProductLogisticsRelation {
+				items := []struct {
+					Costs       float64
+					HsCode      string
+					Rate        float64
+					CountryCode string
+				}{
+					{logistic.USCgTransportCosts, logistic.USBgImportHsCode, logistic.USBgTaxRate, constant.CountryCodeAmerica},
+					{logistic.CACgTransportCosts, logistic.CABgImportHsCode, logistic.CABgTaxRate, constant.CountryCodeCanada},
+					{logistic.MXCgTransportCosts, logistic.MXBgImportHsCode, logistic.MXBgTaxRate, constant.CountryCodeMexico},
+					{logistic.JPCgTransportCosts, logistic.JPBgImportHsCode, logistic.JPBgTaxRate, constant.CountryCodeJapan},
+					{logistic.UKCgTransportCosts, logistic.UKBgImportHsCode, logistic.UKBgTaxRate, constant.CountryCodeUnitedKingdom},
+					{logistic.DECgTransportCosts, logistic.DEBgImportHsCode, logistic.DEBgTaxRate, constant.CountryCodeGermany},
+					{logistic.FRCgTransportCosts, logistic.FRBgImportHsCode, logistic.FRBgTaxRate, constant.CountryCodeFrance},
+					{logistic.ITCgTransportCosts, logistic.ITBgImportHsCode, logistic.ITBgTaxRate, constant.CountryCodeItaly},
+					{logistic.NLCgTransportCosts, logistic.NLBgImportHsCode, logistic.NLBgTaxRate, constant.CountryCodeNetherlands},
+					{logistic.ESCgTransportCosts, logistic.ESBgImportHsCode, logistic.ESBgTaxRate, constant.CountryCodeSpain},
+					{logistic.AUCgTransportCosts, logistic.AUBgImportHsCode, logistic.AUBgTaxRate, constant.CountryCodeAustralian},
+					{logistic.SGCgTransportCosts, logistic.SGBgImportHsCode, logistic.SGBgTaxRate, constant.CountryCodeSingapore},
+					{logistic.INCgTransportCosts, logistic.INBgImportHsCode, logistic.INBgTaxRate, constant.CountryCodeIndia},
+					{logistic.AECgTransportCosts, logistic.AEBgImportHsCode, logistic.AEBgTaxRate, constant.CountryCodeUnitedArabEmirates},
+					{logistic.SACgTransportCosts, logistic.SABgImportHsCode, logistic.SABgTaxRate, constant.CountryCodeSaudiArabia},
+					{logistic.BRCgTransportCosts, logistic.BRBgImportHsCode, logistic.BRBgTaxRate, constant.CountryCodeBrazil},
+					{logistic.SECgTransportCosts, logistic.SEBgImportHsCode, logistic.SEBgTaxRate, constant.CountryCodeSweden},
+				}
+				hasValid := false
+				for _, d := range items {
+					if ok, code := fnParse(d.Costs, d.HsCode, d.Rate, d.CountryCode); ok {
+						hasValid = true
+						logistic.CountryCode = code
+						break
 					}
-					logistics := make([]ProductLogistic, 0)
-					for _, logistic := range item.ProductLogisticsRelation {
-						items := []struct {
-							Costs       float64
-							HsCode      string
-							Rate        float64
-							CountryCode string
-						}{
-							{logistic.USCgTransportCosts, logistic.USBgImportHsCode, logistic.USBgTaxRate, constant.CountryCodeAmerica},
-							{logistic.CACgTransportCosts, logistic.CABgImportHsCode, logistic.CABgTaxRate, constant.CountryCodeCanada},
-							{logistic.MXCgTransportCosts, logistic.MXBgImportHsCode, logistic.MXBgTaxRate, constant.CountryCodeMexico},
-							{logistic.JPCgTransportCosts, logistic.JPBgImportHsCode, logistic.JPBgTaxRate, constant.CountryCodeJapan},
-							{logistic.UKCgTransportCosts, logistic.UKBgImportHsCode, logistic.UKBgTaxRate, constant.CountryCodeUnitedKingdom},
-							{logistic.DECgTransportCosts, logistic.DEBgImportHsCode, logistic.DEBgTaxRate, constant.CountryCodeGermany},
-							{logistic.FRCgTransportCosts, logistic.FRBgImportHsCode, logistic.FRBgTaxRate, constant.CountryCodeFrance},
-							{logistic.ITCgTransportCosts, logistic.ITBgImportHsCode, logistic.ITBgTaxRate, constant.CountryCodeItaly},
-							{logistic.NLCgTransportCosts, logistic.NLBgImportHsCode, logistic.NLBgTaxRate, constant.CountryCodeNetherlands},
-							{logistic.ESCgTransportCosts, logistic.ESBgImportHsCode, logistic.ESBgTaxRate, constant.CountryCodeSpain},
-							{logistic.AUCgTransportCosts, logistic.AUBgImportHsCode, logistic.AUBgTaxRate, constant.CountryCodeAustralian},
-							{logistic.SGCgTransportCosts, logistic.SGBgImportHsCode, logistic.SGBgTaxRate, constant.CountryCodeSingapore},
-							{logistic.INCgTransportCosts, logistic.INBgImportHsCode, logistic.INBgTaxRate, constant.CountryCodeIndia},
-							{logistic.AECgTransportCosts, logistic.AEBgImportHsCode, logistic.AEBgTaxRate, constant.CountryCodeUnitedArabEmirates},
-							{logistic.SACgTransportCosts, logistic.SABgImportHsCode, logistic.SABgTaxRate, constant.CountryCodeSaudiArabia},
-							{logistic.BRCgTransportCosts, logistic.BRBgImportHsCode, logistic.BRBgTaxRate, constant.CountryCodeBrazil},
-							{logistic.SECgTransportCosts, logistic.SEBgImportHsCode, logistic.SEBgTaxRate, constant.CountryCodeSweden},
-						}
-						hasValid := false
-						for _, d := range items {
-							if ok, code := fnParse(d.Costs, d.HsCode, d.Rate, d.CountryCode); ok {
-								hasValid = true
-								logistic.CountryCode = code
-								break
-							}
-						}
-						if hasValid {
-							logistics = append(logistics, logistic)
-						}
-					}
-					item.ProductLogisticsRelation = logistics
+				}
+				if hasValid {
+					logistics = append(logistics, logistic)
 				}
 			}
-		}
-	} else {
-		if e := jsoniter.Unmarshal(resp.Body(), &res); e == nil {
-			err = ErrorWrap(res.Code, res.Message)
-		} else {
-			err = errors.New(resp.Status())
+			item.ProductLogisticsRelation = logistics
 		}
 	}
 	return

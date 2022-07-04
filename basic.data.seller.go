@@ -1,7 +1,6 @@
 package lingxing
 
 import (
-	"errors"
 	"github.com/hiscaler/lingxing/entity"
 	jsoniter "github.com/json-iterator/go"
 )
@@ -20,18 +19,8 @@ func (s basicDataService) Sellers() (items []entity.Seller, err error) {
 		return
 	}
 
-	if resp.IsSuccess() {
-		if err = jsoniter.Unmarshal(resp.Body(), &res); err == nil {
-			if err = ErrorWrap(res.Code, res.Message); err == nil {
-				items = res.Data
-			}
-		}
-	} else {
-		if e := jsoniter.Unmarshal(resp.Body(), &res); e == nil {
-			err = ErrorWrap(res.Code, res.Message)
-		} else {
-			err = errors.New(resp.Status())
-		}
+	if err = jsoniter.Unmarshal(resp.Body(), &res); err == nil {
+		items = res.Data
 	}
 	return
 }
