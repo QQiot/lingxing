@@ -53,7 +53,7 @@ func (s saleService) AmazonFBMOrders(params AmazonFBMOrdersQueryParams) (items [
 		return
 	}
 
-	params.SetPagingVars(params.Offset, params.Limit, s.defaultQueryParams.MaxLimit)
+	params.SetPagingVars()
 	res := struct {
 		NormalResponse
 		Data []AmazonFBMOrder `json:"data"`

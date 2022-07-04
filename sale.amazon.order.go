@@ -72,7 +72,7 @@ func (s saleService) AmazonOrders(params AmazonOrdersQueryParams) (items []Amazo
 		return
 	}
 
-	params.SetPagingVars(params.Offset, params.Limit, s.defaultQueryParams.MaxLimit)
+	params.SetPagingVars()
 	res := struct {
 		NormalResponse
 		Data []AmazonOrder `json:"data"`

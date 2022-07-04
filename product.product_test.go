@@ -8,7 +8,7 @@ import (
 
 func TestProductService_Products(t *testing.T) {
 	params := ProductsQueryParams{}
-	params.Limit = 1
+	params.Limit = 12
 	var products []Product
 	for {
 		items, nextOffset, isLastPage, err := lingXingClient.Services.Product.Products(params)

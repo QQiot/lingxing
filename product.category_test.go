@@ -36,7 +36,7 @@ func TestProductService_UpsertCategory(t *testing.T) {
 	if err != nil {
 		t.Errorf("Services.Product.UpsertCategory() create error: %s", err.Error())
 	} else {
-		t.Log(jsonx.ToJson(brands, "[]"))
+		t.Log(jsonx.ToPrettyJson(brands))
 		req.Data = make([]UpsertCategory, len(brands))
 		for i, brand := range brands {
 			req.Data[i].ID = brand.CID

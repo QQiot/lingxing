@@ -44,21 +44,12 @@ const (
 
 var ErrNotFound = errors.New("lingxing: not found")
 
-type defaultQueryParams struct {
-	Offset   int // 分页偏移索引（默认0）
-	Limit    int // 分页偏移长度（默认1000）
-	MaxLimit int // 最大偏移长度
-}
-
 type LingXing struct {
-	appId              string
-	appSecret          string
-	Debug              bool               // 是否调试模式
-	Client             *resty.Client      // HTTP 客户端
-	Logger             *log.Logger        // 日志
-	DefaultQueryParams defaultQueryParams // 查询默认值
-	auth               AuthResponse
-	Services           services // API Services
+	appId     string
+	appSecret string
+	Debug     bool // 是否调试模式
+	auth      AuthResponse
+	Services  services // API Services
 }
 
 func init() {
@@ -71,12 +62,6 @@ func NewLingXing(config config.Config) *LingXing {
 		appId:     config.AppId,
 		appSecret: config.AppSecret,
 		Debug:     config.Debug,
-		Logger:    logger,
-		DefaultQueryParams: defaultQueryParams{
-			Offset:   0,
-			Limit:    1000,
-			MaxLimit: 1000,
-		},
 	}
 	httpClient := resty.New().SetDebug(config.Debug).
 		SetHeaders(map[string]string{
@@ -186,16 +171,10 @@ func NewLingXing(config config.Config) *LingXing {
 			}
 			return retry
 		})
-	lingXingClient.Client = httpClient
 	xService := service{
 		debug:      config.Debug,
 		logger:     logger,
 		httpClient: httpClient,
-		defaultQueryParams: defaultQueryParams{
-			Offset:   0,
-			Limit:    1000,
-			MaxLimit: 1000,
-		},
 	}
 	lingXingClient.Services = services{
 		BasicData:       (basicDataService)(xService),
@@ -229,18 +208,18 @@ func (lx *LingXing) Auth() (ar AuthResponse, err error) {
 		Data    AuthResponse `json:"data"`
 	}{}
 
-	client := resty.New().
+	httpClient := resty.New().
 		SetDebug(true).
 		SetHeaders(map[string]string{
 			"Content-Type": "application/json",
 			"Accept":       "application/json",
 		})
 	if lx.Debug {
-		client.SetBaseURL("https://openapisandbox.lingxing.com")
+		httpClient.SetBaseURL("https://openapisandbox.lingxing.com")
 	} else {
-		client.SetBaseURL("https://openapi.lingxing.com")
+		httpClient.SetBaseURL("https://openapi.lingxing.com")
 	}
-	resp, err := client.R().
+	resp, err := httpClient.R().
 		SetResult(&result).
 		Post(fmt.Sprintf("/api/auth-server/oauth/access-token?appId=%s&appSecret=%s", lx.appId, url.QueryEscape(lx.appSecret)))
 	if err != nil {

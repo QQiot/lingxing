@@ -28,7 +28,7 @@ func (s basicDataService) Rates(params RatesQueryParams) (items []entity.Rate, n
 		return
 	}
 
-	params.SetPagingVars(params.Offset, params.Limit, s.defaultQueryParams.MaxLimit)
+	params.SetPagingVars()
 	res := struct {
 		NormalResponse
 		Data []entity.Rate `json:"data"`

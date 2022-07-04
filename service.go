@@ -6,10 +6,9 @@ import (
 )
 
 type service struct {
-	debug              bool               // Is debug mode
-	logger             *log.Logger        // Log
-	httpClient         *resty.Client      // HTTP client
-	defaultQueryParams defaultQueryParams // 查询默认值
+	debug      bool          // Is debug mode
+	logger     *log.Logger   // Logger
+	httpClient *resty.Client // HTTP client
 }
 
 // API Services

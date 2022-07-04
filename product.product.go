@@ -69,7 +69,7 @@ func (s productService) Products(params ProductsQueryParams) (items []Product, n
 		return
 	}
 
-	params.SetPagingVars(params.Offset, params.Limit, s.defaultQueryParams.MaxLimit)
+	params.SetPagingVars()
 	res := struct {
 		NormalResponse
 		Data []Product `json:"data"`

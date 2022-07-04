@@ -28,7 +28,7 @@ func (s productService) Brands(params BrandsQueryParams) (items []Brand, nextOff
 		return
 	}
 
-	params.SetPagingVars(params.Offset, params.Limit, s.defaultQueryParams.MaxLimit)
+	params.SetPagingVars()
 	res := struct {
 		NormalResponse
 		Data []Brand `json:"data"`

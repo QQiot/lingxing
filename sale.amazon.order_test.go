@@ -15,7 +15,7 @@ func TestSaleService_AmazonOrders(t *testing.T) {
 	if err != nil {
 		t.Errorf("Services.Sale.AmazonOrders() error: %s", err.Error())
 	} else {
-		t.Log(jsonx.ToJson(items, "[]"))
+		t.Log(jsonx.ToPrettyJson(items))
 	}
 }
 
@@ -27,6 +27,6 @@ func TestSaleService_AmazonOrder(t *testing.T) {
 	if err != nil {
 		t.Errorf("Services.Sale.AmazonOrder() error: %s", err.Error())
 	} else {
-		t.Log(jsonx.ToJson(detail, "[]"))
+		t.Log(jsonx.ToPrettyJson(detail))
 	}
 }

@@ -29,7 +29,7 @@ func (s productService) Categories(params CategoriesQueryParams) (items []Catego
 		return
 	}
 
-	params.SetPagingVars(params.Offset, params.Limit, s.defaultQueryParams.MaxLimit)
+	params.SetPagingVars()
 	res := struct {
 		NormalResponse
 		Data []Category `json:"data"`

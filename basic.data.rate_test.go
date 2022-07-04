@@ -11,6 +11,6 @@ func TestBasicDataService_Rates(t *testing.T) {
 	if err != nil {
 		t.Errorf("Services.BasicData.Rates() error: %s", err.Error())
 	} else {
-		t.Log(jsonx.ToJson(items, "[]"))
+		t.Log(jsonx.ToPrettyJson(items))
 	}
 }

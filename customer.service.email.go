@@ -24,7 +24,7 @@ func (s customerServiceService) Emails(params EmailsQueryParams) (items []entity
 		return
 	}
 
-	params.SetPagingVars(params.Offset, params.Limit, s.defaultQueryParams.MaxLimit)
+	params.SetPagingVars()
 	res := struct {
 		NormalResponse
 		Data []entity.Email `json:"data"`
