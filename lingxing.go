@@ -301,7 +301,7 @@ func ErrorWrap(code int, message string) error {
 		case AccessTokenExpireError:
 			message = "token 不存在或者已经过期"
 		case UnauthorizedError:
-			message = "api 未授权"
+			message = "API 未授权"
 		case InvalidAccessTokenError:
 			message = "token 不正确"
 		case SignError:
@@ -315,7 +315,7 @@ func ErrorWrap(code int, message string) error {
 		case InvalidQueryParamsError:
 			message = "查询参数缺失"
 		case InvalidIPError:
-			message = "应用所在服务器的 ip 不在白名单中"
+			message = "应用所在服务器的 IP 不在白名单中"
 		case TooManyRequestsError:
 			message = "接口请求超请求次数限额"
 		default:
