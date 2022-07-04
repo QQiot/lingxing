@@ -1,9 +1,8 @@
-package sale
+package lingxing
 
 import (
 	"errors"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
-	"github.com/hiscaler/lingxing"
 	"github.com/hiscaler/lingxing/constant"
 	jsoniter "github.com/json-iterator/go"
 	"time"
@@ -47,7 +46,7 @@ type AmazonOrder struct {
 }
 
 type AmazonOrdersQueryParams struct {
-	lingxing.Paging
+	Paging
 	SID       int    `json:"sid"`                 // 店铺 ID
 	StartDate string `json:"start_date"`          // 查询时间左闭区间，可精确到时分秒，格式：Y-m-d或Y-m-d H:i:s
 	EndDate   string `json:"end_date"`            // 查询时间右开区间，可精确到时分秒，格式：Y-m-d或Y-m-d H:i:s
@@ -69,17 +68,17 @@ func (m AmazonOrdersQueryParams) Validate() error {
 	)
 }
 
-func (s service) AmazonOrders(params AmazonOrdersQueryParams) (items []AmazonOrder, nextOffset int, isLastPage bool, err error) {
+func (s saleService) AmazonOrders(params AmazonOrdersQueryParams) (items []AmazonOrder, nextOffset int, isLastPage bool, err error) {
 	if err = params.Validate(); err != nil {
 		return
 	}
 
-	params.SetPagingVars(params.Offset, params.Limit, s.lingXing.DefaultQueryParams.MaxLimit)
+	params.SetPagingVars(params.Offset, params.Limit, s.defaultQueryParams.MaxLimit)
 	res := struct {
-		lingxing.NormalResponse
+		NormalResponse
 		Data []AmazonOrder `json:"data"`
 	}{}
-	resp, err := s.lingXing.Client.R().
+	resp, err := s.httpClient.R().
 		SetBody(params).
 		Post("/data/mws/orders")
 	if err != nil {
@@ -94,7 +93,7 @@ func (s service) AmazonOrders(params AmazonOrdersQueryParams) (items []AmazonOrd
 		}
 	} else {
 		if e := jsoniter.Unmarshal(resp.Body(), &res); e == nil {
-			err = lingxing.ErrorWrap(res.Code, res.Message)
+			err = ErrorWrap(res.Code, res.Message)
 		} else {
 			err = errors.New(resp.Status())
 		}
@@ -180,16 +179,16 @@ func (m AmazonOrderQueryParams) Validate() error {
 	)
 }
 
-func (s service) AmazonOrder(params AmazonOrderQueryParams) (detail AmazonOrderDetail, err error) {
+func (s saleService) AmazonOrder(params AmazonOrderQueryParams) (detail AmazonOrderDetail, err error) {
 	if err = params.Validate(); err != nil {
 		return
 	}
 
 	res := struct {
-		lingxing.NormalResponse
+		NormalResponse
 		Data AmazonOrderDetail `json:"data"`
 	}{}
-	resp, err := s.lingXing.Client.R().
+	resp, err := s.httpClient.R().
 		SetBody(params).
 		Post("/data/mws/orderDetail")
 	if err != nil {
@@ -202,7 +201,7 @@ func (s service) AmazonOrder(params AmazonOrderQueryParams) (detail AmazonOrderD
 		}
 	} else {
 		if e := jsoniter.Unmarshal(resp.Body(), &res); e == nil {
-			err = lingxing.ErrorWrap(res.Code, res.Message)
+			err = ErrorWrap(res.Code, res.Message)
 		} else {
 			err = errors.New(resp.Status())
 		}

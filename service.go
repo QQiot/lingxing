@@ -17,4 +17,5 @@ type services struct {
 	BasicData       basicDataService
 	CustomerService customerServiceService
 	Product         productService
+	Sale            saleService
 }

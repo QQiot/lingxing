@@ -175,6 +175,8 @@ func NewLingXing(config config.Config) *LingXing {
 	lingXingClient.Services = services{
 		BasicData:       (basicDataService)(xService),
 		CustomerService: (customerServiceService)(xService),
+		Product:         (productService)(xService),
+		Sale:            (saleService)(xService),
 	}
 	return lingXingClient
 }

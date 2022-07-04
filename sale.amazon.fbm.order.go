@@ -1,9 +1,8 @@
-package sale
+package lingxing
 
 import (
 	"errors"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
-	"github.com/hiscaler/lingxing"
 	"github.com/hiscaler/lingxing/constant"
 	jsoniter "github.com/json-iterator/go"
 )
@@ -28,7 +27,7 @@ type AmazonFBMOrder struct {
 }
 
 type AmazonFBMOrdersQueryParams struct {
-	lingxing.Paging
+	Paging
 	SID         string `json:"sid"`                    // 店铺 ID（多个使用逗号分隔开）
 	OrderStatus string `json:"order_status,omitempty"` // 订单状态，用逗号分隔开（2:已发货、3:未付款、4:待审核、5:待发货、6:已取消）
 	StartTime   string `json:"start_time,omitempty'"`  // 查询时间左闭区间，可精确到时分秒，格式：Y-m-d或Y-m-d H:i:s
@@ -50,17 +49,17 @@ func (m AmazonFBMOrdersQueryParams) Validate() error {
 }
 
 // AmazonFBMOrders 亚马逊自发货订单（FBM）列表
-func (s service) AmazonFBMOrders(params AmazonFBMOrdersQueryParams) (items []AmazonFBMOrder, nextOffset int, isLastPage bool, err error) {
+func (s saleService) AmazonFBMOrders(params AmazonFBMOrdersQueryParams) (items []AmazonFBMOrder, nextOffset int, isLastPage bool, err error) {
 	if err = params.Validate(); err != nil {
 		return
 	}
 
-	params.SetPagingVars(params.Offset, params.Limit, s.lingXing.DefaultQueryParams.MaxLimit)
+	params.SetPagingVars(params.Offset, params.Limit, s.defaultQueryParams.MaxLimit)
 	res := struct {
-		lingxing.NormalResponse
+		NormalResponse
 		Data []AmazonFBMOrder `json:"data"`
 	}{}
-	resp, err := s.lingXing.Client.R().
+	resp, err := s.httpClient.R().
 		SetBody(params).
 		Post("/routing/order/Order/getOrderList")
 	if err != nil {
@@ -75,7 +74,7 @@ func (s service) AmazonFBMOrders(params AmazonFBMOrdersQueryParams) (items []Ama
 		}
 	} else {
 		if e := jsoniter.Unmarshal(resp.Body(), &res); e == nil {
-			err = lingxing.ErrorWrap(res.Code, res.Message)
+			err = ErrorWrap(res.Code, res.Message)
 		} else {
 			err = errors.New(resp.Status())
 		}
