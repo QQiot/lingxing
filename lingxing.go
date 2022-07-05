@@ -119,6 +119,7 @@ func NewLingXing(config config.Config) *LingXing {
 			r := struct {
 				Code         interface{} `json:"code"`
 				Message      string      `json:"message"`
+				Msg          string      `json:"msg"`
 				ErrorDetails []struct {
 					Message string `json:"message"`
 				} `json:"error_details"`
@@ -126,7 +127,11 @@ func NewLingXing(config config.Config) *LingXing {
 			if err = jsoniter.Unmarshal(response.Body(), &r); err == nil {
 				if r.Code != 0 {
 					if len(r.ErrorDetails) == 0 {
-						err = ErrorWrap(cast.ToInt(r.Code), r.Message)
+						msg := r.Message
+						if msg == "" {
+							msg = r.Msg
+						}
+						err = ErrorWrap(cast.ToInt(r.Code), msg)
 					} else {
 						removeString := "错误："
 						n := len(removeString)
@@ -143,6 +148,8 @@ func NewLingXing(config config.Config) *LingXing {
 						err = ErrorWrap(cast.ToInt(r.Code), strings.Join(errorMessages, "；"))
 					}
 				}
+			} else {
+				logger.Printf("JSON Unmarshal error: %s", err.Error())
 			}
 
 			if err != nil {
@@ -252,18 +259,14 @@ func (lx *LingXing) Auth() (ar AuthResponse, err error) {
 		return
 	}
 
-	code, _ := strconv.ParseInt(result.Code, 10, 32)
 	if resp.IsSuccess() {
+		code, _ := strconv.ParseInt(result.Code, 10, 32)
 		err = ErrorWrap(int(code), result.Message)
 		if err == nil {
 			ar = result.Data
 		}
 	} else {
-		if e := jsoniter.Unmarshal(resp.Body(), &result); e == nil {
-			err = ErrorWrap(int(code), result.Message)
-		} else {
-			err = errors.New(resp.Status())
-		}
+		err = fmt.Errorf("%s: %s", resp.Status(), bytex.ToString(resp.Body()))
 	}
 	return
 }
@@ -317,40 +320,37 @@ func ErrorWrap(code int, message string) error {
 		return nil
 	}
 
-	message = strings.TrimSpace(message)
-	if message == "" {
-		switch code {
-		case ServiceNotFoundError:
-			message = "服务不存在"
-		case InternalError:
-			message = "内部错误，数据库异常"
-		case AppIdNotExistError:
-			message = "appId 不存在"
-		case InvalidAppSecretError:
-			message = "appSecret 不正确或者未编码"
-		case AccessTokenExpireError:
-			message = "token 不存在或者已经过期"
-		case UnauthorizedError:
-			message = "API 未授权"
-		case InvalidAccessTokenError:
-			message = "token 不正确"
-		case SignError:
-			message = "签名错误"
-		case SignExpiredError:
-			message = "签名过期"
-		case RefreshTokenExpiredError:
-			message = "RefreshToken 过期"
-		case InvalidRefreshTokenError:
-			message = "无效的 RefreshToken"
-		case InvalidQueryParamsError:
-			message = "查询参数缺失"
-		case InvalidIPError:
-			message = "应用所在服务器的 IP 不在白名单中"
-		case TooManyRequestsError:
-			message = "接口请求超请求次数限额"
-		default:
-			message = "未知错误"
-		}
+	switch code {
+	case ServiceNotFoundError:
+		message = "服务不存在"
+	case InternalError:
+		message = "内部错误，数据库异常"
+	case AppIdNotExistError:
+		message = "appId 不存在"
+	case InvalidAppSecretError:
+		message = "appSecret 不正确或者未编码"
+	case AccessTokenExpireError:
+		message = "token 不存在或者已经过期"
+	case UnauthorizedError:
+		message = "API 未授权"
+	case InvalidAccessTokenError:
+		message = "token 不正确"
+	case SignError:
+		message = "签名错误"
+	case SignExpiredError:
+		message = "签名过期"
+	case RefreshTokenExpiredError:
+		message = "RefreshToken 过期"
+	case InvalidRefreshTokenError:
+		message = "无效的 RefreshToken"
+	case InvalidQueryParamsError:
+		message = "查询参数缺失"
+	case InvalidIPError:
+		message = "应用所在服务器的 IP 不在白名单中"
+	case TooManyRequestsError:
+		message = "接口请求超请求次数限额"
+	default:
+		message = strings.TrimSpace(message)
 	}
 	return fmt.Errorf("%d: %s", code, message)
 }
