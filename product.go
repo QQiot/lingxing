@@ -5,4 +5,5 @@ type productService struct {
 	Brand       productBrandService
 	Category    productCategoryService
 	AuxMaterial productAuxMaterialService
+	Bundle      productBundledService
 }

@@ -214,6 +214,7 @@ func NewLingXing(config config.Config) *LingXing {
 			Brand:                 (productBrandService)(xService),
 			Category:              (productCategoryService)(xService),
 			AuxMaterial:           (productAuxMaterialService)(xService),
+			Bundle:                (productBundledService)(xService),
 		},
 		Sale: saleService{
 			FBM:     saleFBMService{Order: (fbmOrderService)(xService)},

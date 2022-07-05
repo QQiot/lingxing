@@ -143,6 +143,12 @@ lingXingClient.Services.Product.AuxMaterial.All()
 lingXingClient.Services.Product.AuxMaterial.Upsert()
 ```
 
+- 查询捆绑产品关系列表
+
+```go
+lingXingClient.Services.Product.Bundle.All()
+```
+
 ### 客服
 
 - 邮件列表
