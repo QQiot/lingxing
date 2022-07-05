@@ -46,7 +46,7 @@ func (s productCategoryService) All(params CategoriesQueryParams) (items []Categ
 	if err = jsoniter.Unmarshal(resp.Body(), &res); err == nil {
 		items = res.Data
 		nextOffset = params.NextOffset
-		isLastPage = len(items) < params.Limit
+		isLastPage = res.Total <= nextOffset
 	}
 	return
 }

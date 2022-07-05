@@ -82,7 +82,7 @@ func (s listingService) All(params ListingsQueryParams) (items []Listing, nextOf
 	if err = jsoniter.Unmarshal(resp.Body(), &res); err == nil {
 		items = res.Data
 		nextOffset = params.NextOffset
-		isLastPage = res.Total <= params.Offset
+		isLastPage = res.Total <= nextOffset
 	}
 	return
 }

@@ -9,6 +9,7 @@ import (
 type customerServiceEmailService service
 
 // 邮件列表
+
 type CustomerServiceEmailsQueryParams struct {
 	Paging
 	Flag  string `json:"flag"`  // 类型
