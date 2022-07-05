@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestSaleService_AmazonFBMOrders(t *testing.T) {
+func TestFbmOrderService_All(t *testing.T) {
 	params := AmazonFBMOrdersQueryParams{
 		StartTime: "2022-01-01 00:00:00",
 		EndTime:   "2022-11-01 23:59:59",

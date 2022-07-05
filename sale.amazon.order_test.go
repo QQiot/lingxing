@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestSaleService_AmazonOrders(t *testing.T) {
+func TestOrderService_All(t *testing.T) {
 	params := AmazonOrdersQueryParams{
 		StartDate: "2022-01-01 00:00:00",
 		EndDate:   "2022-11-01 23:59:59",
@@ -19,7 +19,7 @@ func TestSaleService_AmazonOrders(t *testing.T) {
 	}
 }
 
-func TestSaleService_AmazonOrder(t *testing.T) {
+func TestOrderService_One(t *testing.T) {
 	params := AmazonOrderQueryParams{
 		OrderId: "123",
 	}
