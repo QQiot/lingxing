@@ -24,7 +24,7 @@ func (m CategoriesQueryParams) Validate() error {
 	return nil
 }
 
-func (s productService) Categories(params CategoriesQueryParams) (items []Category, nextOffset int, isLastPage bool, err error) {
+func (s productServiceCategory) All(params CategoriesQueryParams) (items []Category, nextOffset int, isLastPage bool, err error) {
 	if err = params.Validate(); err != nil {
 		return
 	}
@@ -80,7 +80,7 @@ func (m UpsertCategoryRequest) Validate() error {
 	)
 }
 
-func (s productService) UpsertCategory(req UpsertCategoryRequest) (items []Category, err error) {
+func (s productServiceCategory) Upsert(req UpsertCategoryRequest) (items []Category, err error) {
 	if err = req.Validate(); err != nil {
 		return
 	}

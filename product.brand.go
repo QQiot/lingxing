@@ -23,7 +23,7 @@ func (m BrandsQueryParams) Validate() error {
 	return nil
 }
 
-func (s productService) Brands(params BrandsQueryParams) (items []Brand, nextOffset int, isLastPage bool, err error) {
+func (s productServiceBrand) All(params BrandsQueryParams) (items []Brand, nextOffset int, isLastPage bool, err error) {
 	if err = params.Validate(); err != nil {
 		return
 	}
@@ -78,7 +78,7 @@ func (m UpsertBrandRequest) Validate() error {
 	)
 }
 
-func (s productService) UpsertBrand(req UpsertBrandRequest) (items []Brand, err error) {
+func (s productServiceBrand) Upsert(req UpsertBrandRequest) (items []Brand, err error) {
 	if err = req.Validate(); err != nil {
 		return
 	}

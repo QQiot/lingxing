@@ -6,12 +6,12 @@ import (
 	"testing"
 )
 
-func TestProductService_Products(t *testing.T) {
+func TestProductServiceProduct_All(t *testing.T) {
 	params := ProductsQueryParams{}
 	params.Limit = 12
 	var products []Product
 	for {
-		items, nextOffset, isLastPage, err := lingXingClient.Services.Product.Products(params)
+		items, nextOffset, isLastPage, err := lingXingClient.Services.Product.All(params)
 		if err != nil {
 			t.Errorf("Services.Product.Products error: %s", err.Error())
 		} else {
@@ -25,15 +25,15 @@ func TestProductService_Products(t *testing.T) {
 	t.Log(jsonx.ToPrettyJson(products))
 }
 
-func TestProductService_ProductNotFound(t *testing.T) {
-	_, err := lingXingClient.Services.Product.Product(0)
+func TestProductServiceProduct_OneNotFound(t *testing.T) {
+	_, err := lingXingClient.Services.Product.One(0)
 	if !errors.Is(err, ErrNotFound) {
 		t.Error("Services.Product.Products error is 'not found error'")
 	}
 }
 
-func TestProductService_Product(t *testing.T) {
-	item, err := lingXingClient.Services.Product.Product(63286)
+func TestProductServiceProduct_One(t *testing.T) {
+	item, err := lingXingClient.Services.Product.One(63286)
 	if err != nil {
 		t.Errorf("Services.Product.Products error %s", err.Error())
 	} else {

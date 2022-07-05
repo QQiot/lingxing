@@ -64,7 +64,7 @@ func (m ProductsQueryParams) Validate() error {
 	return nil
 }
 
-func (s productService) Products(params ProductsQueryParams) (items []Product, nextOffset int, isLastPage bool, err error) {
+func (s productServiceProduct) All(params ProductsQueryParams) (items []Product, nextOffset int, isLastPage bool, err error) {
 	if err = params.Validate(); err != nil {
 		return
 	}
@@ -250,7 +250,7 @@ type ProductDetail struct {
 	ProductLogisticsRelation []ProductLogistic `json:"product_logistics_relation"` // 物流关联
 }
 
-func (s productService) Product(id int) (item ProductDetail, err error) {
+func (s productServiceProduct) One(id int) (item ProductDetail, err error) {
 	res := struct {
 		NormalResponse
 		Data ProductDetail `json:"data"`

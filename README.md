@@ -98,37 +98,37 @@ lingXingClient.Services.Sale.Review.All()
 - 本地产品列表
 
 ```go
-lingXingClient.Services.Product.Products()
+lingXingClient.Services.Product.All()
 ```
 
 - 本地产品详情
 
 ```go
-lingXingClient.Services.Product.Product()
+lingXingClient.Services.Product.One()
 ```
 
 - 本地产品品牌列表
 
 ```go
-lingXingClient.Services.Product.Brands()
+lingXingClient.Services.Product.Brand.All()
 ```
 
 - 新增/更新品牌
 
 ```go
-lingXingClient.Services.Product.UpsertBrand()
+lingXingClient.Services.Product.Brand.Upsert()
 ```
 
 - 产品分类列表
 
 ```go
-lingXingClient.Services.Product.Categories()
+lingXingClient.Services.Product.Category.All()
 ```
 
 - 新增/更新分类
 
 ```go
-lingXingClient.Services.Product.UpsertCategory()
+lingXingClient.Services.Product.Category.Upsert()
 ```
 
 ### 客服
