@@ -205,6 +205,7 @@ func NewLingXing(config config.Config) *LingXing {
 			FBM:     saleFBMService{Order: (fbmOrderService)(xService)},
 			Order:   (orderService)(xService),
 			Listing: (listingService)(xService),
+			Review:  (reviewService)(xService),
 		},
 	}
 	return lingXingClient

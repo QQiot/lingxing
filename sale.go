@@ -12,6 +12,7 @@ type saleService struct {
 	FBM     saleFBMService
 	Order   orderService
 	Listing listingService
+	Review  reviewService
 }
 
 type saleFBMService struct {

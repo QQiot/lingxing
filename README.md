@@ -75,16 +75,22 @@ lingXingClient.Services.Sale.Order.One()
 lingXingClient.Services.Sale.FBM.Order.All()
 ```
 
-- 查询listing
+- 查询 Listing
 
 ```go
 lingXingClient.Services.Sale.Listing.All()
 ```
 
-- 批量添加/编辑Listing配对
+- 批量添加/编辑 Listing 配对
 
 ```go
 lingXingClient.Services.Sale.Listing.Pair()
+```
+
+- 查询售后评价
+
+```go
+lingXingClient.Services.Sale.Review.All()
 ```
 
 ### 产品
