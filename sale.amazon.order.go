@@ -67,7 +67,7 @@ func (m AmazonOrdersQueryParams) Validate() error {
 	)
 }
 
-func (s saleService) AmazonOrders(params AmazonOrdersQueryParams) (items []AmazonOrder, nextOffset int, isLastPage bool, err error) {
+func (s orderService) All(params AmazonOrdersQueryParams) (items []AmazonOrder, nextOffset int, isLastPage bool, err error) {
 	if err = params.Validate(); err != nil {
 		return
 	}
@@ -166,7 +166,7 @@ func (m AmazonOrderQueryParams) Validate() error {
 	)
 }
 
-func (s saleService) AmazonOrder(params AmazonOrderQueryParams) (detail AmazonOrderDetail, err error) {
+func (s orderService) One(params AmazonOrderQueryParams) (detail AmazonOrderDetail, err error) {
 	if err = params.Validate(); err != nil {
 		return
 	}

@@ -47,8 +47,8 @@ func (m AmazonFBMOrdersQueryParams) Validate() error {
 	)
 }
 
-// AmazonFBMOrders 亚马逊自发货订单（FBM）列表
-func (s saleService) AmazonFBMOrders(params AmazonFBMOrdersQueryParams) (items []AmazonFBMOrder, nextOffset int, isLastPage bool, err error) {
+// All 亚马逊自发货订单（FBM）列表
+func (s fbmOrderService) All(params AmazonFBMOrdersQueryParams) (items []AmazonFBMOrder, nextOffset int, isLastPage bool, err error) {
 	if err = params.Validate(); err != nil {
 		return
 	}

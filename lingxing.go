@@ -21,6 +21,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"unsafe"
 )
 
 // https://openapidoc.lingxing.com/#/docs/Guidance/ErrorCode
@@ -171,6 +172,26 @@ func NewLingXing(config config.Config) *LingXing {
 			}
 			return retry
 		})
+
+	jsoniter.RegisterTypeDecoderFunc("float64", func(ptr unsafe.Pointer, iter *jsoniter.Iterator) {
+		switch iter.WhatIsNext() {
+		case jsoniter.StringValue:
+			var t float64
+			v := strings.TrimSpace(iter.ReadString())
+			if v != "" {
+				var err error
+				if t, err = strconv.ParseFloat(v, 64); err != nil {
+					iter.Error = err
+					return
+				}
+			}
+			*((*float64)(ptr)) = t
+		default:
+			*((*float64)(ptr)) = iter.ReadFloat64()
+		}
+	})
+	httpClient.JSONMarshal = jsoniter.Marshal
+	httpClient.JSONUnmarshal = jsoniter.Unmarshal
 	xService := service{
 		debug:      config.Debug,
 		logger:     logger,
@@ -180,7 +201,11 @@ func NewLingXing(config config.Config) *LingXing {
 		BasicData:       (basicDataService)(xService),
 		CustomerService: (customerServiceService)(xService),
 		Product:         (productService)(xService),
-		Sale:            (saleService)(xService),
+		Sale: saleService{
+			FBM:     saleFBMService{Order: (fbmOrderService)(xService)},
+			Order:   (orderService)(xService),
+			Listing: (listingService)(xService),
+		},
 	}
 	return lingXingClient
 }

@@ -60,19 +60,31 @@ lingXingClient.Services.BasicData.Rates()
 - 亚马逊订单列表
 
 ```go
-lingXingClient.Services.Sale.AmazonOrders()
+lingXingClient.Services.Sale.Order.All()
 ```
 
 - 亚马逊订单详情
 
 ```go
-lingXingClient.Services.Sale.AmazonOrder()
+lingXingClient.Services.Sale.Order.One()
 ```
 
 - 亚马逊自发货订单（FBM）列表
 
 ```go
-lingXingClient.Services.Sale.AmazonFBMOrders()
+lingXingClient.Services.Sale.FBM.Order.All()
+```
+
+- 查询listing
+
+```go
+lingXingClient.Services.Sale.Listing.All()
+```
+
+- 批量添加/编辑Listing配对
+
+```go
+lingXingClient.Services.Sale.Listing.Pair()
 ```
 
 ### 产品
