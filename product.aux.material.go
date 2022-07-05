@@ -97,7 +97,7 @@ type UpsertProductAuxMaterialSupplierQuoteItem struct {
 	StepPrices []UpsertProductAuxMaterialSupplierQuoteItemStepPrice `json:"step_prices"` // 阶梯价信息
 }
 
-func (m UpsertProductAuxMaterialSupplierQuoteItem) Validte() error {
+func (m UpsertProductAuxMaterialSupplierQuoteItem) Validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.Currency,
 			validation.Required.Error("报价币种不能为空"),
@@ -117,8 +117,17 @@ type UpsertProductAuxMaterialSupplierQuoteItemStepPrice struct {
 	PriceWithTax float64 `json:"price_with_tax"` // 税单价，4位小数
 }
 
+func (m UpsertProductAuxMaterialSupplierQuoteItemStepPrice) Validate() error {
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.Moq, validation.Min(1).Error("最小起订量不能小于 {{.threshold}}")),
+		validation.Field(&m.PriceWithTax, validation.Min(0.0).Error("税单价不能小于 {{.threshold}}")),
+	)
+}
+
 func (m UpsertProductAuxMaterialRequest) Validate() error {
-	return nil
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.SupplierQuote),
+	)
 }
 
 func (s productAuxMaterialService) Upsert(req UpsertProductAuxMaterialRequest) (err error) {
