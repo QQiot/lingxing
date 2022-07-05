@@ -217,10 +217,15 @@ func NewLingXing(config config.Config) *LingXing {
 			Bundle:                (productBundledService)(xService),
 		},
 		Sale: saleService{
-			FBM:     saleFBMService{Order: (fbmOrderService)(xService)},
+			FBM: saleFBMService{
+				Order: (fbmOrderService)(xService),
+			},
 			Order:   (orderService)(xService),
 			Listing: (listingService)(xService),
 			Review:  (reviewService)(xService),
+		},
+		FBA: fbaService{
+			Shipment: (fbaShipmentService)(xService),
 		},
 	}
 	return lingXingClient

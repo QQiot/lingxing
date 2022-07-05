@@ -93,6 +93,20 @@ lingXingClient.Services.Sale.Listing.Pair()
 lingXingClient.Services.Sale.Review.All()
 ```
 
+### FBA
+
+- 发货单列表
+
+```go
+lingXingClient.Services.FBA.Shipment.All()
+```
+
+- 发货单详情
+
+```go
+lingXingClient.Services.FBA.Shipment.One()
+```
+
 ### 产品
 
 - 本地产品列表

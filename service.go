@@ -17,4 +17,5 @@ type services struct {
 	CustomerService customerServiceService
 	Product         productService
 	Sale            saleService
+	FBA             fbaService
 }
