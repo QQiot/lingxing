@@ -10,6 +10,8 @@ import (
 // 本地产品品牌
 // https://openapidoc.lingxing.com/#/docs/Product/Brand
 
+type productBrandService service
+
 type Brand struct {
 	BID   int    `json:"bid"`   // 品牌 ID
 	Title string `json:"title"` // 品牌名称
@@ -23,7 +25,7 @@ func (m BrandsQueryParams) Validate() error {
 	return nil
 }
 
-func (s productServiceBrand) All(params BrandsQueryParams) (items []Brand, nextOffset int, isLastPage bool, err error) {
+func (s productBrandService) All(params BrandsQueryParams) (items []Brand, nextOffset int, isLastPage bool, err error) {
 	if err = params.Validate(); err != nil {
 		return
 	}
@@ -45,7 +47,6 @@ func (s productServiceBrand) All(params BrandsQueryParams) (items []Brand, nextO
 		nextOffset = params.NextOffset
 		isLastPage = len(items) < params.Limit
 	}
-
 	return
 }
 
@@ -78,7 +79,7 @@ func (m UpsertBrandRequest) Validate() error {
 	)
 }
 
-func (s productServiceBrand) Upsert(req UpsertBrandRequest) (items []Brand, err error) {
+func (s productBrandService) Upsert(req UpsertBrandRequest) (items []Brand, err error) {
 	if err = req.Validate(); err != nil {
 		return
 	}
@@ -103,6 +104,5 @@ func (s productServiceBrand) Upsert(req UpsertBrandRequest) (items []Brand, err 
 			}
 		}
 	}
-
 	return
 }

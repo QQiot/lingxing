@@ -6,15 +6,15 @@ import (
 	"testing"
 )
 
-func TestCustomerServiceService_Emails(t *testing.T) {
-	params := EmailsQueryParams{
+func TestCustomerServiceEmailService_All(t *testing.T) {
+	params := CustomerServiceEmailsQueryParams{
 		Flag:  "1",
 		Email: "1@gmail.com",
 	}
 	params.Limit = 1
 	var emails []entity.Email
 	for {
-		items, nextOffset, isLastPage, err := lingXingClient.Services.CustomerService.Emails(params)
+		items, nextOffset, isLastPage, err := lingXingClient.Services.CustomerService.Email.All(params)
 		if err != nil {
 			t.Errorf("Services.CustomerService.Emails() error: %s", err.Error())
 		} else {

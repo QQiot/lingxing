@@ -10,6 +10,8 @@ import (
 // 产品分类
 // https://openapidoc.lingxing.com/#/docs/Product/Category
 
+type productCategoryService service
+
 type Category struct {
 	CID       int    `json:"cid"`        // 分类 ID
 	ParentCID int    `json:"parent_cid"` // 父级分类 ID
@@ -24,7 +26,7 @@ func (m CategoriesQueryParams) Validate() error {
 	return nil
 }
 
-func (s productServiceCategory) All(params CategoriesQueryParams) (items []Category, nextOffset int, isLastPage bool, err error) {
+func (s productCategoryService) All(params CategoriesQueryParams) (items []Category, nextOffset int, isLastPage bool, err error) {
 	if err = params.Validate(); err != nil {
 		return
 	}
@@ -46,7 +48,6 @@ func (s productServiceCategory) All(params CategoriesQueryParams) (items []Categ
 		nextOffset = params.NextOffset
 		isLastPage = len(items) < params.Limit
 	}
-
 	return
 }
 
@@ -80,7 +81,7 @@ func (m UpsertCategoryRequest) Validate() error {
 	)
 }
 
-func (s productServiceCategory) Upsert(req UpsertCategoryRequest) (items []Category, err error) {
+func (s productCategoryService) Upsert(req UpsertCategoryRequest) (items []Category, err error) {
 	if err = req.Validate(); err != nil {
 		return
 	}
@@ -106,6 +107,5 @@ func (s productServiceCategory) Upsert(req UpsertCategoryRequest) (items []Categ
 			}
 		}
 	}
-
 	return
 }

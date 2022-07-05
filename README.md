@@ -131,6 +131,12 @@ lingXingClient.Services.Product.Category.All()
 lingXingClient.Services.Product.Category.Upsert()
 ```
 
+- 产品辅料列表
+
+```go
+lingXingClient.Services.Product.AuxMaterial.All()
+```
+
 ### 客服
 
 - 邮件列表

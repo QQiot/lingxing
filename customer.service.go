@@ -1,3 +1,5 @@
 package lingxing
 
-type customerServiceService service
+type customerServiceService struct {
+	Email customerServiceEmailService
+}

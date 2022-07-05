@@ -205,12 +205,15 @@ func NewLingXing(config config.Config) *LingXing {
 		httpClient: httpClient,
 	}
 	lingXingClient.Services = services{
-		BasicData:       (basicDataService)(xService),
-		CustomerService: (customerServiceService)(xService),
+		BasicData: (basicDataService)(xService),
+		CustomerService: customerServiceService{
+			Email: (customerServiceEmailService)(xService),
+		},
 		Product: productService{
-			productServiceProduct: (productServiceProduct)(xService),
-			Brand:                 (productServiceBrand)(xService),
-			Category:              (productServiceCategory)(xService),
+			productProductService: (productProductService)(xService),
+			Brand:                 (productBrandService)(xService),
+			Category:              (productCategoryService)(xService),
+			AuxMaterial:           (productAuxMaterialService)(xService),
 		},
 		Sale: saleService{
 			FBM:     saleFBMService{Order: (fbmOrderService)(xService)},

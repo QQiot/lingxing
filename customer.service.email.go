@@ -6,20 +6,25 @@ import (
 	jsoniter "github.com/json-iterator/go"
 )
 
-type EmailsQueryParams struct {
+type customerServiceEmailService service
+
+// 邮件列表
+type CustomerServiceEmailsQueryParams struct {
 	Paging
 	Flag  string `json:"flag"`  // 类型
 	Email string `json:"email"` // 邮箱
 }
 
-func (m EmailsQueryParams) Validate() error {
+func (m CustomerServiceEmailsQueryParams) Validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.Flag, validation.Required.Error("类型不能为空")),
 		validation.Field(&m.Email, validation.Required.Error("邮箱不能为空")),
 	)
 }
 
-func (s customerServiceService) Emails(params EmailsQueryParams) (items []entity.Email, nextOffset int, isLastPage bool, err error) {
+// All https://openapidoc.lingxing.com/#/docs/Service/lists
+// https://openapidoc.lingxing.com/#/docs/Service/lists
+func (s customerServiceEmailService) All(params CustomerServiceEmailsQueryParams) (items []entity.Email, nextOffset int, isLastPage bool, err error) {
 	if err = params.Validate(); err != nil {
 		return
 	}
@@ -47,28 +52,28 @@ func (s customerServiceService) Emails(params EmailsQueryParams) (items []entity
 //  邮件详情
 // https://openapidoc.lingxing.com/#/docs/Service/detail
 
-type EmailAttachment struct {
+type CustomerServiceEmailAttachment struct {
 	Name string `json:"name"` // 附件名称
-	Size int    `json:"size"` // 附件大小（b）
+	Size int    `json:"size"` // 附件大小（byte）
 }
 
-type EmailDetail struct {
-	WebMailUUID  string            `json:"webmail_uuid"`   // 邮件唯一标识
-	Subject      string            `json:"subject"`        // 邮件标题
-	FromName     string            `json:"from_name"`      // 发件人姓名
-	FromAddress  string            `json:"from_address"`   // 发件人地址
-	ToAddressAll string            `json:"to_address_all"` // 所有收件人地址
-	Date         string            `json:"date"`           // 日期
-	CC           string            `json:"cc"`             // 抄送
-	BCC          string            `json:"bcc"`            // 密送地址
-	TextHtml     string            `json:"text_html"`      // 邮件内容
-	Attachments  []EmailAttachment `json:"attachments"`    // 附件
+type CustomerServiceEmail struct {
+	WebMailUUID  string                           `json:"webmail_uuid"`   // 邮件唯一标识
+	Subject      string                           `json:"subject"`        // 邮件标题
+	FromName     string                           `json:"from_name"`      // 发件人姓名
+	FromAddress  string                           `json:"from_address"`   // 发件人地址
+	ToAddressAll string                           `json:"to_address_all"` // 所有收件人地址
+	Date         string                           `json:"date"`           // 日期
+	CC           string                           `json:"cc"`             // 抄送
+	BCC          string                           `json:"bcc"`            // 密送地址
+	TextHtml     string                           `json:"text_html"`      // 邮件内容
+	Attachments  []CustomerServiceEmailAttachment `json:"attachments"`    // 附件
 }
 
-func (s customerServiceService) Email(webMailUUID string) (item EmailDetail, err error) {
+func (s customerServiceEmailService) One(webMailUUID string) (item CustomerServiceEmail, err error) {
 	res := struct {
 		NormalResponse
-		Data EmailDetail `json:"data"`
+		Data CustomerServiceEmail `json:"data"`
 	}{}
 	resp, err := s.httpClient.R().
 		SetBody(map[string]string{"webmail_uuid": webMailUUID}).

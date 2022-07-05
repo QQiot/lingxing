@@ -11,7 +11,6 @@ type service struct {
 	httpClient *resty.Client // HTTP client
 }
 
-
 // API Services
 type services struct {
 	BasicData       basicDataService
