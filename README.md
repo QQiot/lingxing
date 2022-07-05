@@ -137,6 +137,12 @@ lingXingClient.Services.Product.Category.Upsert()
 lingXingClient.Services.Product.AuxMaterial.All()
 ```
 
+- 添加/编辑辅料
+
+```go
+lingXingClient.Services.Product.AuxMaterial.Upsert()
+```
+
 ### 客服
 
 - 邮件列表
