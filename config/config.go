@@ -7,11 +7,11 @@ type Config struct {
 		Dev struct {
 			AppId     string // APP ID
 			AppSecret string // APP Secret
-		}
+		} // 开发环境配置
 		Prod struct {
 			AppId     string // APP ID
 			AppSecret string // APP Secret
-		}
-	}
+		} // 生产环境配置
+	} // 环境配置
 	EnableCache bool // 是否激活缓存
 }
