@@ -279,13 +279,7 @@ func NewLingXing(config config.Config) *LingXing {
 }
 
 type NormalResponse struct {
-	Code         int         `json:"code"`
-	Message      string      `json:"message"`
-	ErrorDetails interface{} `json:"error_details"`
-	RequestId    string      `json:"request_id"`
-	ResponseTime string      `json:"response_time"`
-	Data         interface{} `json:"data"`
-	Total        int         `json:"total"`
+	Total int `json:"total"`
 }
 
 type AuthResponse struct {
