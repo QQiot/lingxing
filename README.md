@@ -75,6 +75,12 @@ lingXingClient.Services.Sale.Order.One()
 lingXingClient.Services.Sale.FBM.Order.All()
 ```
 
+- 亚马逊自发货订单（FBM）详情
+
+```go
+lingXingClient.Services.Sale.FBM.Order.One()
+```
+
 - 查询 Listing
 
 ```go

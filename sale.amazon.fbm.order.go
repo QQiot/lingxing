@@ -72,3 +72,83 @@ func (s fbmOrderService) All(params AmazonFBMOrdersQueryParams) (items []AmazonF
 	}
 	return
 }
+
+// 自发货订单详情
+// https://openapidoc.lingxing.com/#/docs/Sale/FBMOrderDetail
+
+type FBMOrderDetail struct {
+	OrderNumber                  string               `json:"order_number"`                    // 系统单号
+	OrderStatus                  string               `json:"order_status"`                    // 订单状态
+	OrderFromName                string               `json:"order_from_name"`                 // 订单类型
+	PurchaseTime                 string               `json:"purchase_time"`                   // 订购时间
+	Platform                     string               `json:"platform"`                        // 平台
+	ShopName                     string               `json:"shop_name"`                       // 店铺
+	BuyerName                    string               `json:"buyer_name"`                      // 买家姓名（应平台要求，不再返回该数据）
+	BuyerEmail                   string               `json:"buyer_email"`                     // 买家邮箱（应平台要求，不再返回该数据）
+	BuyerChooseExpress           string               `json:"buyer_choose_express"`            // 客选物流
+	TotalShippingPrice           float64              `json:"total_shipping_price"`            // 客付运费
+	BuyerMessage                 string               `json:"buyer_message"`                   // 买家留言
+	CustomerComment              string               `json:"customer_comment"`                // 客服备注
+	Consignee                    string               `json:"consignee"`                       // 收件人（应平台要求，不再返回该数据）
+	PostalCode                   string               `json:"postal_code"`                     // 邮编（应平台要求，不再返回该数据）
+	Phone                        string               `json:"phone"`                           // 电话（应平台要求，不再返回该数据）
+	CountryCode                  string               `json:"country_code"`                    // 国家代码（应平台要求，不再返回该数据）
+	StateOrRegion                string               `json:"state_or_region"`                 // 省/州（应平台要求，不再返回该数据）
+	City                         string               `json:"city"`                            // 城市（应平台要求，不再返回该数据）
+	Address                      string               `json:"address"`                         // 详细地址（应平台要求，不再返回该数据）
+	WarehouseName                string               `json:"warehouse_name"`                  // 发货仓库
+	WId                          string               `json:"wid"`                             //	发货仓库id
+	LogisticsTypeName            string               `json:"logistics_type_name"`             //	物流方式
+	LogisticsProviderName        string               `json:"logistics_provider_name"`         //	物流商
+	LogisticsTypeId              string               `json:"logistics_type_id"`               //	物流方式id
+	LogisticsProviderId          string               `json:"logistics_provider_id"`           //	物流商id
+	TrackingNumber               string               `json:"tracking_number"`                 //	跟踪号
+	LogisticsPreWeight           string               `json:"logistics_pre_weight"`            // 估算重量
+	LogisticsPreWeightUnit       string               `json:"logistics_pre_weight_unit"`       //	估算重量单位
+	PackageLength                string               `json:"package_length"`                  //	估算尺寸长
+	PackageWidth                 string               `json:"package_width"`                   //	估算尺寸宽
+	PackageHeight                string               `json:"package_height"`                  //	估算尺寸高
+	PackageUnit                  string               `json:"package_unit"`                    //	估算尺寸单位
+	LogisticsPrePrice            string               `json:"logistics_pre_price"`             //	预估运费
+	PkgRealWeight                string               `json:"pkg_real_weight"`                 //	包裹实重
+	PkgRealWeightUnit            string               `json:"pkg_real_weight_unit"`            //	包裹实重单位
+	PkgLength                    string               `json:"pkg_length"`                      // 包裹尺寸长
+	PkgWidth                     string               `json:"pkg_width"`                       // 包裹尺寸宽
+	PkgHeight                    string               `json:"pkg_height"`                      // 包裹尺寸高
+	LogisticsFreight             string               `json:"logistics_freight"`               // 物流运费
+	LogisticsFreightCurrencyCode string               `json:"logistics_freight_currency_code"` // 物流运费币种
+	OrderPriceAmount             string               `json:"order_price_amount"`              // 订单总金额
+	GrossProfitAmount            string               `json:"gross_profit_amount"`             // 订单毛利润
+	OrderItem                    []FBMOrderDetailItem `json:"order_item"`
+}
+
+type FBMOrderDetailItem struct {
+	PlatformOrderId string   `json:"platform_order_id"` // 平台单号
+	MSKU            string   `json:"MSKU"`              // MSKU
+	PicURL          string   `json:"pic_url"`           // 图片连接
+	Sku             string   `json:"sku"`               // SKU
+	ProductName     string   `json:"product_name"`      // 品名
+	Quantity        int      `json:"quantity"`          // 数量
+	Price           float64  `json:"price"`             // 单价
+	CurrencyCode    string   `json:"currency_code"`     // 单价币种
+	Customization   string   `json:"customization"`     // 商品备注
+	Attachments     []string `json:"attachments"`       // 商品附件
+}
+
+func (s fbmOrderService) One(number string) (item FBMOrderDetail, err error) {
+	res := struct {
+		NormalResponse
+		Data FBMOrderDetail `json:"data"`
+	}{}
+	resp, err := s.httpClient.R().
+		SetBody(map[string]string{"order_number": number}).
+		Post("/routing/order/Order/getOrderDetail")
+	if err != nil {
+		return
+	}
+
+	if err = jsoniter.Unmarshal(resp.Body(), &res); err == nil {
+		item = res.Data
+	}
+	return
+}
