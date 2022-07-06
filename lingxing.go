@@ -249,7 +249,8 @@ func NewLingXing(config config.Config) *LingXing {
 			Review:  (reviewService)(xService),
 		},
 		FBA: fbaService{
-			Shipment: (fbaShipmentService)(xService),
+			Shipment:   (fbaShipmentService)(xService),
+			StorageFee: (fbaStorageFeeService)(xService),
 		},
 	}
 	return lingXingClient

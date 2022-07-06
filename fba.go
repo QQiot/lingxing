@@ -2,5 +2,6 @@ package lingxing
 
 // FBA
 type fbaService struct {
-	Shipment fbaShipmentService
+	Shipment   fbaShipmentService
+	StorageFee fbaStorageFeeService
 }
