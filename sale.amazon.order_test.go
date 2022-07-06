@@ -22,7 +22,7 @@ func TestOrderService_All(t *testing.T) {
 func TestOrderService_One(t *testing.T) {
 	detail, err := lingXingClient.Services.Sale.Order.One("113")
 	if err != nil {
-		t.Errorf("Services.Sale.Order.All() error: %s", err.Error())
+		t.Errorf("Services.Sale.Order.One() error: %s", err.Error())
 	} else {
 		t.Log(jsonx.ToPrettyJson(detail))
 	}
