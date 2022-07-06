@@ -20,7 +20,7 @@ type AmazonFBMOrder struct {
 	PlatformList          []string `json:"platform_list"`           // 平台订单号
 	LogisticsTypeName     string   `json:"logistics_type_name"`     // 物流方式名称
 	LogisticsProviderName string   `json:"logistics_provider_name"` // 物理商名称
-	WID                   string   `json:"wid"`                     // 发货仓库 ID
+	WID                   int      `json:"wid"`                     // 发货仓库 ID
 	WarehouseName         string   `json:"warehouse_name"`          // 发货仓库名称
 	CustomerComment       string   `json:"customer_comment"`        // 客服备注
 }
