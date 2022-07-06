@@ -18,3 +18,12 @@ func TestFbmOrderService_All(t *testing.T) {
 		t.Log(jsonx.ToPrettyJson(items))
 	}
 }
+
+func TestFbmOrderService_One(t *testing.T) {
+	order, err := lingXingClient.Services.Sale.FBM.Order.One("103138899667546112")
+	if err != nil {
+		t.Errorf("Services.Sale.FBM.Order.One() error: %s", err.Error())
+	} else {
+		t.Log(jsonx.ToPrettyJson(order))
+	}
+}
