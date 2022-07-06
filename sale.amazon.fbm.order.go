@@ -97,28 +97,28 @@ type FBMOrderDetail struct {
 	City                         string               `json:"city"`                            // 城市（应平台要求，不再返回该数据）
 	Address                      string               `json:"address"`                         // 详细地址（应平台要求，不再返回该数据）
 	WarehouseName                string               `json:"warehouse_name"`                  // 发货仓库
-	WId                          string               `json:"wid"`                             //	发货仓库id
-	LogisticsTypeName            string               `json:"logistics_type_name"`             //	物流方式
-	LogisticsProviderName        string               `json:"logistics_provider_name"`         //	物流商
-	LogisticsTypeId              string               `json:"logistics_type_id"`               //	物流方式id
-	LogisticsProviderId          string               `json:"logistics_provider_id"`           //	物流商id
-	TrackingNumber               string               `json:"tracking_number"`                 //	跟踪号
-	LogisticsPreWeight           string               `json:"logistics_pre_weight"`            // 估算重量
-	LogisticsPreWeightUnit       string               `json:"logistics_pre_weight_unit"`       //	估算重量单位
-	PackageLength                string               `json:"package_length"`                  //	估算尺寸长
-	PackageWidth                 string               `json:"package_width"`                   //	估算尺寸宽
-	PackageHeight                string               `json:"package_height"`                  //	估算尺寸高
-	PackageUnit                  string               `json:"package_unit"`                    //	估算尺寸单位
-	LogisticsPrePrice            string               `json:"logistics_pre_price"`             //	预估运费
-	PkgRealWeight                string               `json:"pkg_real_weight"`                 //	包裹实重
-	PkgRealWeightUnit            string               `json:"pkg_real_weight_unit"`            //	包裹实重单位
-	PkgLength                    string               `json:"pkg_length"`                      // 包裹尺寸长
-	PkgWidth                     string               `json:"pkg_width"`                       // 包裹尺寸宽
-	PkgHeight                    string               `json:"pkg_height"`                      // 包裹尺寸高
-	LogisticsFreight             string               `json:"logistics_freight"`               // 物流运费
+	WId                          string               `json:"wid"`                             // 发货仓库id
+	LogisticsTypeName            string               `json:"logistics_type_name"`             // 物流方式
+	LogisticsProviderName        string               `json:"logistics_provider_name"`         // 物流商
+	LogisticsTypeId              string               `json:"logistics_type_id"`               // 物流方式id
+	LogisticsProviderId          string               `json:"logistics_provider_id"`           // 物流商id
+	TrackingNumber               string               `json:"tracking_number"`                 // 跟踪号
+	LogisticsPreWeight           float64              `json:"logistics_pre_weight"`            // 估算重量
+	LogisticsPreWeightUnit       string               `json:"logistics_pre_weight_unit"`       // 估算重量单位
+	PackageLength                float64              `json:"package_length"`                  // 估算尺寸长
+	PackageWidth                 float64              `json:"package_width"`                   // 估算尺寸宽
+	PackageHeight                float64              `json:"package_height"`                  // 估算尺寸高
+	PackageUnit                  string               `json:"package_unit"`                    // 估算尺寸单位
+	LogisticsPrePrice            float64              `json:"logistics_pre_price"`             // 预估运费
+	PkgRealWeight                float64              `json:"pkg_real_weight"`                 // 包裹实重
+	PkgRealWeightUnit            string               `json:"pkg_real_weight_unit"`            // 包裹实重单位
+	PkgLength                    float64              `json:"pkg_length"`                      // 包裹尺寸长
+	PkgWidth                     float64              `json:"pkg_width"`                       // 包裹尺寸宽
+	PkgHeight                    float64              `json:"pkg_height"`                      // 包裹尺寸高
+	LogisticsFreight             float64              `json:"logistics_freight"`               // 物流运费
 	LogisticsFreightCurrencyCode string               `json:"logistics_freight_currency_code"` // 物流运费币种
-	OrderPriceAmount             string               `json:"order_price_amount"`              // 订单总金额
-	GrossProfitAmount            string               `json:"gross_profit_amount"`             // 订单毛利润
+	OrderPriceAmount             float64              `json:"order_price_amount"`              // 订单总金额
+	GrossProfitAmount            float64              `json:"gross_profit_amount"`             // 订单毛利润
 	OrderItem                    []FBMOrderDetailItem `json:"order_item"`
 }
 
