@@ -4,7 +4,7 @@ import (
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/hiscaler/lingxing/constant"
 	jsoniter "github.com/json-iterator/go"
-	"time"
+	"strings"
 )
 
 // 亚马逊订单
@@ -24,7 +24,7 @@ type AmazonOrderItem struct {
 
 type AmazonOrder struct {
 	AmazonOrderId          string            `json:"amazon_order_id"`           // 订单号
-	PurchaseDateLocal      time.Time         `json:"purchase_date_local"`       // 下单时间
+	PurchaseDateLocal      string            `json:"purchase_date_local"`       // 下单时间
 	OrderStatus            string            `json:"order_status"`              // 订单状态
 	OrderTotalCurrencyCode string            `json:"order_total_currency_code"` // 币种
 	OrderTotalAmount       float64           `json:"order_total_amount"`        // 订单金额
@@ -33,14 +33,14 @@ type AmazonOrder struct {
 	IsReturn               int               `json:"is_return"`                 // 是否退款（0：未退款、1：退款中、2：退款完成）
 	IsMcfOrder             bool              `json:"is_mcf_order"`              // 是否多渠道订单（0：否、1：是）
 	IsAssessed             bool              `json:"is_assessed"`               // 是否评测订单（0：否、1：是）
-	EarliestShipDate       time.Time         `json:"earliest_ship_date"`        // 发货时限（2020-11-02T08:00:00Z）
-	ShipmentDate           time.Time         `json:"shipment_date"`             // 发货日期
-	LastUpdateDate         time.Time         `json:"last_update_date"`          // 订单更新站点时间
+	EarliestShipDate       string            `json:"earliest_ship_date"`        // 发货时限（2020-11-02T08:00:00Z）
+	ShipmentDate           string            `json:"shipment_date"`             // 发货日期
+	LastUpdateDate         string            `json:"last_update_date"`          // 订单更新站点时间
 	SellerName             string            `json:"seller_name"`               // 店铺名称
 	TrackingNumber         string            `json:"tracking_number"`           // 物流运单号
 	PostalCode             string            `json:"postal_code"`               // 邮编（应平台要求，不再返回数据）
 	Phone                  string            `json:"phone"`                     // 电话（应平台要求，不再返回数据）
-	PostedDate             time.Time         `json:"posted_date"`               // 付款时间
+	PostedDate             string            `json:"posted_date"`               // 付款时间
 	ItemList               []AmazonOrderItem `json:"item_list"`                 // 商品列表
 }
 
@@ -96,19 +96,20 @@ func (s orderService) All(params AmazonOrdersQueryParams) (items []AmazonOrder, 
 // https://openapidoc.lingxing.com/#/docs/Sale/OrderDetail
 
 type AmazonOrderDetailItem struct {
-	SID                        string  `json:"sid"`                           // 店铺 ID
+	ID                         int     `json:"id"`                            // ID
+	SID                        int     `json:"sid"`                           // 店铺 ID
 	Title                      string  `json:"title"`                         // 商品标题
 	SellerSKU                  string  `json:"seller_sku"`                    // MSKU
 	Asin                       string  `json:"asin"`                          // ASIN
 	AsinURL                    string  `json:"asin_url"`                      // ASIN URL
 	ProductId                  int     `json:"product_id"`                    // 本地商品ID
-	SKU                        int     `json:"sku"`                           // 本地SKU
+	SKU                        string  `json:"sku"`                           // 本地SKU
 	ProductName                string  `json:"product_name"`                  // 品名
 	PicURL                     string  `json:"pic_url"`                       // 图片链接
 	OrderItemId                string  `json:"order_item_id"`                 // 图片链接
 	UnitPriceAmount            float64 `json:"unit_price_amount"`             // 单价
 	QuantityOrdered            int     `json:"quantity_ordered"`              // 下单量
-	QuantityShipped            string  `json:"quantity_shipped"`              // 已配送
+	QuantityShipped            int     `json:"quantity_shipped"`              // 已配送
 	SalesPriceAmount           float64 `json:"sales_price_amount"`            // 销售收益
 	TaxAmount                  float64 `json:"tax_amount"`                    // 税费
 	CgPrice                    float64 `json:"cg_price"`                      // 采购成本
@@ -167,30 +168,30 @@ type AmazonOrderQueryParams struct {
 	OrderId string `json:"order_id"` // 订单号
 }
 
-func (m AmazonOrderQueryParams) Validate() error {
-	return validation.ValidateStruct(&m,
-		validation.Field(&m.OrderId, validation.Required.Error("订单号不能为空")),
-	)
-}
-
-func (s orderService) One(params AmazonOrderQueryParams) (detail AmazonOrderDetail, err error) {
-	if err = params.Validate(); err != nil {
-		return
-	}
-
+func (s orderService) One(orderId string) (detail AmazonOrderDetail, err error) {
 	res := struct {
 		NormalResponse
-		Data AmazonOrderDetail `json:"data"`
+		Data []AmazonOrderDetail `json:"data"`
 	}{}
 	resp, err := s.httpClient.R().
-		SetBody(params).
+		SetBody(map[string]string{"order_id": orderId}).
 		Post("/data/mws/orderDetail")
 	if err != nil {
 		return
 	}
 
 	if err = jsoniter.Unmarshal(resp.Body(), &res); err == nil {
-		detail = res.Data
+		exists := false
+		for i := range res.Data {
+			if strings.EqualFold(res.Data[i].AmazonOrderId, orderId) {
+				detail = res.Data[i]
+				exists = true
+				break
+			}
+		}
+		if !exists {
+			err = ErrNotFound
+		}
 	}
 	return
 }

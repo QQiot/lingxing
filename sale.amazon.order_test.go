@@ -20,10 +20,7 @@ func TestOrderService_All(t *testing.T) {
 }
 
 func TestOrderService_One(t *testing.T) {
-	params := AmazonOrderQueryParams{
-		OrderId: "123",
-	}
-	detail, err := lingXingClient.Services.Sale.Order.One(params)
+	detail, err := lingXingClient.Services.Sale.Order.One("113")
 	if err != nil {
 		t.Errorf("Services.Sale.Order.All() error: %s", err.Error())
 	} else {
