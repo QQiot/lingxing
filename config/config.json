@@ -1,0 +1,14 @@
+{
+  "debug": true,
+  "sandbox": false,
+  "environment": {
+    "dev": {
+      "appId": "",
+      "appSecret": ""
+    },
+    "prod": {
+      "appId": "",
+      "appSecret": ""
+    }
+  }
+}
