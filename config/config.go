@@ -1,8 +1,17 @@
 package config
 
 type Config struct {
-	Debug       bool   // 是否为调试模式
-	AppId       string // APP ID
-	AppSecret   string // APP Secret
-	EnableCache bool   // 是否激活缓存
+	Debug       bool // 是否启用调试模式
+	Sandbox     bool // 是否为沙箱环境（true 启用 Dev 配置，false 启用 Prod 配置）
+	Environment struct {
+		Dev struct {
+			AppId     string // APP ID
+			AppSecret string // APP Secret
+		}
+		Prod struct {
+			AppId     string // APP ID
+			AppSecret string // APP Secret
+		}
+	}
+	EnableCache bool // 是否激活缓存
 }

@@ -51,6 +51,7 @@ const (
 var ErrNotFound = errors.New("lingxing: not found")
 
 type LingXing struct {
+	sandbox   bool
 	appId     string
 	appSecret string
 	Debug     bool // 是否调试模式
@@ -64,9 +65,18 @@ func init() {
 
 func NewLingXing(config config.Config) *LingXing {
 	logger := log.New(os.Stdout, "[ LingXing ] ", log.LstdFlags|log.Llongfile)
+	var appId, appSecret string
+	if config.Sandbox {
+		appId = config.Environment.Dev.AppId
+		appSecret = config.Environment.Dev.AppSecret
+	} else {
+		appId = config.Environment.Prod.AppId
+		appSecret = config.Environment.Prod.AppSecret
+	}
 	lingXingClient := &LingXing{
-		appId:     config.AppId,
-		appSecret: config.AppSecret,
+		sandbox:   config.Sandbox,
+		appId:     appId,
+		appSecret: appSecret,
 		Debug:     config.Debug,
 	}
 	httpClient := resty.New().SetDebug(config.Debug).
@@ -75,7 +85,7 @@ func NewLingXing(config config.Config) *LingXing {
 			"Accept":       "application/json",
 			"User-Agent":   userAgent,
 		})
-	if config.Debug {
+	if config.Sandbox {
 		httpClient.SetBaseURL("https://openapisandbox.lingxing.com/erp/sc")
 	} else {
 		httpClient.SetBaseURL("https://openapi.lingxing.com/erp/sc")
@@ -286,13 +296,13 @@ func (lx *LingXing) Auth() (ar AuthResponse, err error) {
 	}{}
 
 	httpClient := resty.New().
-		SetDebug(true).
+		SetDebug(lx.Debug).
 		SetHeaders(map[string]string{
 			"Content-Type": "application/json",
 			"Accept":       "application/json",
 			"User-Agent":   userAgent,
 		})
-	if lx.Debug {
+	if lx.sandbox {
 		httpClient.SetBaseURL("https://openapisandbox.lingxing.com")
 	} else {
 		httpClient.SetBaseURL("https://openapi.lingxing.com")
