@@ -103,28 +103,34 @@ func NewLingXing(config config.Config) *LingXing {
 			}
 			client.SetAuthToken(lingXingClient.auth.AccessToken)
 
-			queryParams := map[string]string{
+			appendQueryParams := map[string]string{
 				"app_key":      lingXingClient.appId,
 				"access_token": lingXingClient.auth.AccessToken,
 				"timestamp":    strconv.FormatInt(time.Now().Unix(), 10),
 			}
-			var params map[string]interface{}
-			if request.Method == http.MethodPost {
-				params = cast.ToStringMap(jsonx.ToJson(request.Body, "{}")) // Body
-			}
-			if params == nil {
-				params = make(map[string]interface{}, 3)
-			}
-			for k, v := range queryParams {
+			params := make(map[string]interface{}, 0)
+			for k, v := range appendQueryParams {
 				params[k] = v
+			}
+			// 获取 URL 请求参数
+			if u, err := url.Parse(request.URL); err == nil && len(u.Query()) > 0 {
+				for k := range u.Query() {
+					params[k] = u.Query().Get(k)
+				}
+			}
+			if request.Method == http.MethodPost {
+				bodyParams := cast.ToStringMap(jsonx.ToJson(request.Body, "{}")) // Body
+				for k, v := range bodyParams {
+					params[k] = v
+				}
 			}
 			sign, err := generateSign(lingXingClient.appId, params)
 			if err != nil {
 				return err
 			}
 
-			queryParams["sign"] = url.QueryEscape(sign)
-			request.SetQueryParams(queryParams)
+			appendQueryParams["sign"] = url.QueryEscape(sign)
+			request.SetQueryParams(appendQueryParams)
 			return nil
 		}).
 		OnAfterResponse(func(client *resty.Client, response *resty.Response) (err error) {
