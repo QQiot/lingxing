@@ -19,7 +19,7 @@ type SupplierQuote struct {
 	IsPrimary          bool                `json:"is_primary"`           // 是否为首选供应商（0：否、1：是）
 	SupplierProductURL string              `json:"supplier_product_url"` // 采购链接
 	SupplierName       string              `json:"supplier_name"`        // 供应商名称
-	Quotes             []SupplierQuoteItem `json:"quotes"`               //	报价数据
+	Quotes             []SupplierQuoteItem `json:"quotes"`               // 报价数据
 }
 
 // SupplierQuoteItem 供应商报价项

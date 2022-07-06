@@ -141,8 +141,8 @@ type AmazonOrderDetail struct {
 	AmazonOrderId      string                  `json:"amazon_order_id"`     // 订单 ID
 	Name               string                  `json:"name"`                // 用户收货名称
 	Address            string                  `json:"address"`             // 用户收货地址
-	StateOrRegion      string                  `json:"state_or_region"`     //	省州简码
-	FulfillmentChannel string                  `json:"fulfillment_channel"` //	发货渠道
+	StateOrRegion      string                  `json:"state_or_region"`     // 省州简码
+	FulfillmentChannel string                  `json:"fulfillment_channel"` // 发货渠道
 	SID                string                  `json:"sid"`                 // 店铺 ID
 	Country            string                  `json:"country"`             // 国家（应平台要求，不再返回数据）
 	City               string                  `json:"city"`                // 城市（应平台要求，不再返回数据）

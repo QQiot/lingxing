@@ -67,11 +67,11 @@ type FBAShipment struct {
 		ProductQCNum                   int      `json:"product_qc_num"`                    // 待检量
 		DiffNum                        int      `json:"diff_num"`                          // 差额
 	} `json:"relate_list"` // 	关联货件列表
-	NotRelateList                  []string `json:"not_relate_list"`                   // 	未关联货件列表
-	DestinationFulfillmentCenterId string   `json:"destination_fulfillment_center_id"` // 	物流中心编码
-	StatusName                     string   `json:"status_name"`                       // 		状态名称
-	HeadFeeTypeName                string   `json:"head_fee_type_name"`                // 		头程分摊名称
-	FileList                       []string `json:"fileList"`                          // 		文件列表
+	NotRelateList                  []string `json:"not_relate_list"`                   // 未关联货件列表
+	DestinationFulfillmentCenterId string   `json:"destination_fulfillment_center_id"` // 物流中心编码
+	StatusName                     string   `json:"status_name"`                       // 状态名称
+	HeadFeeTypeName                string   `json:"head_fee_type_name"`                // 头程分摊名称
+	FileList                       []string `json:"fileList"`                          // 文件列表
 }
 
 type FBAShipmentsQueryParams struct {

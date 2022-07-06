@@ -24,7 +24,7 @@ type Listing struct {
 	AfnFulfillableQuantity      int                `json:"afn_fulfillable_quantity"`       // 可售
 	ReservedFcTransfers         int                `json:"reserved_fc_transfers"`          // 待调仓
 	ReservedFcProcessing        int                `json:"reserved_fc_processing"`         // 调仓中
-	ReservedCustomerorders      int                `json:"reserved_customerorders"`        // 待发货
+	ReservedCustomerOrders      int                `json:"reserved_customerorders"`        // 待发货
 	AfnInboundShippedQuantity   int                `json:"afn_inbound_shipped_quantity"`   // 入库
 	AfnUnsellableQuantity       int                `json:"afn_unsellable_quantity"`        // 不可售
 	AfnInboundWorkingQuantity   int                `json:"afn_inbound_working_quantity"`   // 计划入库
@@ -41,7 +41,7 @@ type Listing struct {
 	FulfillmentChannelType      string             `json:"fulfillment_channel_type"`       // 配送方式
 	PrincipalInfo               []ListingPrincipal `json:"principal_info"`                 // 负责人数据
 	Shipping                    float64            `json:"shipping"`                       // 运费
-	Points                      float64            `json:"points"`                         //	积分，日本站才有
+	Points                      float64            `json:"points"`                         // 积分，日本站才有
 }
 
 type ListingPrincipal struct {
