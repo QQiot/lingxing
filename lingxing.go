@@ -43,6 +43,11 @@ const (
 	TooManyRequestsError     = 3001008 // 接口请求超请求次数限额
 )
 
+const (
+	Version   = "0.0.1"
+	userAgent = "LingXing API Client-Golang/" + Version + " (https://github.com/hiscaler/lingxing)"
+)
+
 var ErrNotFound = errors.New("lingxing: not found")
 
 type LingXing struct {
@@ -68,6 +73,7 @@ func NewLingXing(config config.Config) *LingXing {
 		SetHeaders(map[string]string{
 			"Content-Type": "application/json",
 			"Accept":       "application/json",
+			"User-Agent":   userAgent,
 		})
 	if config.Debug {
 		httpClient.SetBaseURL("https://openapisandbox.lingxing.com/erp/sc")
@@ -284,6 +290,7 @@ func (lx *LingXing) Auth() (ar AuthResponse, err error) {
 		SetHeaders(map[string]string{
 			"Content-Type": "application/json",
 			"Accept":       "application/json",
+			"User-Agent":   userAgent,
 		})
 	if lx.Debug {
 		httpClient.SetBaseURL("https://openapisandbox.lingxing.com")
