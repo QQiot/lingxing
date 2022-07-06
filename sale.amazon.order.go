@@ -148,14 +148,14 @@ type AmazonOrderDetail struct {
 	City               string                  `json:"city"`                // 城市（应平台要求，不再返回数据）
 	District           string                  `json:"district"`            // 地区（应平台要求，不再返回数据）
 	OrderStatus        string                  `json:"order_status"`        // 订单状态
-	IsAssessed         int                     `json:"is_assessed"`         // 是否评测订单（0：否、1：是）
+	IsAssessed         bool                    `json:"is_assessed"`         // 是否评测订单（0：否、1：是）
 	OrderTotalAmount   float64                 `json:"order_total_amount"`  // 订单总金额
 	Currency           string                  `json:"currency"`            // 订单金额币种
 	Icon               string                  `json:"icon"`                // 订单金额币种符号
 	Phone              string                  `json:"phone"`               // 手机号（应平台要求，不再返回数据）
 	PostalCode         string                  `json:"postal_code"`         // 邮编（应平台要求，不再返回数据）
-	IsMcfOrder         int                     `json:"is_mcf_order"`        // 0普通订单,1多渠道订单
-	IsBusinessOrder    int                     `json:"is_business_order"`   // 是否为B2B订单（0：否、1：是）
+	IsMcfOrder         bool                    `json:"is_mcf_order"`        // 0普通订单,1多渠道订单
+	IsBusinessOrder    bool                    `json:"is_business_order"`   // 是否为B2B订单（0：否、1：是）
 	CountryCode        string                  `json:"country_code"`        // 国家代码（应平台要求，不再返回数据）
 	PurchaseDateLocal  string                  `json:"purchase_date_local"` // 订购时间（站点时间）
 	LastUpdateDate     string                  `json:"last_update_date"`    // 订单更新站点时间

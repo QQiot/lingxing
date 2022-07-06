@@ -85,14 +85,14 @@ type UpsertProductAuxMaterialSupplierQuote struct {
 	ERPSupplierId      string                                      `json:"erp_supplier_id"`      // 领星ERP供应商id
 	SupplierId         string                                      `json:"supplier_id"`          // 客户系统供应商id，没有填这个值或者对应供应商不存在，则取erp_supplier_id
 	SupplierProductURL []string                                    `json:"supplier_product_url"` // 采购链接，字符串数组，最多20个，没有则传空数组
-	IsPrimary          int                                         `json:"is_primary"`           // 首选供应商(1:是；0：否)
+	IsPrimary          bool                                        `json:"is_primary"`           // 首选供应商(1:是；0：否)
 	Quotes             []UpsertProductAuxMaterialSupplierQuoteItem `json:"quotes"`               // 报价信息
 }
 
 // UpsertProductAuxMaterialSupplierQuoteItem 报价信息
 type UpsertProductAuxMaterialSupplierQuoteItem struct {
 	Currency   string                                               `json:"currency"`    // 报价币种，目前只有CNY和USD
-	IsTax      int                                                  `json:"is_tax"`      // 是否含税，0-否；1-是
+	IsTax      bool                                                 `json:"is_tax"`      // 是否含税，0-否；1-是
 	TaxRate    int                                                  `json:"tax_rate"`    // 税率，整数，0-99，为空则表示为0
 	StepPrices []UpsertProductAuxMaterialSupplierQuoteItemStepPrice `json:"step_prices"` // 阶梯价信息
 }

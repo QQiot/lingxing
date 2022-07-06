@@ -197,6 +197,30 @@ func NewLingXing(config config.Config) *LingXing {
 			*((*float64)(ptr)) = iter.ReadFloat64()
 		}
 	})
+	jsoniter.RegisterTypeDecoderFunc("bool", func(ptr unsafe.Pointer, iter *jsoniter.Iterator) {
+		switch iter.WhatIsNext() {
+		case jsoniter.StringValue:
+			var t bool
+			v := strings.TrimSpace(iter.ReadString())
+			if v != "" {
+				var err error
+				if t, err = strconv.ParseBool(strings.ToLower(v)); err != nil {
+					iter.Error = err
+					return
+				}
+			}
+			*((*bool)(ptr)) = t
+		case jsoniter.NumberValue:
+			if v, err := iter.ReadNumber().Int64(); err != nil {
+				iter.Error = err
+				return
+			} else {
+				*((*bool)(ptr)) = v > 0
+			}
+		default:
+			*((*bool)(ptr)) = iter.ReadBool()
+		}
+	})
 	httpClient.JSONMarshal = jsoniter.Marshal
 	httpClient.JSONUnmarshal = jsoniter.Unmarshal
 	xService := service{

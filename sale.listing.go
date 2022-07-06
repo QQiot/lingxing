@@ -20,7 +20,7 @@ type Listing struct {
 	ParentAsin                  string             `json:"parent_asin"`                    // 父ASIN
 	SmallImageURL               string             `json:"small_image_url"`                // 主图URL
 	Status                      int                `json:"status"`                         // 状态（1：在售，0：下架）
-	IsDelete                    int                `json:"is_delete"`                      // 是否删除（1：是，0：否）
+	IsDelete                    bool               `json:"is_delete"`                      // 是否删除（1：是，0：否）
 	AfnFulfillableQuantity      int                `json:"afn_fulfillable_quantity"`       // 可售
 	ReservedFcTransfers         int                `json:"reserved_fc_transfers"`          // 待调仓
 	ReservedFcProcessing        int                `json:"reserved_fc_processing"`         // 调仓中
@@ -95,7 +95,7 @@ type ListingPairRequest struct {
 	MarketplaceId string `json:"marketplace_id,omitempty"` // 市场id
 	MSku          string `json:"msku"`                     // msku
 	Sku           string `json:"sku"`                      // 本地sku
-	IsSyncPic     int    `json:"is_sync_pic"`              // 是否同步listing图片（1：是、0：否）
+	IsSyncPic     bool   `json:"is_sync_pic"`              // 是否同步listing图片（1：是、0：否）
 }
 
 func (m ListingPairRequest) Validate() error {

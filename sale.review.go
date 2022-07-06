@@ -18,11 +18,11 @@ type Review struct {
 	Author        string   `json:"author"`          // 评价客户
 	AuthorId      string   `json:"author_id"`       // 评价客户 ID
 	ReviewDate    string   `json:"review_date"`     // 发表评论日期
-	IsVP          int      `json:"is_vp"`           // 0：没有购买；1：购买评价
+	IsVP          bool     `json:"is_vp"`           // 0：没有购买；1：购买评价
 	Status        int      `json:"status"`          // 评论处理状态(0:待处理，1:处理中，2:已完成)
 	UpdateTime    string   `json:"update_time"`     // 更新时间
 	CreateTime    string   `json:"create_time"`     // 创建时间
-	IsDelete      int      `json:"is_delete"`       // 是否删除：0=否，1=是
+	IsDelete      bool     `json:"is_delete"`       // 是否删除：0=否，1=是
 	Remark        string   `json:"remark"`          // 评论备注
 	OrderIds      string   `json:"order_ids"`       // 订单号
 	SmallImageURL string   `json:"small_image_url"` // 图片链接

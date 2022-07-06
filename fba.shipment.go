@@ -20,8 +20,8 @@ type FBAShipment struct {
 	EtaDate              string `json:"eta_date"`               // 预计到港时间
 	DeliveryDate         string `json:"delivery_date"`          // 实际妥投时间
 	CreateTime           string `json:"create_time"`            // 创建时间
-	IsPick               int    `json:"is_pick"`                // 拣货状态 0 未拣货 1已拣货
-	IsPrint              int    `json:"is_print"`               // 是否打印
+	IsPick               bool   `json:"is_pick"`                // 拣货状态 0 未拣货 1已拣货
+	IsPrint              bool   `json:"is_print"`               // 是否打印
 	PickTime             string `json:"pick_time"`              // 拣货时间
 	PrintNum             int    `json:"print_num"`              // 打印次数
 	HeadFeeType          int    `json:"head_fee_type"`          // 头程费分配方式，0：按计费重；1：按实重；2：按体积重；3：按SKU数量；4：自定义；5：按箱子体积
@@ -29,7 +29,7 @@ type FBAShipment struct {
 	GmtModified          string `json:"gmt_modified"`           // 更新时间
 	Remark               string `json:"remark"`                 // 备注
 	Wid                  int    `json:"wid"`                    // 仓库ID
-	IsReturnStock        int    `json:"is_return_stock"`        // 是否恢复库存
+	IsReturnStock        bool   `json:"is_return_stock"`        // 是否恢复库存
 	Logistics            []struct {
 		ReplaceTrackingNumber string `json:"replace_tracking_number"` // 跟踪单号
 		TrackingNumber        string `json:"tracking_number"`         // 物流商号
@@ -59,7 +59,7 @@ type FBAShipment struct {
 		Remark                         string   `json:"remark"`                            // 备注
 		Status                         int      `json:"stauts"`                            // 状态
 		SId                            int      `json:"sid"`                               // 店铺id
-		IsCombo                        int      `json:"is_combo"`                          // 是否组合商品
+		IsCombo                        bool     `json:"is_combo"`                          // 是否组合商品
 		CreateByMws                    int      `json:"create_by_mws"`                     // 创建发货单的途径
 		WhbCodeList                    []string `json:"whb_code_list"`                     // 仓位编码列表
 		PackingTypeName                string   `json:"packing_type_name"`                 // 包装名称

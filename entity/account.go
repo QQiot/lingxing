@@ -14,5 +14,5 @@ type Account struct {
 	ZID           int    `json:"zid"`             // ?
 	Role          string `json:"role"`            // 角色
 	Seller        string `json:"seller"`          // 店铺权限
-	IsMaster      int    `json:"is_master"`       // 是否为主账号
+	IsMaster      bool   `json:"is_master"`       // 是否为主账号
 }
