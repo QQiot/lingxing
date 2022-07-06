@@ -2,13 +2,23 @@ package lingxing
 
 import (
 	validation "github.com/go-ozzo/ozzo-validation/v4"
-	"github.com/hiscaler/lingxing/entity"
 	jsoniter "github.com/json-iterator/go"
 )
 
 type customerServiceEmailService service
 
 // 邮件列表
+
+type Email struct {
+	WebMailUUID   string `json:"webmail_uuid"`   // 邮件唯一标识
+	Date          string `json:"date"`           // 日期
+	Subject       string `json:"subject"`        // 邮件标题
+	FromName      string `json:"from_name"`      // 发件人姓名
+	FromAddress   string `json:"from_address"`   // 发件人地址
+	ToName        string `json:"to_name"`        // 接收人
+	ToAddress     string `json:"to_address"`     // 接收人地址
+	HasAttachment int    `json:"has_attachment"` // 是否存在附件（0：不存在、1：存在）
+}
 
 type CustomerServiceEmailsQueryParams struct {
 	Paging
@@ -25,7 +35,7 @@ func (m CustomerServiceEmailsQueryParams) Validate() error {
 
 // All https://openapidoc.lingxing.com/#/docs/Service/lists
 // https://openapidoc.lingxing.com/#/docs/Service/lists
-func (s customerServiceEmailService) All(params CustomerServiceEmailsQueryParams) (items []entity.Email, nextOffset int, isLastPage bool, err error) {
+func (s customerServiceEmailService) All(params CustomerServiceEmailsQueryParams) (items []Email, nextOffset int, isLastPage bool, err error) {
 	if err = params.Validate(); err != nil {
 		return
 	}
@@ -33,7 +43,7 @@ func (s customerServiceEmailService) All(params CustomerServiceEmailsQueryParams
 	params.SetPagingVars()
 	res := struct {
 		NormalResponse
-		Data []entity.Email `json:"data"`
+		Data []Email `json:"data"`
 	}{}
 	resp, err := s.httpClient.R().
 		SetBody(params).

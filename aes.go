@@ -38,7 +38,6 @@ func (t *AesTool) ECBEncrypt(src []byte) ([]byte, error) {
 	for bs, be := 0, block.BlockSize(); bs < len(src); bs, be = bs+block.BlockSize(), be+block.BlockSize() {
 		block.Encrypt(encryptData[bs:be], src[bs:be])
 	}
-
 	return encryptData, nil
 }
 
@@ -52,6 +51,5 @@ func (t *AesTool) ECBDecrypt(src []byte) ([]byte, error) {
 	for bs, be := 0, size; bs < len(src); bs, be = bs+size, be+size {
 		block.Decrypt(decrypted[bs:be], src[bs:be])
 	}
-
 	return t.unPadding(decrypted), nil
 }

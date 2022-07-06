@@ -2,7 +2,6 @@ package lingxing
 
 import (
 	"github.com/hiscaler/gox/jsonx"
-	"github.com/hiscaler/lingxing/entity"
 	"testing"
 )
 
@@ -12,7 +11,7 @@ func TestCustomerServiceEmailService_All(t *testing.T) {
 		Email: "1@gmail.com",
 	}
 	params.Limit = 1
-	var emails []entity.Email
+	var emails []Email
 	for {
 		items, nextOffset, isLastPage, err := lingXingClient.Services.CustomerService.Email.All(params)
 		if err != nil {
