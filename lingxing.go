@@ -146,32 +146,44 @@ func NewLingXing(config config.Config) *LingXing {
 				Code         interface{} `json:"code"`
 				Message      string      `json:"message"`
 				Msg          string      `json:"msg"`
-				ErrorDetails []struct {
-					Message string `json:"message"`
-				} `json:"error_details"`
+				ErrorDetails interface{} `json:"error_details"` // 存在多种返回格式：string, string slice, struct slice
 			}{}
 			if err = jsoniter.Unmarshal(response.Body(), &r); err == nil {
 				if r.Code != 0 {
-					if len(r.ErrorDetails) == 0 {
-						msg := r.Message
-						if msg == "" {
-							msg = r.Msg
+					if s, ok := r.ErrorDetails.(string); ok {
+						err = ErrorWrap(cast.ToInt(r.Code), s)
+					} else if ss, ok := r.ErrorDetails.([]interface{}); ok {
+						type errorDetail struct {
+							Message string `json:"message"`
 						}
-						err = ErrorWrap(cast.ToInt(r.Code), msg)
-					} else {
 						removeString := "错误："
 						n := len(removeString)
 						errorMessages := make([]string, 0)
-						for i := range r.ErrorDetails {
-							message := r.ErrorDetails[i].Message
+						for i := range ss {
+							message := ""
+							if s, ok := ss[i].(string); ok {
+								message = s
+							} else if ed, ok := ss[i].(errorDetail); ok {
+								message = ed.Message
+							}
+							message = strings.TrimSpace(message)
 							if message != "" {
 								if index := strings.Index(message, removeString); index == 0 {
 									message = message[n:]
+								}
+								if index := strings.Index(message, " => "); index != -1 {
+									message = message[index+4:]
 								}
 								errorMessages = append(errorMessages, message)
 							}
 						}
 						err = ErrorWrap(cast.ToInt(r.Code), strings.Join(errorMessages, "；"))
+					} else {
+						msg := r.Message
+						if msg == "" {
+							msg = r.Msg
+						}
+						err = ErrorWrap(cast.ToInt(r.Code), msg)
 					}
 				}
 			} else {
@@ -382,14 +394,12 @@ func ErrorWrap(code int, message string) error {
 	switch code {
 	case ServiceNotFoundError:
 		message = "服务不存在"
-	case InternalError:
-		message = "内部错误，数据库异常"
 	case AppIdNotExistError:
 		message = "appId 不存在"
 	case InvalidAppSecretError:
 		message = "appSecret 不正确或者未编码"
 	case AccessTokenExpireError:
-		message = "token 不存在或者已经过期"
+		message = "Token 不存在或者已经过期"
 	case UnauthorizedError:
 		message = "API 未授权"
 	case InvalidAccessTokenError:
@@ -399,9 +409,9 @@ func ErrorWrap(code int, message string) error {
 	case SignExpiredError:
 		message = "签名过期"
 	case RefreshTokenExpiredError:
-		message = "RefreshToken 过期"
+		message = "Refresh Token 过期"
 	case InvalidRefreshTokenError:
-		message = "无效的 RefreshToken"
+		message = "无效的 Refresh Token"
 	case InvalidQueryParamsError:
 		message = "查询参数缺失"
 	case InvalidIPError:
@@ -409,7 +419,13 @@ func ErrorWrap(code int, message string) error {
 	case TooManyRequestsError:
 		message = "接口请求超请求次数限额"
 	default:
-		message = strings.TrimSpace(message)
+		if code == InternalError {
+			if message == "" {
+				message = "内部错误"
+			}
+		} else {
+			message = strings.TrimSpace(message)
+		}
 	}
 	return fmt.Errorf("%d: %s", code, message)
 }
