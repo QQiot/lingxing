@@ -118,6 +118,10 @@ func NewLingXing(config config.Config) *LingXing {
 					params[k] = u.Query().Get(k)
 				}
 			}
+			for k := range request.QueryParam {
+				params[k] = request.QueryParam.Get(k)
+			}
+
 			if request.Method == http.MethodPost {
 				bodyParams := cast.ToStringMap(jsonx.ToJson(request.Body, "{}")) // Body
 				for k, v := range bodyParams {
