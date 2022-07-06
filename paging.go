@@ -1,9 +1,12 @@
 package lingxing
 
+import "net/url"
+import "github.com/google/go-querystring/query"
+
 type Paging struct {
-	Offset     int `json:"offset"` // 分页偏移索引（默认0）
-	NextOffset int `json:"-"`      // 下一次偏移索引
-	Limit      int `json:"length"` // 分页偏移长度（默认1000）
+	Offset     int `json:"offset" url:"offset"` // 分页偏移索引（默认0）
+	NextOffset int `json:"-" url:"-"`           // 下一次偏移索引
+	Limit      int `json:"length" url:"length"` // 分页偏移长度（默认1000）
 }
 
 func (p *Paging) SetPagingVars() *Paging {
@@ -15,4 +18,10 @@ func (p *Paging) SetPagingVars() *Paging {
 	}
 	p.NextOffset = p.Offset + p.Limit
 	return p
+}
+
+// change to url.values
+func toValues(i interface{}) (values url.Values) {
+	values, _ = query.Values(i)
+	return
 }

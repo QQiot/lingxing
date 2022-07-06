@@ -7,7 +7,7 @@ import (
 
 func TestCustomerServiceEmailService_All(t *testing.T) {
 	params := CustomerServiceEmailsQueryParams{
-		Flag:  "1",
+		Flag:  "receive",
 		Email: "1@gmail.com",
 	}
 	params.Limit = 1
@@ -15,7 +15,7 @@ func TestCustomerServiceEmailService_All(t *testing.T) {
 	for {
 		items, nextOffset, isLastPage, err := lingXingClient.Services.CustomerService.Email.All(params)
 		if err != nil {
-			t.Errorf("Services.CustomerService.Emails() error: %s", err.Error())
+			t.Errorf("Services.CustomerService.Email.All() error: %s", err.Error())
 		} else {
 			emails = append(emails, items...)
 		}

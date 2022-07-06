@@ -2,6 +2,7 @@ package lingxing
 
 import (
 	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/go-ozzo/ozzo-validation/v4/is"
 	jsoniter "github.com/json-iterator/go"
 )
 
@@ -22,18 +23,24 @@ type Email struct {
 
 type CustomerServiceEmailsQueryParams struct {
 	Paging
-	Flag  string `json:"flag"`  // 类型
-	Email string `json:"email"` // 邮箱
+	Flag  string `json:"flag" url:"flag"`   // 类型
+	Email string `json:"email" url:"email"` // 邮箱
 }
 
 func (m CustomerServiceEmailsQueryParams) Validate() error {
 	return validation.ValidateStruct(&m,
-		validation.Field(&m.Flag, validation.Required.Error("类型不能为空")),
-		validation.Field(&m.Email, validation.Required.Error("邮箱不能为空")),
+		validation.Field(&m.Flag,
+			validation.Required.Error("类型不能为空"),
+			validation.In("sent", "receive").Error("无效的类型"),
+		),
+		validation.Field(&m.Email,
+			validation.Required.Error("邮箱不能为空"),
+			is.EmailFormat.Error("无效的邮箱格式"),
+		),
 	)
 }
 
-// All https://openapidoc.lingxing.com/#/docs/Service/lists
+// All 邮件列表
 // https://openapidoc.lingxing.com/#/docs/Service/lists
 func (s customerServiceEmailService) All(params CustomerServiceEmailsQueryParams) (items []Email, nextOffset int, isLastPage bool, err error) {
 	if err = params.Validate(); err != nil {
@@ -46,7 +53,7 @@ func (s customerServiceEmailService) All(params CustomerServiceEmailsQueryParams
 		Data []Email `json:"data"`
 	}{}
 	resp, err := s.httpClient.R().
-		SetBody(params).
+		SetQueryParamsFromValues(toValues(params)).
 		Get("/data/mail/lists")
 	if err != nil {
 		return
