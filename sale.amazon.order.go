@@ -160,7 +160,7 @@ type AmazonOrderDetail struct {
 	PurchaseDateLocal  string                  `json:"purchase_date_local"` // 订购时间（站点时间）
 	LastUpdateDate     string                  `json:"last_update_date"`    // 订单更新站点时间
 	ItemList           []AmazonOrderDetailItem `json:"item_list"`           // 订单明细
-	taxes_included     string                  `json:"taxes_included"`      // 是否含税（费用是否含税，针对平台返回的原始itemprice、shippingprice等数据）(1：含税 2：不含税)
+	TaxesIncluded      string                  `json:"taxes_included"`      // 是否含税（费用是否含税，针对平台返回的原始itemprice、shippingprice等数据）(1：含税 2：不含税)
 }
 
 type AmazonOrderQueryParams struct {
