@@ -150,34 +150,36 @@ func NewLingXing(config config.Config) *LingXing {
 			}{}
 			if err = jsoniter.Unmarshal(response.Body(), &r); err == nil {
 				if r.Code != 0 {
-					if s, ok := r.ErrorDetails.(string); ok {
-						err = ErrorWrap(cast.ToInt(r.Code), s)
-					} else if ss, ok := r.ErrorDetails.([]interface{}); ok {
-						type errorDetail struct {
-							Message string `json:"message"`
-						}
-						removeString := "错误："
-						n := len(removeString)
-						errorMessages := make([]string, 0)
-						for i := range ss {
-							message := ""
-							if s, ok := ss[i].(string); ok {
-								message = s
-							} else if ed, ok := ss[i].(errorDetail); ok {
-								message = ed.Message
+					if r.ErrorDetails != nil {
+						if s, ok := r.ErrorDetails.(string); ok {
+							err = ErrorWrap(cast.ToInt(r.Code), s)
+						} else if ss, ok := r.ErrorDetails.([]interface{}); ok {
+							type errorDetail struct {
+								Message string `json:"message"`
 							}
-							message = strings.TrimSpace(message)
-							if message != "" {
-								if index := strings.Index(message, removeString); index == 0 {
-									message = message[n:]
+							removeString := "错误："
+							n := len(removeString)
+							errorMessages := make([]string, 0)
+							for i := range ss {
+								message := ""
+								if s, ok := ss[i].(string); ok {
+									message = s
+								} else if ed, ok := ss[i].(errorDetail); ok {
+									message = ed.Message
 								}
-								if index := strings.Index(message, " => "); index != -1 {
-									message = message[index+4:]
+								message = strings.TrimSpace(message)
+								if message != "" {
+									if index := strings.Index(message, removeString); index == 0 {
+										message = message[n:]
+									}
+									if index := strings.Index(message, " => "); index != -1 {
+										message = message[index+4:]
+									}
+									errorMessages = append(errorMessages, message)
 								}
-								errorMessages = append(errorMessages, message)
 							}
+							err = ErrorWrap(cast.ToInt(r.Code), strings.Join(errorMessages, "；"))
 						}
-						err = ErrorWrap(cast.ToInt(r.Code), strings.Join(errorMessages, "；"))
 					} else {
 						msg := r.Message
 						if msg == "" {
