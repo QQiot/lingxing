@@ -180,11 +180,11 @@ lingXingClient.Services.Product.Bundle.All()
 - 邮件列表
 
 ```go
-lingXingClient.Services.CustomerService.Emails()
+lingXingClient.Services.CustomerService.Email.All()
 ```
 
 - 邮件详情
 
 ```go
-lingXingClient.Services.CustomerService.Email()
+lingXingClient.Services.CustomerService.Email.One()
 ```
