@@ -24,6 +24,10 @@ import (
 	"unsafe"
 )
 
+func init() {
+	extra.RegisterFuzzyDecoders()
+}
+
 // https://openapidoc.lingxing.com/#/docs/Guidance/ErrorCode
 const (
 	OK                       = 200     // 无错误
@@ -59,10 +63,6 @@ type LingXing struct {
 	Services  services // API Services
 }
 
-func init() {
-	extra.RegisterFuzzyDecoders()
-}
-
 func NewLingXing(config config.Config) *LingXing {
 	logger := log.New(os.Stdout, "[ LingXing ] ", log.LstdFlags|log.Llongfile)
 	var appId, appSecret string
@@ -93,14 +93,11 @@ func NewLingXing(config config.Config) *LingXing {
 
 	httpClient.SetTimeout(10 * time.Second).
 		OnBeforeRequest(func(client *resty.Client, request *resty.Request) error {
-			if lingXingClient.auth.ExpiresIn <= 0 || lingXingClient.auth.AccessToken == "" {
-				if auth, err := lingXingClient.Auth(); err != nil {
-					logger.Printf("auth error: %s", err.Error())
-					return err
-				} else {
-					lingXingClient.auth = auth
-				}
+			if err := lingXingClient.accessToken(); err != nil {
+				logger.Printf("auth error: %s", err.Error())
+				return err
 			}
+
 			client.SetAuthToken(lingXingClient.auth.AccessToken)
 
 			appendQueryParams := map[string]string{
@@ -301,18 +298,23 @@ type NormalResponse struct {
 }
 
 type AuthResponse struct {
-	AccessToken  string `json:"access_token"`
-	RefreshToken string `json:"refresh_token"`
-	ExpiresIn    int    `json:"expires_in"`
+	AccessToken     string    `json:"access_token"`
+	RefreshToken    string    `json:"refresh_token"`
+	ExpiresIn       int       `json:"expires_in"`
+	ExpiresDatetime time.Time `json:"-"`
 }
 
-func (lx *LingXing) Auth() (ar AuthResponse, err error) {
+func (lx *LingXing) accessToken() (err error) {
+	auth := lx.auth
+	if auth.AccessToken != "" && auth.ExpiresDatetime.After(time.Now()) {
+		return nil
+	}
+
 	result := struct {
 		Code    string       `json:"code"`
 		Message string       `json:"msg"`
 		Data    AuthResponse `json:"data"`
 	}{}
-
 	httpClient := resty.New().
 		SetDebug(lx.Debug).
 		SetHeaders(map[string]string{
@@ -325,9 +327,13 @@ func (lx *LingXing) Auth() (ar AuthResponse, err error) {
 	} else {
 		httpClient.SetBaseURL("https://openapi.lingxing.com")
 	}
+	url := fmt.Sprintf("/api/auth-server/oauth/access-token?appId=%s&appSecret=%s", lx.appId, url.QueryEscape(lx.appSecret))
+	if auth.RefreshToken != "" {
+		url = fmt.Sprintf("/api/auth-server/oauth/refresh?appId=%s&refreshToken=%s", lx.appId, auth.RefreshToken)
+	}
 	resp, err := httpClient.R().
 		SetResult(&result).
-		Post(fmt.Sprintf("/api/auth-server/oauth/access-token?appId=%s&appSecret=%s", lx.appId, url.QueryEscape(lx.appSecret)))
+		Post(url)
 	if err != nil {
 		return
 	}
@@ -336,7 +342,9 @@ func (lx *LingXing) Auth() (ar AuthResponse, err error) {
 		code, _ := strconv.ParseInt(result.Code, 10, 32)
 		err = ErrorWrap(int(code), result.Message)
 		if err == nil {
-			ar = result.Data
+			ar := result.Data
+			ar.ExpiresDatetime = time.Now().Add(time.Duration(ar.ExpiresIn*8/10) * time.Second) // 剩余 1/5 时间就会要求更换 token
+			lx.auth = ar
 		}
 	} else {
 		err = fmt.Errorf("%s: %s", resp.Status(), bytex.ToString(resp.Body()))
