@@ -188,3 +188,9 @@ lingXingClient.Services.CustomerService.Email.All()
 ```go
 lingXingClient.Services.CustomerService.Email.One()
 ```
+
+- Review 列表
+
+```go
+lingXingClient.Services.CustomerService.Review.All()
+```

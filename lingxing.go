@@ -268,7 +268,8 @@ func NewLingXing(config config.Config) *LingXing {
 	lingXingClient.Services = services{
 		BasicData: (basicDataService)(xService),
 		CustomerService: customerServiceService{
-			Email: (customerServiceEmailService)(xService),
+			Email:  (customerServiceEmailService)(xService),
+			Review: (customerServiceReviewService)(xService),
 		},
 		Product: productService{
 			productProductService: (productProductService)(xService),
