@@ -16,7 +16,7 @@ go get github.com/hiscaler/lingxing
 ```
 var lingXingClient *LingXing
 // 加载配置文件
-b, err := os.ReadFile("./config/config_test.json")
+b, err := os.ReadFile("./config/config.json")
 if err != nil {
     panic(fmt.Sprintf("Read config error: %s", err.Error()))
 }
