@@ -119,6 +119,12 @@ lingXingClient.Services.FBA.Shipment.One()
 lingXingClient.Services.FBA.StorageFee.LongTerm()
 ```
 
+- 查询 FBA 月仓储费
+
+```go
+lingXingClient.Services.FBA.StorageFee.Month()
+```
+
 ### 产品
 
 - 本地产品列表

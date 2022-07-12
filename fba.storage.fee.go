@@ -75,3 +75,71 @@ func (s fbaStorageFeeService) LongTerm(params FBALongTermStorageFeesQueryParams)
 	}
 	return
 }
+
+// 月仓储费
+
+type FBAMonthStorageFee struct {
+	SID                           int     `json:"sid"`                              // 店铺ID
+	Asin                          string  `json:"asin"`                             // ASIN
+	FnSKU                         string  `json:"fnsku"`                            // FNSKU
+	ProductName                   string  `json:"product_name"`                     // 标题
+	FulfillmentCenter             string  `json:"fulfillment_center"`               // 仓库编号
+	CountryCode                   string  `json:"country_code"`                     // 国家代码
+	LongestSide                   float64 `json:"longest_side"`                     // 长边
+	MedianSide                    float64 `json:"median_side"`                      // 中间边
+	ShortestSide                  float64 `json:"shortest_side"`                    // 短边
+	MeasurementUnits              string  `json:"measurement_units"`                // 长中短边单位
+	Weight                        float64 `json:"weight"`                           // 重量
+	WeightUnits                   string  `json:"weight_units"`                     // 重量单位
+	ItemVolume                    float64 `json:"item_volume"`                      // 体积
+	VolumeUnits                   string  `json:"volume_units"`                     // 体积单位
+	ProductSizeTier               string  `json:"product_size_tier"`                // 产品标准
+	AverageQuantityOnHand         float64 `json:"average_quantity_on_hand"`         // 库存量
+	AverageQuantityPendingRemoval float64 `json:"average_quantity_pending_removal"` // 待移除量
+	EstimatedTotalItemVolume      float64 `json:"estimated_total_item_volume"`      // 总体积
+	MonthOfCharge                 string  `json:"month_of_charge"`                  // 收费月份
+	StorageRate                   float64 `json:"storage_rate"`                     // 收费标准
+	Currency                      string  `json:"currency"`                         // 币种
+	EstimatedMonthlyStorageFee    float64 `json:"estimated_monthly_storage_fee"`    // 预估仓储费
+}
+
+type FBAMonthStorageFeesQueryParams struct {
+	Paging
+	SID   int    `json:"sid"`   // 店铺 ID
+	Month string `json:"month"` // 收费月份
+}
+
+func (m FBAMonthStorageFeesQueryParams) Validate() error {
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.SID, validation.Required.Error("店铺 ID 不能为空")),
+		validation.Field(&m.Month,
+			validation.Required.Error("收费月份不能为空"),
+			validation.Date("2006-01").Error("收费月份格式有误，正确的格式为：2006-01"),
+		),
+	)
+}
+
+func (s fbaStorageFeeService) Month(params FBALongTermStorageFeesQueryParams) (items []FBAMonthStorageFee, nextOffset int, isLastPage bool, err error) {
+	if err = params.Validate(); err != nil {
+		return
+	}
+
+	params.SetPagingVars()
+	res := struct {
+		NormalResponse
+		Data []FBAMonthStorageFee `json:"data"`
+	}{}
+	resp, err := s.httpClient.R().
+		SetBody(params).
+		Post("/data/fba_report/storageFeeMonth")
+	if err != nil {
+		return
+	}
+
+	if err = jsoniter.Unmarshal(resp.Body(), &res); err == nil {
+		items = res.Data
+		nextOffset = params.NextOffset
+		isLastPage = len(items) < params.Limit
+	}
+	return
+}
