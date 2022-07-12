@@ -29,21 +29,15 @@ type AmazonFBMOrdersQueryParams struct {
 	Paging
 	SID         string `json:"sid"`                    // 店铺 ID（多个使用逗号分隔开）
 	OrderStatus string `json:"order_status,omitempty"` // 订单状态，用逗号分隔开（2:已发货、3:未付款、4:待审核、5:待发货、6:已取消）
-	StartTime   string `json:"start_time,omitempty'"`  // 查询时间左闭区间，可精确到时分秒，格式：Y-m-d或Y-m-d H:i:s
+	StartTime   string `json:"start_time,omitempty"`   // 查询时间左闭区间，可精确到时分秒，格式：Y-m-d或Y-m-d H:i:s
 	EndTime     string `json:"end_time,omitempty"`     // 查询时间右开区间，可精确到时分秒，格式：Y-m-d或Y-m-d H:i:s
 }
 
 func (m AmazonFBMOrdersQueryParams) Validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.SID, validation.Required.Error("店铺 ID 不能为空")),
-		validation.Field(&m.StartTime,
-			validation.Required.Error("查询开始时间不能为空"),
-			validation.Date(constant.DatetimeFormat).Error("查询开始时间格式有误"),
-		),
-		validation.Field(&m.EndTime,
-			validation.Required.Error("查询结束时间不能为空"),
-			validation.Date(constant.DatetimeFormat).Error("查询结束时间格式有误"),
-		),
+		validation.Field(&m.StartTime, validation.When(m.StartTime != "", validation.Date(constant.DatetimeFormat).Error("查询开始时间格式有误"))),
+		validation.Field(&m.EndTime, validation.When(m.EndTime != "", validation.Date(constant.DatetimeFormat).Error("查询结束时间格式有误"))),
 	)
 }
 
