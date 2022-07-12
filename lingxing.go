@@ -7,6 +7,7 @@ import (
 	"github.com/go-resty/resty/v2"
 	"github.com/hiscaler/gox/bytex"
 	"github.com/hiscaler/gox/cryptox"
+	"github.com/hiscaler/gox/inx"
 	"github.com/hiscaler/gox/jsonx"
 	"github.com/hiscaler/gox/stringx"
 	"github.com/hiscaler/lingxing/config"
@@ -359,6 +360,10 @@ func (lx *LingXing) accessToken() (err error) {
 			ar := result.Data
 			ar.ExpiresDatetime = time.Now().Add(time.Duration(ar.ExpiresIn*8/10) * time.Second) // 剩余 1/5 时间就会要求更换 token
 			lx.auth = ar
+		} else if inx.IntIn(int(code), RefreshTokenExpiredError, InvalidRefreshTokenError) {
+			// Refresh Token 无效的话则重新发起认证
+			lx.auth = AuthResponse{}
+			lx.accessToken()
 		}
 	} else {
 		err = fmt.Errorf("%s: %s", resp.Status(), bytex.ToString(resp.Body()))
