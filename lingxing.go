@@ -264,6 +264,9 @@ func NewLingXing(config config.Config) *LingXing {
 			} else {
 				*((*bool)(ptr)) = v > 0
 			}
+		case jsoniter.NilValue:
+			iter.Skip()
+			*((*bool)(ptr)) = false
 		default:
 			*((*bool)(ptr)) = iter.ReadBool()
 		}
