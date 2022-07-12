@@ -113,7 +113,7 @@ type FBMOrderDetail struct {
 	LogisticsFreightCurrencyCode string               `json:"logistics_freight_currency_code"` // 物流运费币种
 	OrderPriceAmount             float64              `json:"order_price_amount"`              // 订单总金额
 	GrossProfitAmount            float64              `json:"gross_profit_amount"`             // 订单毛利润
-	OrderItem                    []FBMOrderDetailItem `json:"order_item"`
+	OrderItem                    []FBMOrderDetailItem `json:"order_item"`                      // 订单项
 }
 
 type FBMOrderDetailItem struct {
