@@ -2,6 +2,7 @@ package lingxing
 
 import (
 	jsoniter "github.com/json-iterator/go"
+	"strings"
 )
 
 // 查询亚马逊店铺信息
@@ -18,8 +19,23 @@ type Seller struct {
 	AccountName     string `json:"account_name"`      // 帐号名称
 }
 
+type SellersQueryParams struct {
+	Name     string `url:"name,omitempty"`      // 店铺名（LIKE）
+	SellerId string `url:"seller_id,omitempty"` // Seller ID（EQ）
+}
+
+func (m SellersQueryParams) Validate() error {
+	return nil
+}
+
 // Sellers 查询亚马逊店铺信息
-func (s basicDataService) Sellers() (items []Seller, err error) {
+func (s basicDataService) Sellers(params ...SellersQueryParams) (items []Seller, err error) {
+	if len(params) > 0 {
+		if err = params[0].Validate(); err != nil {
+			return
+		}
+	}
+
 	res := struct {
 		NormalResponse
 		Data []Seller `json:"data"`
@@ -30,7 +46,25 @@ func (s basicDataService) Sellers() (items []Seller, err error) {
 	}
 
 	if err = jsoniter.Unmarshal(resp.Body(), &res); err == nil {
-		items = res.Data
+		if len(params) == 0 {
+			items = res.Data
+		} else {
+			name := strings.TrimSpace(params[0].Name)
+			sellerId := params[0].SellerId
+			if name == "" && sellerId == "" {
+				items = res.Data
+			} else {
+				items = make([]Seller, 0)
+				name = strings.ToLower(name)
+				for i := range res.Data {
+					if (name != "" && !strings.Contains(strings.ToLower(res.Data[i].Name), name)) ||
+						sellerId != "" && !strings.EqualFold(res.Data[i].SellerId, sellerId) {
+						continue
+					}
+					items = append(items, res.Data[i])
+				}
+			}
+		}
 	}
 	return
 }
