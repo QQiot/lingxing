@@ -13,7 +13,7 @@ type FBALongTermStorageFee struct {
 	SID                                  int    `json:"sid"`                                     // 店铺ID
 	SnapshotDate                         string `json:"snapshot_date"`                           // 时间
 	SKU                                  string `json:"sku"`                                     // SKU
-	FnSKU                                string `json:"fn_sku"`                                  // FNSKU
+	FnSKU                                string `json:"fnsku"`                                   // FNSKU
 	Asin                                 string `json:"asin"`                                    // ASIN
 	ProductName                          string `json:"product_name"`                            // 标题
 	Condition                            string `json:"condition"`                               // 状况
