@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/go-resty/resty/v2"
 	"github.com/hiscaler/gox/bytex"
+	"github.com/hiscaler/lingxing/config"
 	"net/url"
 	"strconv"
 	"time"
@@ -11,14 +12,14 @@ import (
 
 type authorizationService service
 
-func newHttpClient(c cfg) *resty.Client {
-	httpClient := resty.New().SetDebug(c.debug).
+func newHttpClient(c config.Config) *resty.Client {
+	httpClient := resty.New().SetDebug(c.Debug).
 		SetHeaders(map[string]string{
 			"Content-Type": "application/json",
 			"Accept":       "application/json",
 			"User-Agent":   userAgent,
 		})
-	if c.sandbox {
+	if c.Sandbox {
 		httpClient.SetBaseURL("https://openapisandbox.lingxing.com")
 	} else {
 		httpClient.SetBaseURL("https://openapi.lingxing.com")
@@ -36,7 +37,7 @@ func (s authorizationService) GetToken() (ar authorizationResponse, err error) {
 	}{}
 	resp, err := newHttpClient(*s.config).R().
 		SetResult(&result).
-		Post(fmt.Sprintf("/api/auth-server/oauth/access-token?appId=%s&appSecret=%s", s.config.appId, url.QueryEscape(s.config.appSecret)))
+		Post(fmt.Sprintf("/api/auth-server/oauth/access-token?appId=%s&appSecret=%s", s.config.AppId, url.QueryEscape(s.config.AppSecret)))
 	if err != nil {
 		return
 	}
@@ -63,7 +64,7 @@ func (s authorizationService) RefreshToken(refreshToken string) (ar authorizatio
 	}{}
 	resp, err := newHttpClient(*s.config).R().
 		SetResult(&result).
-		Post(fmt.Sprintf("/api/auth-server/oauth/refresh?appId=%s&refreshToken=%s", s.config.appId, refreshToken))
+		Post(fmt.Sprintf("/api/auth-server/oauth/refresh?appId=%s&refreshToken=%s", s.config.AppId, refreshToken))
 	if err != nil {
 		return
 	}

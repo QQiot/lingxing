@@ -55,38 +55,24 @@ const (
 var ErrNotFound = errors.New("lingxing: not found")
 
 type LingXing struct {
-	config        *cfg                  // 配置
+	config        *config.Config        // 配置
 	httpClient    *resty.Client         // Resty Client
 	authorization authorizationResponse // 认证数据
 	Services      services              // API Services
 }
 
-func NewLingXing(config config.Config) *LingXing {
+func NewLingXing(cfg config.Config) *LingXing {
 	logger := log.New(os.Stdout, "[ LingXing ] ", log.LstdFlags|log.Llongfile)
-	var appId, appSecret string
-	if config.Sandbox {
-		appId = config.Environment.Dev.AppId
-		appSecret = config.Environment.Dev.AppSecret
-	} else {
-		appId = config.Environment.Prod.AppId
-		appSecret = config.Environment.Prod.AppSecret
-	}
-	c := &cfg{
-		debug:     config.Debug,
-		sandbox:   config.Sandbox,
-		appId:     appId,
-		appSecret: appSecret,
-	}
 	lingXingClient := &LingXing{
-		config: c,
+		config: &cfg,
 	}
-	httpClient := resty.New().SetDebug(lingXingClient.config.debug).
+	httpClient := resty.New().SetDebug(lingXingClient.config.Debug).
 		SetHeaders(map[string]string{
 			"Content-Type": "application/json",
 			"Accept":       "application/json",
 			"User-Agent":   userAgent,
 		})
-	if c.sandbox {
+	if cfg.Sandbox {
 		httpClient.SetBaseURL("https://openapisandbox.lingxing.com/erp/sc")
 	} else {
 		httpClient.SetBaseURL("https://openapi.lingxing.com/erp/sc")
@@ -102,7 +88,7 @@ func NewLingXing(config config.Config) *LingXing {
 			client.SetAuthToken(lingXingClient.authorization.AccessToken)
 
 			appendQueryParams := map[string]string{
-				"app_key":      lingXingClient.config.appId,
+				"app_key":      lingXingClient.config.AppId,
 				"access_token": lingXingClient.authorization.AccessToken,
 				"timestamp":    strconv.FormatInt(time.Now().Unix(), 10),
 			}
@@ -126,10 +112,10 @@ func NewLingXing(config config.Config) *LingXing {
 					params[k] = v
 				}
 			}
-			if lingXingClient.config.debug {
+			if lingXingClient.config.Debug {
 				logger.Printf("Signature params: %+v", params)
 			}
-			sign, err := generateSignature(lingXingClient.config.appId, params)
+			sign, err := generateSignature(lingXingClient.config.AppId, params)
 			if err != nil {
 				return err
 			}
@@ -280,7 +266,7 @@ func NewLingXing(config config.Config) *LingXing {
 
 	lingXingClient.httpClient = httpClient
 	xService := service{
-		config:     c,
+		config:     &cfg,
 		logger:     logger,
 		httpClient: lingXingClient.httpClient,
 	}
@@ -316,7 +302,7 @@ func NewLingXing(config config.Config) *LingXing {
 
 // SetDebug 设置是否开启调试模式
 func (lx *LingXing) SetDebug(v bool) *LingXing {
-	lx.config.debug = v
+	lx.config.Debug = v
 	lx.httpClient.SetDebug(v)
 	return lx
 }
@@ -352,21 +338,21 @@ func (lx *LingXing) accessToken() (err error) {
 		Data    authorizationResponse `json:"data"`
 	}{}
 	httpClient := resty.New().
-		SetDebug(lx.config.debug).
+		SetDebug(lx.config.Debug).
 		SetHeaders(map[string]string{
 			"Content-Type": "application/json",
 			"Accept":       "application/json",
 			"User-Agent":   userAgent,
 		})
-	if lx.config.sandbox {
+	if lx.config.Sandbox {
 		httpClient.SetBaseURL("https://openapisandbox.lingxing.com")
 	} else {
 		httpClient.SetBaseURL("https://openapi.lingxing.com")
 	}
 
-	url := fmt.Sprintf("/api/auth-server/oauth/access-token?appId=%s&appSecret=%s", lx.config.appId, url.QueryEscape(lx.config.appSecret))
+	url := fmt.Sprintf("/api/auth-server/oauth/access-token?appId=%s&appSecret=%s", lx.config.AppId, url.QueryEscape(lx.config.AppSecret))
 	if auth.RefreshToken != "" {
-		url = fmt.Sprintf("/api/auth-server/oauth/refresh?appId=%s&refreshToken=%s", lx.config.appId, auth.RefreshToken)
+		url = fmt.Sprintf("/api/auth-server/oauth/refresh?appId=%s&refreshToken=%s", lx.config.AppId, auth.RefreshToken)
 	}
 	resp, err := httpClient.R().SetResult(&result).Post(url)
 	if err != nil {

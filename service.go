@@ -2,20 +2,14 @@ package lingxing
 
 import (
 	"github.com/go-resty/resty/v2"
+	"github.com/hiscaler/lingxing/config"
 	"log"
 )
 
-type cfg struct {
-	debug     bool
-	sandbox   bool
-	appId     string
-	appSecret string
-}
-
 type service struct {
-	config     *cfg          // Config
-	logger     *log.Logger   // Logger
-	httpClient *resty.Client // HTTP client
+	config     *config.Config // Config
+	logger     *log.Logger    // Logger
+	httpClient *resty.Client  // HTTP client
 }
 
 // API Services
