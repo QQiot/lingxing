@@ -129,7 +129,7 @@ func NewLingXing(config config.Config) *LingXing {
 			if lingXingClient.config.debug {
 				logger.Printf("Signature params: %+v", params)
 			}
-			sign, err := generateSign(lingXingClient.config.appId, params)
+			sign, err := generateSignature(lingXingClient.config.appId, params)
 			if err != nil {
 				return err
 			}
@@ -387,9 +387,9 @@ func (lx *LingXing) accessToken() (err error) {
 	return
 }
 
-func generateSign(appId string, params map[string]interface{}) (sign string, err error) {
-	n := len(params)
-	keys := make([]string, n)
+// 生成签名
+func generateSignature(appId string, params map[string]interface{}) (sign string, err error) {
+	keys := make([]string, len(params))
 	i := 0
 	for k := range params {
 		keys[i] = k
@@ -416,7 +416,7 @@ func generateSign(appId string, params map[string]interface{}) (sign string, err
 		sb.WriteRune('&')
 	}
 	s := sb.String()
-	if n = len(s); n > 0 {
+	if n := len(s); n > 0 {
 		s = s[0 : n-1]
 	}
 
