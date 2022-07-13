@@ -1,9 +1,9 @@
 package lingxing
 
 import (
-	"errors"
 	"fmt"
 	"github.com/go-resty/resty/v2"
+	"github.com/hiscaler/gox/bytex"
 	"net/url"
 	"strconv"
 	"time"
@@ -26,6 +26,8 @@ func newHttpClient(c cfg) *resty.Client {
 	return httpClient
 }
 
+// GetToken 获取 access-token 和 refresh-token
+// https://openapidoc.lingxing.com/#/docs/Authorization/GetToken
 func (s authorizationService) GetToken() (ar authorizationResponse, err error) {
 	result := struct {
 		Code    string                `json:"code"`
@@ -46,11 +48,13 @@ func (s authorizationService) GetToken() (ar authorizationResponse, err error) {
 			ar.ExpiresDatetime = time.Now().Add(time.Duration(ar.ExpiresIn*5/10) * time.Second) // 剩余 1/2 时间就会要求更换 token
 		}
 	} else {
-		err = errors.New(resp.Status())
+		err = fmt.Errorf("%s: %s", resp.Status(), bytex.ToString(resp.Body()))
 	}
 	return
 }
 
+// RefreshToken 刷新token（token续约，每个refreshToken只能用一次）
+// https://openapidoc.lingxing.com/#/docs/Authorization/RefreshToken
 func (s authorizationService) RefreshToken(refreshToken string) (ar authorizationResponse, err error) {
 	result := struct {
 		Code    string                `json:"code"`
@@ -70,7 +74,7 @@ func (s authorizationService) RefreshToken(refreshToken string) (ar authorizatio
 			ar = result.Data
 		}
 	} else {
-		err = errors.New(resp.Status())
+		err = fmt.Errorf("%s: %s", resp.Status(), bytex.ToString(resp.Body()))
 	}
 	return
 }
