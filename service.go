@@ -5,14 +5,22 @@ import (
 	"log"
 )
 
+type cfg struct {
+	debug     bool
+	sandbox   bool
+	appId     string
+	appSecret string
+}
+
 type service struct {
-	debug      bool          // Is debug mode
+	config     *cfg          // Config
 	logger     *log.Logger   // Logger
 	httpClient *resty.Client // HTTP client
 }
 
 // API Services
 type services struct {
+	Authorization   authorizationService
 	BasicData       basicDataService
 	CustomerService customerServiceService
 	Product         productService

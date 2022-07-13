@@ -30,10 +30,20 @@ lingXingClient = NewLingXing(c)
 
 ## 服务
 
-### ~~授权~~
+### 授权
 
-- ~~Auth(appId, appSecret string) (ar AuthResponse, err error)~~
-- ~~Refresh(appId, refreshToken string) (ar AuthResponse, err error)~~
+- 获取 Token
+
+```go
+lingXingClient.Services.Authorization.GetToken()
+```
+
+
+- 刷新 Token
+
+```go
+lingXingClient.Services.Authorization.RefreshToken(refreshTokenValue)
+```
 
 ### 基础数据
 
