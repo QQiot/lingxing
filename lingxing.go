@@ -351,7 +351,7 @@ func (lx *LingXing) accessToken() (err error) {
 	}
 
 	url := fmt.Sprintf("/api/auth-server/oauth/access-token?appId=%s&appSecret=%s", lx.config.AppId, url.QueryEscape(lx.config.AppSecret))
-	if auth.RefreshToken != "" {
+	if auth.RefreshToken != "" && auth.ExpiresDatetime.After(time.Now()) {
 		url = fmt.Sprintf("/api/auth-server/oauth/refresh?appId=%s&refreshToken=%s", lx.config.AppId, auth.RefreshToken)
 	}
 	resp, err := httpClient.R().SetResult(&result).Post(url)
