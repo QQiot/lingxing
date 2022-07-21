@@ -54,7 +54,7 @@ func (s authorizationService) GetToken() (ar authorizationResponse, err error) {
 	return
 }
 
-// RefreshToken 刷新token（token续约，每个refreshToken只能用一次）
+// RefreshToken 刷新 token（token 续约，每个 refreshToken 只能用一次）
 // https://openapidoc.lingxing.com/#/docs/Authorization/RefreshToken
 func (s authorizationService) RefreshToken(refreshToken string) (ar authorizationResponse, err error) {
 	result := struct {
