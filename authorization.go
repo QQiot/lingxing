@@ -46,7 +46,7 @@ func (s authorizationService) GetToken() (ar authorizationResponse, err error) {
 		code, _ := strconv.Atoi(result.Code)
 		if err = ErrorWrap(code, result.Message); err == nil {
 			ar = result.Data
-			ar.ExpiresDatetime = time.Now().Add(time.Duration(ar.ExpiresIn*5/10) * time.Second) // 剩余 1/2 时间就会要求更换 token
+			ar.ExpiresDatetime = time.Now().Unix() + int64(ar.ExpiresIn*5/10) // 剩余 1/2 时间就会要求更换 token
 		}
 	} else {
 		err = fmt.Errorf("%s: %s", resp.Status(), bytex.ToString(resp.Body()))

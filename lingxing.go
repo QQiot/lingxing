@@ -80,7 +80,7 @@ func NewLingXing(cfg config.Config) *LingXing {
 
 	httpClient.SetTimeout(10 * time.Second).
 		OnBeforeRequest(func(client *resty.Client, request *resty.Request) error {
-			if err := lingXingClient.accessToken(); err != nil {
+			if err := lingXingClient.accessToken(true); err != nil {
 				logger.Printf("authorization error: %s", err.Error())
 				return err
 			}
@@ -312,23 +312,26 @@ type NormalResponse struct {
 }
 
 type authorizationResponse struct {
-	AccessToken     string    `json:"access_token"`
-	RefreshToken    string    `json:"refresh_token"`
-	ExpiresIn       int       `json:"expires_in"`
-	ExpiresDatetime time.Time `json:"-"`
+	AccessToken     string `json:"access_token"`
+	RefreshToken    string `json:"refresh_token"`
+	ExpiresIn       int    `json:"expires_in"`
+	ExpiresDatetime int64  `json:"expires_datetime"`
 }
 
 // IsExpired 是否过期
 func (ar authorizationResponse) IsExpired() bool {
-	if ar.AccessToken == "" || ar.ExpiresIn == 0 || ar.ExpiresDatetime.IsZero() || ar.ExpiresDatetime.Before(time.Now()) {
+	if ar.AccessToken == "" || ar.ExpiresIn == 0 || ar.ExpiresDatetime <= time.Now().Unix() {
 		return true
 	}
 	return false
 }
 
-func (lx *LingXing) accessToken() (err error) {
+// accessToken 获取 Token 值
+// force 参数为 true 的情况下，会强制重新获取 token，为 false 的情况下根据已有的 token 数据是否过期而采取重新获取或者续期处理。
+// 当前通过测试发现领星对 token 的过期时间处理并不是很准确，故当前总是重新获取 token.
+func (lx *LingXing) accessToken(force bool) (err error) {
 	auth := lx.authorization
-	if !auth.IsExpired() {
+	if !force && !auth.IsExpired() {
 		return nil
 	}
 
@@ -351,7 +354,7 @@ func (lx *LingXing) accessToken() (err error) {
 	}
 
 	url := fmt.Sprintf("/api/auth-server/oauth/access-token?appId=%s&appSecret=%s", lx.config.AppId, url.QueryEscape(lx.config.AppSecret))
-	if auth.RefreshToken != "" && auth.ExpiresDatetime.After(time.Now()) {
+	if !force && auth.RefreshToken != "" && auth.ExpiresDatetime > time.Now().Unix() {
 		url = fmt.Sprintf("/api/auth-server/oauth/refresh?appId=%s&refreshToken=%s", lx.config.AppId, auth.RefreshToken)
 	}
 	resp, err := httpClient.R().SetResult(&result).Post(url)
@@ -364,7 +367,7 @@ func (lx *LingXing) accessToken() (err error) {
 		err = ErrorWrap(int(code), result.Message)
 		if err == nil {
 			ar := result.Data
-			ar.ExpiresDatetime = time.Now().Add(time.Duration(ar.ExpiresIn*5/10) * time.Second) // 剩余 1/2 时间就会要求更换 token
+			ar.ExpiresDatetime = time.Now().Unix() + int64(ar.ExpiresIn*5/10) // 剩余 1/2 时间就会要求更换 token
 			lx.authorization = ar
 		}
 	} else {
