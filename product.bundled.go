@@ -22,7 +22,7 @@ type BundledProduct struct {
 
 // BundledProductItem 捆绑产品
 type BundledProductItem struct {
-	productId string `json:"productId"`  // 子产品ID
+	ProductId string `json:"productId"`  // 子产品ID
 	SKU       string `json:"sku"`        // 子产品SKU
 	Quantity  int    `json:"bundledQty"` // 捆绑数量
 }
