@@ -51,12 +51,14 @@ type ListingPrincipal struct {
 
 type ListingsQueryParams struct {
 	Paging
-	SID int `json:"sid"` // 店铺ID
+	SID    int `json:"sid"`     // 店铺ID
+	IsPair int `json:"is_pair"` // 是否配对（1：已配对，2：未配对）
 }
 
 func (m ListingsQueryParams) Validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.SID, validation.Required.Error("店铺 ID 不能为空")),
+		validation.Field(&m.IsPair, validation.In(1, 2).Error("无效的配对状态")),
 	)
 }
 
