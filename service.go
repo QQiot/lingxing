@@ -21,4 +21,5 @@ type services struct {
 	Sale            saleService            // 销售
 	FBA             fbaService             // FBA
 	Statistic       statisticService       // 统计
+	Ad              adService              // 广告
 }
