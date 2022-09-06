@@ -1,8 +1,6 @@
 package lingxing
 
 import (
-	"fmt"
-	"github.com/hiscaler/gox/jsonx"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -14,7 +12,6 @@ func TestStatisticService_Products(t *testing.T) {
 		EndDate:   "2022-09-01",
 	}
 	params.Limit = 1
-	items, _, _, err := lingXingClient.Services.Statistic.Products(params)
+	_, _, _, err := lingXingClient.Services.Statistic.Products(params)
 	assert.Equal(t, nil, err, "error")
-	fmt.Println(jsonx.ToPrettyJson(items))
 }
