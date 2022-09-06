@@ -296,6 +296,7 @@ func NewLingXing(cfg config.Config) *LingXing {
 			Shipment:   (fbaShipmentService)(xService),
 			StorageFee: (fbaStorageFeeService)(xService),
 		},
+		Statistic: (statisticService)(xService),
 	}
 	return lingXingClient
 }
