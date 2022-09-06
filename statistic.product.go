@@ -145,7 +145,7 @@ func (s statisticService) Products(params ProductStatisticQueryParams) (items []
 			}
 		}
 		nextOffset = params.NextOffset
-		isLastPage = len(items) < params.Limit
+		isLastPage = res.Total <= nextOffset
 	}
 	return
 }
