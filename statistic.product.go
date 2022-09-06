@@ -1,9 +1,12 @@
 package lingxing
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/hiscaler/gox/bytex"
+	"github.com/hiscaler/gox/jsonx"
 	"github.com/hiscaler/lingxing/constant"
 	jsoniter "github.com/json-iterator/go"
 	"time"
@@ -19,6 +22,7 @@ type ProductReport struct {
 	ItemName                    string          `json:"item_name"`                      // 标题
 	CID                         int             `json:"cid"`                            // 种类 ID
 	BID                         int             `json:"bid"`                            // 品牌 ID
+	CurrencyCode                string          `json:"currency_code"`                  // 货币代码
 	AvailableDays               float64         `json:"avaiable_days"`                  // 可售天数预估
 	OrderItems                  int             `json:"order_items"`                    // 订单量
 	Volume                      int             `json:"volume"`                         // 销量
@@ -51,7 +55,7 @@ type ProductReport struct {
 	Acos                        float64         `json:"acos"`                           // ACOS
 	Acoas                       float64         `json:"acoas"`                          // ACoAS
 	OrderQuantity               float64         `json:"order_quantity"`                 // 广告订单量
-	Category                    string          `json:"category"`                       // 类别
+	Category                    json.RawMessage `json:"category"`                       // 类别
 	Pid                         int             `json:"pid"`                            // 商品ID
 	AdvRate                     float64         `json:"adv_rate"`                       // 广告订单量占比
 	SalesAmount                 float64         `json:"sales_amount"`                   // 广告销售额
@@ -63,6 +67,7 @@ type ProductReport struct {
 
 type ProductStatisticQueryParams struct {
 	Paging
+	SID       int    `json:"sid"`                 // 店铺 ID
 	AsinType  int    `json:"asin_type,omitempty"` // 产品表现维度（0：asin、1：父 asin，不填默认为 0）
 	StartDate string `json:"start_date"`          // 报表时间（Y-m-d格式。 eg:2019-07-12，闭区间）
 	EndDate   string `json:"end_date"`            // 报表时间（Y-m-d格式。 eg:2019-07-12，开区间）
@@ -70,7 +75,8 @@ type ProductStatisticQueryParams struct {
 
 func (m ProductStatisticQueryParams) Validate() error {
 	return validation.ValidateStruct(&m,
-		validation.Field(&m.AsinType, validation.When(!validation.IsEmpty(m.AsinType), validation.In(0, 1))),
+		validation.Field(&m.SID, validation.Required.Error("店铺 ID 不能为空")),
+		validation.Field(&m.AsinType, validation.When(!validation.IsEmpty(m.AsinType), validation.In(0, 1).Error("无效的产品表现维度"))),
 		validation.Field(&m.StartDate,
 			validation.Required.Error("报表开始时间不能为空"),
 			validation.Date(constant.DateFormat).Error("报表开始时间格式有误"),
@@ -119,6 +125,25 @@ func (s statisticService) Products(params ProductStatisticQueryParams) (items []
 
 	if err = jsoniter.Unmarshal(resp.Body(), &res); err == nil {
 		items = res.Data
+		emptyArray := jsonx.EmptyArrayRawMessage()
+		for i := range items {
+			// Category string to []string
+			b := items[i].Category
+			if bytex.IsBlank(b) {
+				items[i].Category = emptyArray
+			} else {
+				category := emptyArray
+				b = bytes.ReplaceAll(b, []byte(`\"`), []byte(`"`))
+				b = bytes.Trim(b, `"`)
+				var ss []string
+				if e := jsoniter.Unmarshal(b, &ss); e == nil {
+					if v, e := jsonx.ToRawMessage(ss, "[]"); e == nil {
+						category = v
+					}
+				}
+				items[i].Category = category
+			}
+		}
 		nextOffset = params.NextOffset
 		isLastPage = len(items) < params.Limit
 	}
