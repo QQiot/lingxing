@@ -230,10 +230,10 @@ type AdProductTarget struct {
 
 type AdProductTargetsQueryParams struct {
 	Paging
-	SID       int    `json:"sid"`        // 店铺 ID
-	StartDate string `json:"start_date"` // 广告时间左闭区间，Y-m-d格式
-	EndDate   string `json:"end_date"`   // 广告时间右开区间，Y-m-d格式
-	Type      int    `json:"type"`       //	广告类型（1：SP广告、2：SB广告、3:SD广告、不填默认SP）
+	SID       int    `json:"sid"`            // 店铺 ID
+	StartDate string `json:"start_date"`     // 广告时间左闭区间，Y-m-d格式
+	EndDate   string `json:"end_date"`       // 广告时间右开区间，Y-m-d格式
+	Type      int    `json:"type,omitempty"` //	广告类型（1：SP广告、2：SB广告、3:SD广告、不填默认SP）
 }
 
 func (m AdProductTargetsQueryParams) Validate() error {
@@ -270,7 +270,8 @@ func (m AdProductTargetsQueryParams) Validate() error {
 }
 
 // ProductTargets 查询广告管理-商品定位
-func (s adService) ProductTargets(params AdQueryWordsQueryParams) (items []AdProductTarget, nextOffset int, isLastPage bool, err error) {
+func (s adService) ProductTargets(params AdProductTargetsQueryParams) (items []AdProductTarget, nextOffset int, isLastPage bool, err error) {
+	params.SetPagingVars()
 	if err = params.Validate(); err != nil {
 		return
 	}
