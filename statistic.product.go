@@ -27,9 +27,9 @@ type ProductReport struct {
 	OrderItems                  int             `json:"order_items"`                    // 订单量
 	Volume                      int             `json:"volume"`                         // 销量
 	Amount                      float64         `json:"amount"`                         // 销售额
-	SessionsBrowser             string          `json:"sessions_browser"`               // Sessions Browser
-	SessionsTotal               string          `json:"sessions_total"`                 // Sessions Total
-	SessionsMobile              string          `json:"sessions_mobile"`                // Sessions Mobile
+	SessionsBrowser             int             `json:"sessions_browser"`               // Sessions Browser
+	SessionsTotal               int             `json:"sessions_total"`                 // Sessions Total
+	SessionsMobile              int             `json:"sessions_mobile"`                // Sessions Mobile
 	BuyBoxPercentage            float64         `json:"buy_box_percentage"`             // Buy Box
 	PageViewsBrowser            float64         `json:"page_views_browser"`             // PV Browser
 	PageViewsTotal              float64         `json:"page_views_total"`               // PV Total
