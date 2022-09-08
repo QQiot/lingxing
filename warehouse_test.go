@@ -30,13 +30,12 @@ func Test_warehouseService_All(t *testing.T) {
 					if limit == 0 {
 						limit = 1000 // Default size per page
 					}
-
 					assert.Equalf(t, true, n <= limit, "All(%s) items", params)                        // check return count is less or equal limit param value
 					assert.Equalf(t, isLastPage, n < limit, "All(%s) isLastPage", params)              // check isLastPage value
 					assert.Equalf(t, nextOffset, tt.params.Offset+limit, "All(%s) nextOffset", params) // check nextOffset value
 				}
 			} else if n > 0 {
-				assert.Equalf(t, 0, n, "All(%s) items count", params) // if error not equal nil, items will a empty slice
+				assert.Equalf(t, 0, n, "All(%s) items count", params) // if error not equal nil, items will be an empty slice
 			}
 		})
 	}
