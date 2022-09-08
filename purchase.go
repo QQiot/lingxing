@@ -17,7 +17,7 @@ type PurchasePlan struct {
 	StatusText           string   `json:"status_text"`             // 状态
 	Status               int      `json:"status"`                  // 计划状态码
 	CreatorRealName      string   `json:"creator_real_name"`       // 创建人名称
-	CreatorUid           int      `json:"creator_uid"`             // 创建人ID
+	CreatorUID           int      `json:"creator_uid"`             // 创建人 ID
 	CreateTime           string   `json:"create_time"`             // 创建时间 Y-m-d H:i:s
 	File                 []string `json:"file"`                    // 附件
 	PlanRemark           string   `json:"plan_remark"`             // 备注
@@ -25,36 +25,36 @@ type PurchasePlan struct {
 	SpuName              string   `json:"spu_name"`                // 款名
 	Spu                  string   `json:"spu"`                     // SPU
 	ProductName          string   `json:"product_name"`            // 品名
-	ProductId            int      `json:"product_id"`              // 商品ID
+	ProductId            int      `json:"product_id"`              // 商品 ID
 	SKU                  string   `json:"sku"`                     // SKU
 	Attribute            []string `json:"attribute"`               // 属性
-	SID                  int      `json:"sid"`                     // 店铺ID
+	SID                  int      `json:"sid"`                     // 店铺 ID
 	SellerName           string   `json:"seller_name"`             // 店铺名称
 	Marketplace          string   `json:"marketplace"`             // 国家
 	FNSKU                string   `json:"fnsku"`                   // FNSKU
 	MSKU                 []string `json:"msku"`                    // MSKU
-	SupplierId           string   `json:"supplier_id"`             // 供应商ID
+	SupplierId           string   `json:"supplier_id"`             // 供应商 ID
 	SupplierName         string   `json:"supplier_name"`           // 供应商名称
-	WID                  int      `json:"wid"`                     // 仓库ID
+	WID                  int      `json:"wid"`                     // 仓库 ID
 	WarehouseName        string   `json:"warehouse_name"`          // 仓库名称
-	PurchaserId          int      `json:"purchaser_id"`            // 采购方ID
+	PurchaserId          int      `json:"purchaser_id"`            // 采购方 ID
 	PurchaserName        string   `json:"purchaser_name"`          // 采购方名称
 	CgBoxPcs             int      `json:"cg_box_pcs"`              // 单箱数量
 	QuantityPlan         int      `json:"quantity_plan"`           // 计划采购量
-	ExpectArriveTime     string   `json:"expect_arrive_time"`      // 期望到货时间 Y-m-d
-	CgUid                int      `json:"cg_uid"`                  // 采购员ID
+	ExpectArriveTime     string   `json:"expect_arrive_time"`      // 期望到货时间（Y-m-d）
+	CgUID                int      `json:"cg_uid"`                  // 采购员 ID
 	CgOptUsername        string   `json:"cg_opt_username"`         // 采购员名称
 	Remark               string   `json:"remark"`                  // 产品备注
-	IsCombo              bool     `json:"is_combo"`                // 是否为组合商品。1：是，0：否
-	IsAux                bool     `json:"is_aux"`                  // 是否为辅料。1：是，0：否
-	IsRelatedProcessPlan bool     `json:"is_related_process_plan"` // 是否关联了加工计划。1：是，0：否
+	IsCombo              bool     `json:"is_combo"`                // 是否为组合商品（0：否、1：是）
+	IsAux                bool     `json:"is_aux"`                  // 是否为辅料（0：否、1：是）
+	IsRelatedProcessPlan bool     `json:"is_related_process_plan"` // 是否关联了加工计划（0：否、1：是）
 }
 
 type PurchasePlansQueryParams struct {
 	Paging
-	SearchFieldTime      string   `json:"search_field_time,omitempty"`       // 时间搜索维度：creator_time：创建时间；expect_arrive_time：预计到货时间
-	StartDate            string   `json:"start_date"`                        // 开始日期，Y-m-d，闭区间
-	EndDate              string   `json:"end_date"`                          // 结束日期，Y-m-d，闭区间
+	SearchFieldTime      string   `json:"search_field_time,omitempty"`       // 时间搜索维度（creator_time：创建时间、expect_arrive_time：预计到货时间）
+	StartDate            string   `json:"start_date"`                        // 开始日期（Y-m-d，闭区间）
+	EndDate              string   `json:"end_date"`                          // 结束日期（Y-m-d，开区间）
 	PlanSNs              []string `json:"plan_sns,omitempty"`                // 采购计划编号
 	IsCombo              bool     `json:"is_combo,omitempty"`                // 是否为组合商品（0：否、1：是）
 	IsRelatedProcessPlan bool     `json:"is_related_process_plan,omitempty"` // 是否关联加工计划（0：否、1：是）
@@ -64,6 +64,7 @@ type PurchasePlansQueryParams struct {
 
 func (m PurchasePlansQueryParams) Validate() error {
 	return validation.ValidateStruct(&m,
+		validation.Field(&m.SearchFieldTime, validation.When(m.SearchFieldTime != "", validation.In("creator_time", "expect_arrive_time").Error("时间搜索维度有误"))),
 		validation.Field(&m.StartDate,
 			validation.Required.Error("开始时间不能为空"),
 			validation.Date(constant.DateFormat).Error("开始时间格式有误"),
@@ -142,7 +143,7 @@ type PurchaseOrderItem struct {
 	Remark            string   `json:"remark"`              // 备注
 	CasesNum          int      `json:"cases_num"`           // 箱数
 	QuantityPerCase   int      `json:"quantity_per_case"`   // 单箱数量
-	IsDelete          bool     `json:"is_delete"`           // 是否删除 0：否；1：是
+	IsDelete          bool     `json:"is_delete"`           // 是否删除（0：否、1：是）
 	QuantityReturn    int      `json:"quantity_return"`     // 退货数
 	MSKU              []string `json:"msku"`                // MSKU
 	Attribute         []string `json:"attribute"`           // 属性
@@ -163,9 +164,9 @@ type PurchaseOrderLogisticsInformation struct {
 // PurchaseOrder 采购单
 type PurchaseOrder struct {
 	OrderSn               string                              `json:"order_sn"`               // 采购单号
-	SupplierId            int                                 `json:"supplier_id"`            // 供应商ID
+	SupplierId            int                                 `json:"supplier_id"`            // 供应商 ID
 	SupplierName          string                              `json:"supplier_name"`          // 供应商
-	OptUid                int                                 `json:"opt_uid"`                // 操作员UID
+	OptUID                int                                 `json:"opt_uid"`                // 操作员 UID
 	CreateTime            string                              `json:"create_time"`            // 创建时间
 	OrderTime             string                              `json:"order_time"`             // 下单时间
 	PurchaseCurrency      string                              `json:"purchase_currency"`      // 采购币种
@@ -174,14 +175,14 @@ type PurchaseOrder struct {
 	StatusShipped         int                                 `json:"status_shipped"`         // 到货状态（1：未到货、2：部分到货、3：全部到货）
 	QuantityTotal         int                                 `json:"quantity_total"`         // 采购总量
 	Payment               float64                             `json:"payment"`                // 应付货款（手工）
-	AuditorUid            int                                 `json:"auditor_uid"`            // 审核人员ID
+	AuditorUID            int                                 `json:"auditor_uid"`            // 审核人员 ID
 	AuditorTime           string                              `json:"auditor_time"`           // 审核时间
-	LastUid               int                                 `json:"last_uid"`               // 最后操作人员ID
+	LastUID               int                                 `json:"last_uid"`               // 最后操作人员 ID
 	LastTime              string                              `json:"last_time"`              // 最后操作时间
 	Reason                string                              `json:"reason"`                 // 作废原因
-	WID                   int                                 `json:"wid"`                    // 仓库ID
-	IsTax                 bool                                `json:"is_tax"`                 // 是否含税 0：否；1：是
-	Status                int                                 `json:"status"`                 // -1=作废	0=待审核 - 草稿	1=待下单 - 已审核	2=待签收(待到货) - 已下单	9=完成	121=(审批流)待审核	122=(审批流)驳回	124=(审批流)作废
+	WID                   int                                 `json:"wid"`                    // 仓库 ID
+	IsTax                 bool                                `json:"is_tax"`                 // 是否含税（0：否、1：是）
+	Status                int                                 `json:"status"`                 // 状态（-1：作废、0：待审核 - 草稿、1：待下单 - 已审核、2：待签收(待到货) - 已下单、9：完成、121：(审批流)待审核、122：(审批流)驳回、124：(审批流)作废）
 	WareHouseBakName      string                              `json:"ware_house_bak_name"`    // 仓库名(备份)
 	StatusText            string                              `json:"status_text"`            // 状态文本
 	PayStatusText         string                              `json:"pay_status_text"`        // 支付状态文本
@@ -191,11 +192,11 @@ type PurchaseOrder struct {
 	LastRealName          string                              `json:"last_realname"`          // 最后操作人姓名
 	ShippingPrice         float64                             `json:"shipping_price"`         // 运费
 	AmountTotal           float64                             `json:"amount_total"`           // 货物总价
-	PayStatus             int                                 `json:"pay_status"`             // 付款状态：	0:未申请	1：已申请	2：部分付款	3：已付款
+	PayStatus             int                                 `json:"pay_status"`             // 付款状态（0：未申请、1：已申请、2：部分付款、3：已付款）
 	Remark                string                              `json:"remark"`                 // 备注
 	OtherFee              float64                             `json:"other_fee"`              // 其他费用
 	OtherCurrency         string                              `json:"other_currency"`         // 其他费用币种
-	FeePartType           int                                 `json:"fee_part_type"`          // 费用分摊方式	0:不分摊	1:按金额	2:按数量
+	FeePartType           int                                 `json:"fee_part_type"`          // 费用分摊方式（0：不分摊、1：按金额、2：按数量）
 	TotalPrice            float64                             `json:"total_price"`            // 总金额
 	ICON                  string                              `json:"icon"`                   // 采购币种符号
 	WareHouseName         string                              `json:"ware_house_name"`        // 仓库名
@@ -204,8 +205,8 @@ type PurchaseOrder struct {
 	QuantityReceive       int                                 `json:"quantity_receive"`       // 待到货量
 	UpdateTime            string                              `json:"update_time"`            // 采购单更新时间
 	ItemList              []PurchaseOrderItem                 `json:"item_list"`              // 采购单子项
-	LogisticsInfo         []PurchaseOrderLogisticsInformation `json:"logistics_info"`         // 	物流信息
-	PurchaserId           int                                 `json:"purchaser_id"`           // 采购方id
+	LogisticsInfo         []PurchaseOrderLogisticsInformation `json:"logistics_info"`         // 物流信息
+	PurchaserId           int                                 `json:"purchaser_id"`           // 采购方 ID
 	ContactPerson         string                              `json:"contact_person"`         // 联系人
 	ContactNumber         string                              `json:"contact_number"`         // 联系方式
 	SettlementMethod      int                                 `json:"settlement_method"`      // 结算方式
@@ -215,13 +216,14 @@ type PurchaseOrder struct {
 
 type PurchaseOrdersQueryParams struct {
 	Paging
-	SearchFieldTime string `json:"search_field_time,omitempty"` // 	时间搜索维度 create_time：创建时间；expect_arrive_time：预计到货时间
-	StartDate       string `json:"start_date"`                  // 开始日期，Y-m-d，闭区间
-	EndDate         string `json:"end_date"`                    // 结束日期，Y-m-d，闭区间
+	SearchFieldTime string `json:"search_field_time,omitempty"` // 时间搜索维度（create_time：创建时间、expect_arrive_time：预计到货时间）
+	StartDate       string `json:"start_date"`                  // 开始日期（Y-m-d，闭区间）
+	EndDate         string `json:"end_date"`                    // 结束日期（Y-m-d，开区间）
 }
 
 func (m PurchaseOrdersQueryParams) Validate() error {
 	return validation.ValidateStruct(&m,
+		validation.Field(&m.SearchFieldTime, validation.When(m.SearchFieldTime != "", validation.In("create_time", "expect_arrive_time").Error("时间搜索维度有误"))),
 		validation.Field(&m.StartDate,
 			validation.Required.Error("开始时间不能为空"),
 			validation.Date(constant.DateFormat).Error("开始时间格式有误"),
