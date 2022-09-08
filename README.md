@@ -259,3 +259,9 @@ lingXingClient.Services.Statistic.Products()
 ```go
 lingXingClient.Services.Warehouse.All()
 ```
+
+- 获取入库单列表s
+
+```go
+lingXingClient.Services.Warehouse.InboundOrders()
+```
