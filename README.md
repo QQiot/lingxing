@@ -239,6 +239,12 @@ lingXingClient.Services.Ad.ProductTargets()
 lingXingClient.Services.Purchase.Plans()
 ```
 
+- 采购单列表
+
+```go
+lingXingClient.Services.Purchase.Orders()
+```
+
 ### 统计
 
 - 产品表现列表
