@@ -38,7 +38,6 @@ lingXingClient = NewLingXing(c)
 lingXingClient.Services.Authorization.GetToken()
 ```
 
-
 - 刷新 Token
 
 ```go
@@ -251,4 +250,12 @@ lingXingClient.Services.Purchase.Orders()
 
 ```go
 lingXingClient.Services.Statistic.Products()
+```
+
+### 仓库
+
+- 本地仓库列表
+
+```go
+lingXingClient.Services.Warehouse.All()
 ```

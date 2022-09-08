@@ -23,4 +23,5 @@ type services struct {
 	Statistic       statisticService       // 统计
 	Ad              adService              // 广告
 	Purchase        purchaseService        // 采购
+	Warehouse       warehouseService       // 仓库
 }
