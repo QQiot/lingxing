@@ -95,7 +95,6 @@ func (m PurchasePlansQueryParams) Validate() error {
 // Plans 查询采购计划列表
 // https://openapidoc.lingxing.com/#/docs/Purchase/getPurchasePlans?id=%e6%9f%a5%e8%af%a2%e9%87%87%e8%b4%ad%e8%ae%a1%e5%88%92%e5%88%97%e8%a1%a8
 func (s purchaseService) Plans(params PurchasePlansQueryParams) (items []PurchasePlan, nextOffset int, isLastPage bool, err error) {
-	params.SetPagingVars()
 	if err = params.Validate(); err != nil {
 		return
 	}
@@ -252,7 +251,6 @@ func (m PurchaseOrdersQueryParams) Validate() error {
 }
 
 func (s purchaseService) Orders(params PurchaseOrdersQueryParams) (items []PurchaseOrder, nextOffset int, isLastPage bool, err error) {
-	params.SetPagingVars()
 	if err = params.Validate(); err != nil {
 		return
 	}

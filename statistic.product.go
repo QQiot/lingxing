@@ -107,7 +107,6 @@ func (m ProductStatisticQueryParams) Validate() error {
 // Products 查询产品表现
 // https://openapidoc.lingxing.com/#/docs/Statistics/AsinList
 func (s statisticService) Products(params ProductStatisticQueryParams) (items []ProductReport, nextOffset int, isLastPage bool, err error) {
-	params.SetPagingVars()
 	if err = params.Validate(); err != nil {
 		return
 	}

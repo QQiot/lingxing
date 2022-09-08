@@ -80,7 +80,6 @@ func (m AdGroupsQueryParams) Validate() error {
 // Groups 查询广告管理-广告组
 // https://openapidoc.lingxing.com/#/docs/Advertisement/AdManageGroups
 func (s adService) Groups(params AdGroupsQueryParams) (items []AdGroup, nextOffset int, isLastPage bool, err error) {
-	params.SetPagingVars()
 	if err = params.Validate(); err != nil {
 		return
 	}
@@ -177,7 +176,6 @@ func (m AdQueryWordsQueryParams) Validate() error {
 // QueryWords 查询广告管理-用户搜索词
 // https://openapidoc.lingxing.com/#/docs/Advertisement/AdManageQueryWords
 func (s adService) QueryWords(params AdQueryWordsQueryParams) (items []AdQueryWord, nextOffset int, isLastPage bool, err error) {
-	params.SetPagingVars()
 	if err = params.Validate(); err != nil {
 		return
 	}
@@ -273,7 +271,6 @@ func (m AdProductTargetsQueryParams) Validate() error {
 
 // ProductTargets 查询广告管理-商品定位
 func (s adService) ProductTargets(params AdProductTargetsQueryParams) (items []AdProductTarget, nextOffset int, isLastPage bool, err error) {
-	params.SetPagingVars()
 	if err = params.Validate(); err != nil {
 		return
 	}

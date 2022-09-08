@@ -31,7 +31,6 @@ func (m WarehousesQueryParams) Validate() error {
 // All 查询本地仓库列表
 // https://openapidoc.lingxing.com/#/docs/Warehouse/WarehouseLists
 func (s warehouseService) All(params WarehousesQueryParams) (items []Warehouse, nextOffset int, isLastPage bool, err error) {
-	params.SetPagingVars()
 	if err = params.Validate(); err != nil {
 		return
 	}
