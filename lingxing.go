@@ -298,6 +298,7 @@ func NewLingXing(cfg config.Config) *LingXing {
 		},
 		Statistic: (statisticService)(xService),
 		Ad:        (adService)(xService),
+		Purchase:  (purchaseService)(xService),
 	}
 	return lingXingClient
 }

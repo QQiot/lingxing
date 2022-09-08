@@ -210,3 +210,39 @@ lingXingClient.Services.CustomerService.Email.One()
 ```go
 lingXingClient.Services.CustomerService.Review.All()
 ```
+
+### 广告
+
+- 广告组列表
+
+```go
+lingXingClient.Services.Ad.Groups()
+```
+
+- 用户搜索词列表
+
+```go
+lingXingClient.Services.Ad.QueryWords()
+```
+
+- 商品定位列表
+
+```go
+lingXingClient.Services.Ad.ProductTargets()
+```
+
+### 采购单
+
+- 采购计划列表
+
+```go
+lingXingClient.Services.Purchase.Plans()
+```
+
+### 统计
+
+- 产品表现列表
+
+```go
+lingXingClient.Services.Statistic.Products()
+```
