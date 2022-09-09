@@ -1,7 +1,11 @@
 package lingxing
 
 import (
+	"fmt"
+	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/hiscaler/lingxing/constant"
 	jsoniter "github.com/json-iterator/go"
+	"time"
 )
 
 type fbaShipmentService service
@@ -94,6 +98,7 @@ func (m FBAShipmentsQueryParams) Validate() error {
 	return nil
 }
 
+// All 查询 FBA 发货单
 func (s fbaShipmentService) All(params FBAShipmentsQueryParams) (items []FBAShipment, nextOffset int, isLastPage bool, err error) {
 	if err = params.Validate(); err != nil {
 		return
@@ -149,5 +154,154 @@ func (s fbaShipmentService) One(shipmentSN string) (item FBAShipmentDetail, err 
 		return
 	}
 	item = res.Data
+	return
+}
+
+// FBA 发货计划
+
+// FBAShipmentPlan FBA 发货计划
+type FBAShipmentPlan struct {
+	IspgId     int    `json:"ispg_id"`     // 发货计划组 ID
+	CreateTime string `json:"create_time"` // 创建时间
+	Seq        string `json:"seq"`         // 批次号
+	Remark     string `json:"remark"`      // 备注
+	CreateUser string `json:"create_user"` // 创建用户
+	List       []struct {
+		IspgId               int    `json:"ispg_id"`                // 发货计划组父 ID
+		IspId                int    `json:"isp_id"`                 // 发货计划 ID
+		LogisticsChannelId   int    `json:"logistics_channel_id"`   // 物流 ID
+		Fnsku                string `json:"fnsku"`                  // FNSKU
+		Msku                 string `json:"msku"`                   // MSKU
+		WID                  int    `json:"wid"`                    // 仓库 ID
+		WarehouseName        string `json:"wname"`                  // 仓库名称
+		SID                  int    `json:"sid"`                    // 店铺 ID
+		CreateTime           string `json:"create_time"`            // 创建时间
+		Status               int    `json:"status"`                 // 状态（-5：已驳回、0：待审核、5：待处理、10：已处理）
+		PackageType          int    `json:"package_type"`           // 包装类型 2原装 1混装
+		ShipmentTime         string `json:"shipment_time"`          // 计划发货时间
+		ShipmentPlanQuantity int    `json:"shipment_plan_quantity"` // 计划发货量
+		Seq                  string `json:"seq"`                    // 批次号
+		LogisticsName        string `json:"logistics_name"`         // 物流名称
+		QuantityInCase       int    `json:"quantity_in_case"`       // 单箱数量
+		BoxNum               int    `json:"box_num"`                // 箱数
+		IsRelateMws          int    `json:"is_relate_mws"`          // 是否关联货件
+		IsRelateList         int    `json:"is_relate_list"`         // 是否关联发货单
+		Remark               string `json:"remark"`                 // 备注
+		PrintNum             int    `json:"print_num"`              // 打印次数
+		CreateUser           string `json:"create_user"`            // 创建用户
+		SmallImageURL        string `json:"small_image_url"`        // 商品图片
+		OrderSN              string `json:"order_sn"`               // 计划发货单号
+		ProductName          string `json:"product_name"`           // 产品名称
+		ProductId            int    `json:"product_id"`             // 产品 ID
+		SKU                  string `json:"sku"`                    // SKU
+		PicURL               string `json:"pic_url"`                // 商品图片
+		IsCombo              bool   `json:"is_combo"`               // 是否组合商品
+		StorageList          []struct {
+			ProductId       int `json:"product_id"`        // 商品 ID
+			ProductValidNum int `json:"product_valid_num"` // 库存可用量
+			ProductQcNum    int `json:"product_qc_num"`    // 待检量
+			QuantityReceive int `json:"quantity_receive"`  // 待收货量
+		} `json:"storage_list"` // 库存列表
+		MwsRelate []struct {
+			IsimId               int    `json:"isim_id"`                // 关联货件 ID
+			IsilId               int    `json:"isil_id"`                // 关联发货单 ID
+			IsilmId              int    `json:"isilm_id"`               // 关联发货单明细 ID
+			ShipmentPlanSn       string `json:"shipment_plan_sn"`       // 关联发货计划单号
+			ShipmentMwsSn        string `json:"shipment_mws_sn"`        // 关联货件单号
+			ShipmentListSn       string `json:"shipment_list_sn"`       // 关联发货单单号
+			ShipmentPlanQuantity int    `json:"shipment_plan_quantity"` // 关联发货计划数量
+			ShipmentMwsQuantity  int    `json:"shipment_mws_quantity"`  // 关联货件数量
+			ShipmentListQuantity int    `json:"shipment_list_quantity"` // 关联发货单数量
+		} `json:"mws_relate"` // 发货单关联
+		StatusName      string `json:"status_name"`       // 状态名称
+		PackingTypeName string `json:"packing_type_name"` // 包装类型名称
+		DiffNum         int    `json:"diff_num"`          // 差额
+		SName           string `json:"sname"`             // 店铺
+		Nation          string `json:"nation"`            // 国家
+	} `json:"list"` // 子项目列表
+}
+
+type FBAShipmentPlansQueryParams struct {
+	Paging
+	SIDs            string `json:"sids"`                 // 店铺 ids，多个之间以逗号分隔
+	WID             string `json:"wid"`                  // 仓库 ID
+	PackageType     int    `json:"package_type"`         // 包装类型（1：混装、2：原装）
+	SearchFieldTime string `json:"search_field_time"`    // 查找时间字段（gmt_create?）文档不全
+	SearchField     string `json:"search_field"`         // 查找字段（order_sn：发货计划单号）文档不全
+	SearchValue     string `json:"search_value"`         // 查找值
+	Status          string `json:"status"`               // 状态
+	MIDs            string `json:"mids"`                 // 国家 ID
+	StartDate       string `json:"start_date,omitempty"` // 开始日期
+	EndDate         string `json:"end_date,omitempty"`   // 结束日期
+}
+
+func (m FBAShipmentPlansQueryParams) Validate() error {
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.SIDs, validation.Required.Error("店铺 ID 不能为空")),
+		validation.Field(&m.WID, validation.Required.Error("仓库 ID 不能为空")),
+		validation.Field(&m.PackageType, validation.In(1, 2).Error("无效的包装类型")),
+		validation.Field(&m.SearchFieldTime,
+			validation.Required.Error("查找时间字段不能为空"),
+			validation.In("gmt_create").Error("查找时间字段有误"),
+		),
+		validation.Field(&m.SearchField,
+			validation.Required.Error("查找字段不能为空"),
+			validation.In("order_sn").Error("查找字段有误"),
+		),
+		validation.Field(&m.SearchValue, validation.Required.Error("查找值不能为空")),
+		validation.Field(&m.Status, validation.Required.Error("状态不能为空")),
+		validation.Field(&m.MIDs, validation.Required.Error("国家 ID 不能为空")),
+		validation.Field(&m.StartDate,
+			validation.Required.Error("开始时间不能为空"),
+			validation.Date(constant.DateFormat).Error("开始时间格式有误"),
+		),
+		validation.Field(&m.EndDate,
+			validation.Required.Error("结束时间不能为空"),
+			validation.Date(constant.DateFormat).Error("结束时间格式有误"),
+			validation.By(func(value interface{}) error {
+				d1 := m.StartDate
+				d2 := value.(string)
+				startDate, err := time.Parse(constant.DateFormat, d1)
+				if err != nil {
+					return err
+				}
+				endDate, err := time.Parse(constant.DateFormat, d2)
+				if err != nil {
+					return err
+				}
+				if startDate.After(endDate) {
+					return fmt.Errorf("结束时间不能小于 %s", d1)
+				}
+				return nil
+			}),
+		),
+	)
+}
+
+// Plans 查询FBA发货计划
+func (s fbaShipmentService) Plans(params FBAShipmentPlansQueryParams) (items []FBAShipmentPlan, nextOffset int, isLastPage bool, err error) {
+	if err = params.Validate(); err != nil {
+		return
+	}
+
+	params.SetPagingVars()
+	res := struct {
+		NormalResponse
+		Data struct {
+			PlanList []FBAShipmentPlan `json:"plan_list"` // 发货计划组列表
+		} `json:"data"`
+	}{}
+	resp, err := s.httpClient.R().
+		SetBody(params).
+		Post("/data/fba_report/shipmentPlanLists")
+	if err != nil {
+		return
+	}
+
+	if err = jsoniter.Unmarshal(resp.Body(), &res); err == nil {
+		items = res.Data.PlanList
+		nextOffset = params.NextOffset
+		isLastPage = len(items) < params.Limit
+	}
 	return
 }

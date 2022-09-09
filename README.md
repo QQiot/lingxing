@@ -164,6 +164,12 @@ lingXingClient.Services.FBA.Shipment.All(FBAShipmentsQueryParams{})
 lingXingClient.Services.FBA.Shipment.One(shipmentSN)
 ```
 
+- 查询 FBA 发货计划
+
+```go
+lingXingClient.Services.FBA.Shipment.Plans(FBAShipmentPlansQueryParams{})
+```
+
 - 查询 FBA 长期仓储费
 
 ```go
