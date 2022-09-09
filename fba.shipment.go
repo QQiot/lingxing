@@ -6,7 +6,7 @@ import (
 
 type fbaShipmentService service
 
-// 查询FBA发货单列表
+// 查询 FBA 发货单列表
 
 type FBAShipment struct {
 	ID                   int    `json:"id"`                     // 发货单id
@@ -119,7 +119,7 @@ func (s fbaShipmentService) All(params FBAShipmentsQueryParams) (items []FBAShip
 	return
 }
 
-// 查询FBA发货单详情
+// 查询 FBA 发货单详情
 // https://openapidoc.lingxing.com/#/docs/FBA/getInboundShipmentListMwsDetail
 
 type FBAShipmentDetail struct {

@@ -119,6 +119,7 @@ func (m FBAMonthStorageFeesQueryParams) Validate() error {
 	)
 }
 
+// Month FBA 月仓储费
 func (s fbaStorageFeeService) Month(params FBAMonthStorageFeesQueryParams) (items []FBAMonthStorageFee, nextOffset int, isLastPage bool, err error) {
 	if err = params.Validate(); err != nil {
 		return
