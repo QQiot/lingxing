@@ -28,6 +28,48 @@ if err != nil {
 lingXingClient = NewLingXing(c)
 ```
 
+获取到 lingXingClient 后，则可以根据业务需求调用对应的服务获取数据，比如我要调取仓库数据，您可以使用以下代码：
+
+```go
+params := WarehousesQueryParams{
+    Type: 1,
+}
+params.Limit = 20
+for {
+    items, nextOffset, isLastPage, err := lingXingClient.Services.Warehouse.All(params)
+    if err != nil {
+        break
+    }
+    for _, item := range items {
+        // Read item
+        _ = item
+    }
+    if isLastPage {
+        break
+    }
+    params.Offset = nextOffset
+}
+```
+
+### 注意
+
+所有的列表方法都会返回四个值，分别是 `items`, `nextOffset`, `isLastPage`, `err`，它们所表示的含义为：
+
+- items: 接口返回的数据
+- nextOffset 下一次调取的位置
+- isLastPage 是否为最后一页
+- err 包含的错误，如果没有错误，则为 nil
+
+**任何情况下，您都应该首先判断 err 是否为 nil，然后进行下一步的业务逻辑处理。**
+
+如果是单个数据的请求，比如获取亚马逊订单详情：
+
+```go
+item, err := lingXingClient.Services.Sale.Order.One(1)
+```
+
+则会返回 `item`, `err` 两个值，第一个表示返回的数据，第二个则是错误信息，如果没有错误的话返回的是 nil，和列表数据一样，在处理 data 数据前，您需要先判断 err 是否为 nil，然后再进行下一步的处理。
+
 ## 服务
 
 ### 授权
@@ -249,7 +291,7 @@ lingXingClient.Services.Purchase.Orders(PurchaseOrdersQueryParams{})
 - 产品表现列表
 
 ```go
-lingXingClient.Services.Statistic.Products()
+lingXingClient.Services.Statistic.Products(ProductStatisticQueryParams)
 ```
 
 ### 仓库
@@ -257,7 +299,7 @@ lingXingClient.Services.Statistic.Products()
 - 本地仓库列表
 
 ```go
-lingXingClient.Services.Warehouse.All()
+lingXingClient.Services.Warehouse.All(WarehousesQueryParams)
 ```
 
 - 获取入库单列表
@@ -271,3 +313,12 @@ lingXingClient.Services.Warehouse.InboundOrders(InboundsQueryParms{})
 ```go
 lingXingClient.Services.Warehouse.OutboundOrders(OutboundsQueryParms{})
 ```
+
+## 贡献
+
+如果您在使用中遇到问题，或者有更好的建议或意见，您可以
+
+1. [报告问题](https://github.com/hiscaler/lingxing/issues/new)
+2. Fork 它并修改或实现需求，提交 Pull Request
+
+谢谢！
