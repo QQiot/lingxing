@@ -60,8 +60,8 @@ func (s warehouseService) All(params WarehousesQueryParams) (items []Warehouse, 
 
 // 入库单
 
-// InboundOrderItem 入库单项
-type InboundOrderItem struct {
+// OutboundInboundOrderItem 出入库单项
+type OutboundInboundOrderItem struct {
 	ProductName     string  `json:"product_name"`      // 品名
 	SKU             string  `json:"sku"`               // SKU
 	FnSKU           string  `json:"fnsku"`             // FNSKU
@@ -79,39 +79,39 @@ type InboundOrderItem struct {
 }
 
 type InboundOrder struct {
-	OptRealName     string             `json:"opt_realname"`       // 入库人姓名
-	OptTime         string             `json:"opt_time"`           // 	操作时间
-	OptUID          int                `json:"opt_uid"`            // 操作人id
-	CommitRealName  string             `json:"commit_realname"`    // 提交人名称
-	CommitUID       string             `json:"commit_uid"`         // 提交人 ID
-	CommitTime      string             `json:"commit_time"`        // 提交时间
-	OrderSN         string             `json:"order_sn"`           // 订单号
-	Status          int                `json:"status"`             // 入库单状态
-	StatusText      string             `json:"status_text"`        // 入库单状态名称
-	CreateTime      string             `json:"create_time"`        // 创建时间
-	CreateUID       int                `json:"create_uid"`         // 创建人ID
-	CreateRealName  string             `json:"create_realname"`    // 创建人名称
-	PurchaseOrderSn string             `json:"purchase_order_sn"`  // 采购单号
-	RevokeRealName  string             `json:"revoke_realname"`    // 撤销人名称
-	RevokeUID       int                `json:"revoke_uid"`         // 撤销人id
-	RevokeTime      string             `json:"revoke_time"`        // 撤销时间
-	SupplierId      string             `json:"supplier_id"`        // 供应商id
-	SupplierName    string             `json:"supplier_name"`      // 供应商名称
-	SourceSn        string             `json:"source_sn"`          // 关联单据号
-	OrderAmount     float64            `json:"order_amount"`       // 单据入库成本
-	CgUID           int                `json:"cg_uid"`             // 采购员 ID
-	ReturnPrice     float64            `json:"return_price"`       // 运费
-	Currency        string             `json:"currency"`           // 运费币种
-	OtherFee        float64            `json:"other_fee"`          // 其他费用
-	FeePartType     string             `json:"fee_part_type"`      // 费用分摊方式
-	FeePartTypeText string             `json:"fee_part_type_text"` // 费用分摊方式名称
-	Type            int                `json:"type"`               // 入库类型
-	TypeText        string             `json:"type_text"`          // 入库类型名称
-	CgRealName      string             `json:"cg_realname"`        // 采购员姓名
-	WID             string             `json:"wid"`                // 仓库 ID
-	WarehouseName   string             `json:"ware_house_name"`    // 仓库名称
-	Remark          string             `json:"remark"`             // 单据备注
-	ItemList        []InboundOrderItem `json:"item_list"`          // 入库项
+	OptRealName     string                     `json:"opt_realname"`       // 入库人姓名
+	OptTime         string                     `json:"opt_time"`           // 	操作时间
+	OptUID          int                        `json:"opt_uid"`            // 操作人id
+	CommitRealName  string                     `json:"commit_realname"`    // 提交人名称
+	CommitUID       string                     `json:"commit_uid"`         // 提交人 ID
+	CommitTime      string                     `json:"commit_time"`        // 提交时间
+	OrderSN         string                     `json:"order_sn"`           // 订单号
+	Status          int                        `json:"status"`             // 入库单状态
+	StatusText      string                     `json:"status_text"`        // 入库单状态名称
+	CreateTime      string                     `json:"create_time"`        // 创建时间
+	CreateUID       int                        `json:"create_uid"`         // 创建人ID
+	CreateRealName  string                     `json:"create_realname"`    // 创建人名称
+	PurchaseOrderSn string                     `json:"purchase_order_sn"`  // 采购单号
+	RevokeRealName  string                     `json:"revoke_realname"`    // 撤销人名称
+	RevokeUID       int                        `json:"revoke_uid"`         // 撤销人id
+	RevokeTime      string                     `json:"revoke_time"`        // 撤销时间
+	SupplierId      string                     `json:"supplier_id"`        // 供应商id
+	SupplierName    string                     `json:"supplier_name"`      // 供应商名称
+	SourceSn        string                     `json:"source_sn"`          // 关联单据号
+	OrderAmount     float64                    `json:"order_amount"`       // 单据入库成本
+	CgUID           int                        `json:"cg_uid"`             // 采购员 ID
+	ReturnPrice     float64                    `json:"return_price"`       // 运费
+	Currency        string                     `json:"currency"`           // 运费币种
+	OtherFee        float64                    `json:"other_fee"`          // 其他费用
+	FeePartType     string                     `json:"fee_part_type"`      // 费用分摊方式
+	FeePartTypeText string                     `json:"fee_part_type_text"` // 费用分摊方式名称
+	Type            int                        `json:"type"`               // 入库类型
+	TypeText        string                     `json:"type_text"`          // 入库类型名称
+	CgRealName      string                     `json:"cg_realname"`        // 采购员姓名
+	WID             string                     `json:"wid"`                // 仓库 ID
+	WarehouseName   string                     `json:"ware_house_name"`    // 仓库名称
+	Remark          string                     `json:"remark"`             // 单据备注
+	ItemList        []OutboundInboundOrderItem `json:"item_list"`          // 入库项
 }
 
 type InboundOrdersQueryParams struct {
@@ -175,6 +175,120 @@ func (s warehouseService) InboundOrders(params InboundOrdersQueryParams) (items 
 	resp, err := s.httpClient.R().
 		SetBody(params).
 		Post("/routing/storage/inbound/getOrders")
+	if err != nil {
+		return
+	}
+
+	if err = jsoniter.Unmarshal(resp.Body(), &res); err == nil {
+		items = res.Data
+		nextOffset = params.NextOffset
+		isLastPage = len(items) < params.Limit
+	}
+	return
+}
+
+// 出库单
+// https://openapidoc.lingxing.com/#/docs/Warehouse/outboundgetOrders
+
+type OutboundOrder struct {
+	OptRealName     string                     `json:"opt_realname"`       // 出库人姓名
+	OptTime         string                     `json:"opt_time"`           // 操作时间
+	OptUID          int                        `json:"opt_uid"`            // 操作人 ID
+	CommitRealName  string                     `json:"commit_realname"`    // 提交人名称
+	CommitUID       int                        `json:"commit_uid"`         // 提交人 ID
+	CommitTime      string                     `json:"commit_time"`        // 提交时间
+	OrderSn         string                     `json:"order_sn"`           // 订单号
+	Status          int                        `json:"status"`             // 出库单状态
+	StatusText      string                     `json:"status_text"`        // 出库单状态名称
+	CreateTime      string                     `json:"create_time"`        // 创建时间
+	CreateUID       int                        `json:"create_uid"`         // 创建人 ID
+	CreateRealName  string                     `json:"create_realname"`    // 创建人名称
+	PurchaseOrderSn string                     `json:"purchase_order_sn"`  // 采购单号
+	RevokeRealName  string                     `json:"revoke_realname"`    // 撤销人名称
+	RevokeUID       int                        `json:"revoke_uid"`         // 撤销人 ID
+	RevokeTime      string                     `json:"revoke_time"`        // 撤销时间
+	SupplierId      string                     `json:"supplier_id"`        // 供应商 ID
+	SupplierName    string                     `json:"supplier_name"`      // 供应商名称
+	SourceSn        string                     `json:"source_sn"`          // 关联单据号
+	OrderAmount     float64                    `json:"order_amount"`       // 单据入库成本
+	CgUID           int                        `json:"cg_uid"`             // 采购员id
+	ReturnPrice     float64                    `json:"return_price"`       // 运费
+	Currency        string                     `json:"currency"`           // 运费币种
+	OtherFee        float64                    `json:"other_fee"`          // 其他费用
+	FeePartType     string                     `json:"fee_part_type"`      // 费用分摊方式
+	FeePartTypeText string                     `json:"fee_part_type_text"` // 费用分摊方式名称
+	Type            int                        `json:"type"`               // 出库类型
+	TypeText        string                     `json:"type_text"`          // 出库类型名称
+	CgRealName      string                     `json:"cg_realname"`        // 采购员姓名
+	WID             string                     `json:"wid"`                // 仓库 ID
+	WarehouseName   string                     `json:"ware_house_name"`    // 仓库名称
+	ToWID           string                     `json:"to_wid"`             // 目的仓库 ID
+	ToWarehouseName string                     `json:"to_ware_house_name"` // 目的仓库名称
+	Remark          string                     `json:"remark"`             // 单据备注
+	ItemList        []OutboundInboundOrderItem `json:"item_list"`          // 出库项
+}
+
+type OutboundOrdersQueryParams struct {
+	Paging
+	WID             string `json:"wid"`               // 系统仓库 ID
+	SearchFieldTime string `json:"search_field_time"` // 时间搜索维度（create_time：创建时间、opt_time：出库时间）
+	StartDate       string `json:"start_date"`        // 开始日期（Y-m-d，闭区间）
+	EndDate         string `json:"end_date"`          // 结束日期（Y-m-d，开区间）
+	OrderSn         string `json:"order_sn"`          // 入库单单号，支持多个，分号隔离
+	Status          int    `json:"status"`            // 出库单状态（10：待提交、121：待审批、30：待出库、40：已完成、50：已撤销）
+	Type            int    `json:"type"`              // 出库类型（11：其他出库、12：FBA 出库、14：退货出库、15：调拨出库）
+}
+
+func (m OutboundOrdersQueryParams) Validate() error {
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.WID, validation.Required.Error("系统仓库 ID 不能为空")),
+		validation.Field(&m.SearchFieldTime,
+			validation.Required.Error("时间搜索维度不能为空"),
+			validation.In("create_time", "opt_time").Error("时间搜索维度有误"),
+		),
+		validation.Field(&m.StartDate,
+			validation.Required.Error("开始时间不能为空"),
+			validation.Date(constant.DateFormat).Error("开始时间格式有误"),
+		),
+		validation.Field(&m.EndDate,
+			validation.Required.Error("结束时间不能为空"),
+			validation.Date(constant.DateFormat).Error("结束时间格式有误"),
+			validation.By(func(value interface{}) error {
+				d1 := m.StartDate
+				d2 := value.(string)
+				startDate, err := time.Parse(constant.DateFormat, d1)
+				if err != nil {
+					return err
+				}
+				endDate, err := time.Parse(constant.DateFormat, d2)
+				if err != nil {
+					return err
+				}
+				if startDate.After(endDate) {
+					return fmt.Errorf("结束时间不能小于 %s", d1)
+				}
+				return nil
+			}),
+		),
+		validation.Field(&m.Status, validation.In(10, 121, 30, 40, 50).Error("无效的出库单状态")),
+		validation.Field(&m.Type, validation.In(11, 12, 14, 15).Error("无效的出库类型")),
+	)
+}
+
+// OutboundOrders 获取出库单列表
+func (s warehouseService) OutboundOrders(params OutboundOrdersQueryParams) (items []OutboundOrder, nextOffset int, isLastPage bool, err error) {
+	if err = params.Validate(); err != nil {
+		return
+	}
+
+	params.SetPagingVars()
+	res := struct {
+		NormalResponse
+		Data []OutboundOrder `json:"data"`
+	}{}
+	resp, err := s.httpClient.R().
+		SetBody(params).
+		Post("/routing/storage/outbound/getOrders")
 	if err != nil {
 		return
 	}

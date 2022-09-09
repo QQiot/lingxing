@@ -260,8 +260,14 @@ lingXingClient.Services.Statistic.Products()
 lingXingClient.Services.Warehouse.All()
 ```
 
-- 获取入库单列表s
+- 获取入库单列表
 
 ```go
-lingXingClient.Services.Warehouse.InboundOrders()
+lingXingClient.Services.Warehouse.InboundOrders(InboundsQueryParms{})
+```
+
+- 获取出库单列表
+
+```go
+lingXingClient.Services.Warehouse.OutboundOrders(OutboundsQueryParms{})
 ```
