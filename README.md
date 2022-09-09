@@ -305,13 +305,13 @@ lingXingClient.Services.Warehouse.All(WarehousesQueryParams)
 - 获取入库单列表
 
 ```go
-lingXingClient.Services.Warehouse.InboundOrders(InboundsQueryParms{})
+lingXingClient.Services.Warehouse.InboundOrders(InboundsQueryParams{})
 ```
 
 - 获取出库单列表
 
 ```go
-lingXingClient.Services.Warehouse.OutboundOrders(OutboundsQueryParms{})
+lingXingClient.Services.Warehouse.OutboundOrders(OutboundsQueryParams{})
 ```
 
 ## 贡献
