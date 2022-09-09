@@ -50,7 +50,7 @@ func (m FBALongTermStorageFeesQueryParams) Validate() error {
 	)
 }
 
-// LongTerm 查询FBA长期仓储费
+// LongTerm 查询 FBA 长期仓储费
 func (s fbaStorageFeeService) LongTerm(params FBALongTermStorageFeesQueryParams) (items []FBALongTermStorageFee, nextOffset int, isLastPage bool, err error) {
 	if err = params.Validate(); err != nil {
 		return
@@ -119,7 +119,7 @@ func (m FBAMonthStorageFeesQueryParams) Validate() error {
 	)
 }
 
-func (s fbaStorageFeeService) Month(params FBALongTermStorageFeesQueryParams) (items []FBAMonthStorageFee, nextOffset int, isLastPage bool, err error) {
+func (s fbaStorageFeeService) Month(params FBAMonthStorageFeesQueryParams) (items []FBAMonthStorageFee, nextOffset int, isLastPage bool, err error) {
 	if err = params.Validate(); err != nil {
 		return
 	}
