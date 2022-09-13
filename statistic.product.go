@@ -13,8 +13,8 @@ import (
 )
 
 type ProductReport struct {
-	SID                         int             `json:"sid"`                            // 店铺 ID
 	ID                          int             `json:"id"`                             // ID
+	SID                         int             `json:"sid"`                            // 店铺 ID
 	GmtModified                 string          `json:"gmt_modified"`                   // 更新时间
 	Price                       float64         `json:"price"`                          // 单价
 	ASIN                        string          `json:"asin"`                           // ASIN
@@ -54,7 +54,7 @@ type ProductReport struct {
 	AfnInboundWorkingQuantity   int             `json:"afn_inbound_working_quantity"`   // 计划入库
 	Acos                        float64         `json:"acos"`                           // ACOS
 	Acoas                       float64         `json:"acoas"`                          // ACoAS
-	OrderQuantity               float64         `json:"order_quantity"`                 // 广告订单量
+	OrderQuantity               int             `json:"order_quantity"`                 // 广告订单量
 	Category                    json.RawMessage `json:"category"`                       // 类别
 	Pid                         int             `json:"pid"`                            // 商品 ID
 	AdvRate                     float64         `json:"adv_rate"`                       // 广告订单量占比
