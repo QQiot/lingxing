@@ -56,21 +56,21 @@ type ProductReport struct {
 	Acoas                       float64         `json:"acoas"`                          // ACoAS
 	OrderQuantity               float64         `json:"order_quantity"`                 // 广告订单量
 	Category                    json.RawMessage `json:"category"`                       // 类别
-	Pid                         int             `json:"pid"`                            // 商品ID
+	Pid                         int             `json:"pid"`                            // 商品 ID
 	AdvRate                     float64         `json:"adv_rate"`                       // 广告订单量占比
 	SalesAmount                 float64         `json:"sales_amount"`                   // 广告销售额
-	AdCvr                       float64         `json:"ad_cvr"`                         // 广告CVR
+	AdCVR                       float64         `json:"ad_cvr"`                         // 广告 CVR
 	Asoas                       float64         `json:"asoas"`                          // ASOAS
 	Remark                      json.RawMessage `json:"remark"`                         // asin备注数组，格式[{"date": "", "content": ""}]
-	SmallRankList               json.RawMessage `json:"smallRankList"`                  // 小类排名数组，格式[{"smallRankName": "", "rankValue": ""}]
+	SmallRankList               json.RawMessage `json:"smallRankList"`                  // 小类排名数组（格式：[{"smallRankName":"","rankValue":""}]）
 }
 
 type ProductStatisticQueryParams struct {
 	Paging
 	SID       int    `json:"sid"`                 // 店铺 ID
-	ASINType  int    `json:"asin_type,omitempty"` // 产品表现维度（0：asin、1：父 asin，不填默认为 0）
-	StartDate string `json:"start_date"`          // 报表时间（Y-m-d格式。 eg:2019-07-12，闭区间）
-	EndDate   string `json:"end_date"`            // 报表时间（Y-m-d格式。 eg:2019-07-12，开区间）
+	ASINType  int    `json:"asin_type,omitempty"` // 产品表现维度（0：ASIN[默认]、1：父 ASIN）
+	StartDate string `json:"start_date"`          // 报表时间闭区间（Y-m-d 格式）
+	EndDate   string `json:"end_date"`            // 报表时间开区间（Y-m-d 格式）
 }
 
 func (m ProductStatisticQueryParams) Validate() error {

@@ -11,21 +11,21 @@ type customerServiceReviewService service
 // Review
 
 type CustomerServiceReview struct {
-	Ratings      int      `json:"ratings"`       // 子rating总数
-	FiveStar     int      `json:"five_star"`     // 5星review新增数
-	FourStar     int      `json:"four_star"`     // 4星review新增数
-	ThreeStar    int      `json:"three_star"`    // 3星review新增数
-	TwoStar      int      `json:"two_star"`      // 2星review新增数
-	OneStar      int      `json:"one_star"`      // 星review新增数
-	ReviewNum    int      `json:"review_num"`    // review数
-	GoodNum      int      `json:"good_num"`      // review好评数
-	NegativeNum  int      `json:"negative_num"`  // review中差评数
-	GoodRate     float64  `json:"good_rate"`     // review好评率
-	NegativeRate float64  `json:"negative_rate"` // review中差评率
-	ModifiedNum  float64  `json:"modified_num"`  // review改评数
-	RemoveNum    float64  `json:"remove_num"`    // review删评数
+	Ratings      int      `json:"ratings"`       // 子 rating 总数
+	FiveStar     int      `json:"five_star"`     // 5星 review 新增数
+	FourStar     int      `json:"four_star"`     // 4星 review 新增数
+	ThreeStar    int      `json:"three_star"`    // 3星 review 新增数
+	TwoStar      int      `json:"two_star"`      // 2星 review 新增数
+	OneStar      int      `json:"one_star"`      // 1星 review 新增数
+	ReviewNum    int      `json:"review_num"`    // review 数
+	GoodNum      int      `json:"good_num"`      // review 好评数
+	NegativeNum  int      `json:"negative_num"`  // review 中差评数
+	GoodRate     float64  `json:"good_rate"`     // review 好评率
+	NegativeRate float64  `json:"negative_rate"` // review 中差评率
+	ModifiedNum  float64  `json:"modified_num"`  // review 改评数
+	RemoveNum    float64  `json:"remove_num"`    // review 删评数
 	ASIN         string   `json:"asin"`          // asin
-	ASINURL      string   `json:"asin_url"`      // asin链接
+	ASINURL      string   `json:"asin_url"`      // asin 链接
 	ImageURL     string   `json:"image_url"`     // 图片链接
 	Title        string   `json:"title"`         // 商品标题
 	Country      string   `json:"country"`       // 国家
@@ -41,7 +41,7 @@ type CustomerServiceReview struct {
 
 type CustomerServiceReviewsQueryParams struct {
 	Paging
-	SID       string `url:"sid,omitempty"` // 店铺 id
+	SID       string `url:"sid,omitempty"` // 店铺 ID
 	StartDate string `url:"start_date"`    // 开始时间
 	EndDate   string `url:"end_date"`      // 结束时间（最大不超过1年）
 }

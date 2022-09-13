@@ -27,7 +27,7 @@ type SupplierQuoteItem struct {
 	Currency     string                       `json:"currency"`      // 报价币种
 	CurrencyIcon string                       `json:"currency_icon"` // 报价币种符号
 	IsTax        bool                         `json:"is_tax"`        // 是否含税（0：否、1：是）
-	TaxRate      int                          `json:"tax_rate"`      // 税率（百分比）0-99整数
+	TaxRate      int                          `json:"tax_rate"`      // 税率（百分比）0 ~ 99 的整数
 	StepPrices   []SupplierQuoteItemStepPrice `json:"step_prices"`   // 报价梯度
 }
 
@@ -105,8 +105,8 @@ type ProductLogistic struct {
 
 	// US
 	USCgTransportCosts float64 `json:"US_cg_transport_costs,omitempty"` // 美国默认头程成本（含税）
-	USCurrency         string  `json:"US_currency,omitempty"`           // 美国官方汇率code
-	USBgImportHsCode   string  `json:"US_bg_import_hs_code,omitempty"`  // 报关：美国HS Code（进口国）
+	USCurrency         string  `json:"US_currency,omitempty"`           // 美国官方汇率 code
+	USBgImportHsCode   string  `json:"US_bg_import_hs_code,omitempty"`  // 报关：美国 HS Code（进口国）
 	USBgTaxRate        float64 `json:"US_bg_tax_rate,omitempty"`        // 报关：美国税率
 
 	// CA

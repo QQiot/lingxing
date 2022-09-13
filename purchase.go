@@ -58,7 +58,7 @@ type PurchasePlansQueryParams struct {
 	PlanSNs              []string `json:"plan_sns,omitempty"`                // 采购计划编号
 	IsCombo              bool     `json:"is_combo,omitempty"`                // 是否为组合商品（0：否、1：是）
 	IsRelatedProcessPlan bool     `json:"is_related_process_plan,omitempty"` // 是否关联加工计划（0：否、1：是）
-	Status               []int    `json:"status,omitempty"`                  // 状态（待采购=2 ，已处理=-2，已驳回=122，已作废=-3,124）
+	Status               []int    `json:"status,omitempty"`                  // 状态（待采购：2、已处理：-2、已驳回：122、已作废：-3、124：?）
 	SIDs                 []int    `json:"sids,omitempty"`                    // 店铺
 }
 

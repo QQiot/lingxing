@@ -38,8 +38,8 @@ type AdGroup struct {
 type AdGroupsQueryParams struct {
 	Paging
 	SID       int    `json:"sid"`        // 店铺 ID
-	StartDate string `json:"start_date"` // 广告时间左闭区间，Y-m-d格式
-	EndDate   string `json:"end_date"`   // 广告时间右开区间，Y-m-d格式
+	StartDate string `json:"start_date"` // 广告时间左闭区间（Y-m-d 格式）
+	EndDate   string `json:"end_date"`   // 广告时间右开区间（Y-m-d 格式）
 	Type      int    `json:"type"`       //	广告类型（1：SP、3：SD）
 }
 
@@ -130,10 +130,10 @@ type AdQueryWord struct {
 type AdQueryWordsQueryParams struct {
 	Paging
 	SID       int    `json:"sid"`        // 店铺 ID
-	StartDate string `json:"start_date"` // 广告时间左闭区间，Y-m-d格式
-	EndDate   string `json:"end_date"`   // 广告时间右开区间，Y-m-d格式
+	StartDate string `json:"start_date"` // 广告时间左闭区间（Y-m-d 格式）
+	EndDate   string `json:"end_date"`   // 广告时间右开区间（Y-m-d 格式）
 	Type      int    `json:"type"`       //	广告类型（1：SP广告、2：SB广告、不填默认SP）
-	QueryType int    `json:"query_type"` // 搜索词类型（1：关键词产生、2：商品产生、3：自动产生、不填默认1）
+	QueryType int    `json:"query_type"` // 搜索词类型（1：关键词产生[默认]、2：商品产生、3：自动产生）
 
 }
 
@@ -231,8 +231,8 @@ type AdProductTarget struct {
 type AdProductTargetsQueryParams struct {
 	Paging
 	SID       int    `json:"sid"`            // 店铺 ID
-	StartDate string `json:"start_date"`     // 广告时间左闭区间，Y-m-d格式
-	EndDate   string `json:"end_date"`       // 广告时间右开区间，Y-m-d格式
+	StartDate string `json:"start_date"`     // 广告时间左闭区间（Y-m-d 格式）
+	EndDate   string `json:"end_date"`       // 广告时间右开区间（Y-m-d 格式）
 	Type      int    `json:"type,omitempty"` //	广告类型（1：SP广告、2：SB广告、3:SD广告、不填默认SP）
 }
 

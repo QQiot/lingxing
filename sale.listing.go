@@ -93,16 +93,16 @@ func (s listingService) All(params ListingsQueryParams) (items []Listing, nextOf
 // https://openapidoc.lingxing.com/#/docs/Sale/Productlink
 
 type ListingPairRequest struct {
-	SellerId      string `json:"seller_id,omitempty"`      // 店铺id
-	MarketplaceId string `json:"marketplace_id,omitempty"` // 市场id
-	MSKU          string `json:"msku"`                     // msku
-	SKU           string `json:"sku"`                      // 本地sku
-	IsSyncPic     bool   `json:"is_sync_pic"`              // 是否同步listing图片（1：是、0：否）
+	SellerId      string `json:"seller_id,omitempty"`      // 店铺 ID
+	MarketplaceId string `json:"marketplace_id,omitempty"` // 市场 ID
+	MSKU          string `json:"msku"`                     // MSKU
+	SKU           string `json:"sku"`                      // 本地 SKU
+	IsSyncPic     bool   `json:"is_sync_pic"`              // 是否同步listing图片（0：否、1：是）
 }
 
 func (m ListingPairRequest) Validate() error {
 	return validation.ValidateStruct(&m,
-		validation.Field(&m.MSKU, validation.Required.Error("msku 不能为空")),
+		validation.Field(&m.MSKU, validation.Required.Error("MSKU 不能为空")),
 		validation.Field(&m.SKU, validation.Required.Error("本地 SKU 不能为空")),
 		validation.Field(&m.IsSyncPic, validation.In(0, 1).Error("是否同步图片标识错误")),
 	)

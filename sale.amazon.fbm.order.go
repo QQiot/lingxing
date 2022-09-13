@@ -28,9 +28,9 @@ type AmazonFBMOrder struct {
 type AmazonFBMOrdersQueryParams struct {
 	Paging
 	SID         string `json:"sid"`                    // 店铺 ID（多个使用逗号分隔开）
-	OrderStatus string `json:"order_status,omitempty"` // 订单状态，用逗号分隔开（2:已发货、3:未付款、4:待审核、5:待发货、6:已取消）
-	StartTime   string `json:"start_time,omitempty"`   // 查询时间左闭区间，可精确到时分秒，格式：Y-m-d或Y-m-d H:i:s
-	EndTime     string `json:"end_time,omitempty"`     // 查询时间右开区间，可精确到时分秒，格式：Y-m-d或Y-m-d H:i:s
+	OrderStatus string `json:"order_status,omitempty"` // 订单状态，用逗号分隔开（2：已发货、3：未付款、4：待审核、5：待发货、6：已取消）
+	StartTime   string `json:"start_time,omitempty"`   // 查询时间左闭区间，可精确到时分秒（格式：Y-m-d 或 Y-m-d H:i:s）
+	EndTime     string `json:"end_time,omitempty"`     // 查询时间右开区间，可精确到时分秒（格式：Y-m-d 或 Y-m-d H:i:s）
 }
 
 func (m AmazonFBMOrdersQueryParams) Validate() error {
@@ -91,11 +91,11 @@ type FBMOrderDetail struct {
 	City                         string               `json:"city"`                            // 城市（应平台要求，不再返回该数据）
 	Address                      string               `json:"address"`                         // 详细地址（应平台要求，不再返回该数据）
 	WarehouseName                string               `json:"warehouse_name"`                  // 发货仓库
-	WId                          string               `json:"wid"`                             // 发货仓库id
+	WId                          string               `json:"wid"`                             // 发货仓库 ID
 	LogisticsTypeName            string               `json:"logistics_type_name"`             // 物流方式
 	LogisticsProviderName        string               `json:"logistics_provider_name"`         // 物流商
-	LogisticsTypeId              string               `json:"logistics_type_id"`               // 物流方式id
-	LogisticsProviderId          string               `json:"logistics_provider_id"`           // 物流商id
+	LogisticsTypeId              string               `json:"logistics_type_id"`               // 物流方式 ID
+	LogisticsProviderId          string               `json:"logistics_provider_id"`           // 物流商 ID
 	TrackingNumber               string               `json:"tracking_number"`                 // 跟踪号
 	LogisticsPreWeight           float64              `json:"logistics_pre_weight"`            // 估算重量
 	LogisticsPreWeightUnit       string               `json:"logistics_pre_weight_unit"`       // 估算重量单位

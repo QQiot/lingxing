@@ -128,13 +128,13 @@ func (s fbaShipmentService) All(params FBAShipmentsQueryParams) (items []FBAShip
 // https://openapidoc.lingxing.com/#/docs/FBA/getInboundShipmentListMwsDetail
 
 type FBAShipmentDetail struct {
-	ID           int    `json:"id"`            // 发货单ID
+	ID           int    `json:"id"`            // 发货单 ID
 	ZId          int    `json:"zid"`           // ZID
-	TrackingId   int    `json:"tracking_id"`   // 物流追踪(运单)ID
+	TrackingId   int    `json:"tracking_id"`   // 物流追踪(运单) ID
 	ShipmentSN   string `json:"shipment_sn"`   // 发货单号
-	Status       int    `json:"status"`        // 发货单状态，1 : 待配货 0：待发货，1：已发货，2：已完成，3：已作废
+	Status       int    `json:"status"`        // 发货单状态（1：待配货、0：待发货、1：已发货、2：已完成、3：已作废）
 	ShipmentTime string `json:"shipment_time"` // 发货时间
-	WId          int    `json:"wid"`           // 仓库ID
+	WId          int    `json:"wid"`           // 仓库 ID
 	GmtModified  string `json:"gmt_modified"`  // 修改时间
 	GmtCreate    string `json:"gmt_create"`    // 创建时间
 	Remark       string `json:"remark"`        // 备注

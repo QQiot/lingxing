@@ -80,8 +80,8 @@ type OutboundInboundOrderItem struct {
 
 type InboundOrder struct {
 	OptRealName     string                     `json:"opt_realname"`       // 入库人姓名
-	OptTime         string                     `json:"opt_time"`           // 	操作时间
-	OptUID          int                        `json:"opt_uid"`            // 操作人id
+	OptTime         string                     `json:"opt_time"`           // 操作时间
+	OptUID          int                        `json:"opt_uid"`            // 操作人 ID
 	CommitRealName  string                     `json:"commit_realname"`    // 提交人名称
 	CommitUID       string                     `json:"commit_uid"`         // 提交人 ID
 	CommitTime      string                     `json:"commit_time"`        // 提交时间
@@ -89,13 +89,13 @@ type InboundOrder struct {
 	Status          int                        `json:"status"`             // 入库单状态
 	StatusText      string                     `json:"status_text"`        // 入库单状态名称
 	CreateTime      string                     `json:"create_time"`        // 创建时间
-	CreateUID       int                        `json:"create_uid"`         // 创建人ID
+	CreateUID       int                        `json:"create_uid"`         // 创建人 ID
 	CreateRealName  string                     `json:"create_realname"`    // 创建人名称
 	PurchaseOrderSN string                     `json:"purchase_order_sn"`  // 采购单号
 	RevokeRealName  string                     `json:"revoke_realname"`    // 撤销人名称
-	RevokeUID       int                        `json:"revoke_uid"`         // 撤销人id
+	RevokeUID       int                        `json:"revoke_uid"`         // 撤销人 ID
 	RevokeTime      string                     `json:"revoke_time"`        // 撤销时间
-	SupplierId      string                     `json:"supplier_id"`        // 供应商id
+	SupplierId      string                     `json:"supplier_id"`        // 供应商 ID
 	SupplierName    string                     `json:"supplier_name"`      // 供应商名称
 	SourceSN        string                     `json:"source_sn"`          // 关联单据号
 	OrderAmount     float64                    `json:"order_amount"`       // 单据入库成本
@@ -234,7 +234,7 @@ type OutboundOrdersQueryParams struct {
 	SearchFieldTime string `json:"search_field_time"` // 时间搜索维度（create_time：创建时间、opt_time：出库时间）
 	StartDate       string `json:"start_date"`        // 开始日期（Y-m-d，闭区间）
 	EndDate         string `json:"end_date"`          // 结束日期（Y-m-d，开区间）
-	OrderSN         string `json:"order_sn"`          // 入库单单号，支持多个，分号隔离
+	OrderSN         string `json:"order_sn"`          // 入库单单号（多个使用逗号分隔）
 	Status          int    `json:"status"`            // 出库单状态（10：待提交、121：待审批、30：待出库、40：已完成、50：已撤销）
 	Type            int    `json:"type"`              // 出库类型（11：其他出库、12：FBA 出库、14：退货出库、15：调拨出库）
 }
