@@ -11,7 +11,7 @@ type reviewService service
 
 type Review struct {
 	SID           string   `json:"sid"`             // 店铺ID
-	Asin          string   `json:"asin"`            // ASIN
+	ASIN          string   `json:"asin"`            // ASIN
 	LastStar      float64  `json:"last_star"`       // 星级
 	LastTitle     string   `json:"last_title"`      // 标题
 	LastContent   string   `json:"last_content"`    // 内容
@@ -29,7 +29,7 @@ type Review struct {
 	History       []string `json:"history"`         // 历史评价
 	SellerName    string   `json:"seller_name"`     // 店铺名
 	Marketplace   string   `json:"marketplace"`     // 国家
-	AsinURL       string   `json:"asin_url"`        // ASIN链接
+	ASINURL       string   `json:"asin_url"`        // ASIN链接
 	ReviewURl     string   `json:"review_url"`      // 评价链接
 }
 

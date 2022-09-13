@@ -53,7 +53,7 @@ func Test_warehouseService_InboundOrders(t *testing.T) {
 		{"t3", InboundOrdersQueryParams{
 			Paging:          Paging{Limit: 1},
 			SearchFieldTime: "create_time",
-			OrderSn:         "123",
+			OrderSN:         "123",
 			WID:             "a",
 			Type:            1,
 			Status:          40,
@@ -63,7 +63,7 @@ func Test_warehouseService_InboundOrders(t *testing.T) {
 		{"t4", InboundOrdersQueryParams{
 			Paging:          Paging{Limit: 1, Offset: 2},
 			SearchFieldTime: "create_time",
-			OrderSn:         "123",
+			OrderSN:         "123",
 			Type:            1,
 			WID:             "a",
 			Status:          40,
@@ -111,7 +111,7 @@ func Test_warehouseService_OutboundOrders(t *testing.T) {
 		{"t3", OutboundOrdersQueryParams{
 			Paging:          Paging{Limit: 1},
 			SearchFieldTime: "create_time",
-			OrderSn:         "123",
+			OrderSN:         "123",
 			WID:             "a",
 			Type:            11,
 			Status:          40,
@@ -121,7 +121,7 @@ func Test_warehouseService_OutboundOrders(t *testing.T) {
 		{"t4", OutboundOrdersQueryParams{
 			Paging:          Paging{Limit: 1, Offset: 2},
 			SearchFieldTime: "create_time",
-			OrderSn:         "123",
+			OrderSN:         "123",
 			Type:            11,
 			WID:             "a",
 			Status:          40,

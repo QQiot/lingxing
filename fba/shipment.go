@@ -14,12 +14,12 @@ type Shipment struct {
 	MID                            int      `json:"mid"`                               // 国家 ID
 	DestinationFulfillmentCenterId int      `json:"destination_fulfillment_center_id"` // 物流中心编码
 	QuantityShipped                int      `json:"quantity_shipped"`                  // 申报量
-	Wname                          string   `json:"wname"`                             // 仓库名称
-	ShipmentSn                     string   `json:"shipment_sn"`                       // 发货单号
+	WarehouseName                  string   `json:"wname"`                             // 仓库名称
+	ShipmentSN                     string   `json:"shipment_sn"`                       // 发货单号
 	ShipmentId                     string   `json:"shipment_id"`                       // 货件id
 	Wid                            string   `json:"wid"`                               // 仓库id
 	Pid                            int      `json:"pid"`                               // 货件明细 ID
-	Sname                          string   `json:"sname"`                             // 店铺名称
+	SellerName                     string   `json:"sname"`                             // 店铺名称
 	ProductName                    string   `json:"product_name"`                      // 产品名称
 	Num                            string   `json:"num"`                               // 发货数量
 	PicURL                         string   `json:"pic_url"`                           // 图片 URL

@@ -120,7 +120,7 @@ type FBMOrderDetailItem struct {
 	PlatformOrderId string   `json:"platform_order_id"` // 平台单号
 	MSKU            string   `json:"MSKU"`              // MSKU
 	PicURL          string   `json:"pic_url"`           // 图片连接
-	Sku             string   `json:"sku"`               // SKU
+	SKU             string   `json:"sku"`               // SKU
 	ProductName     string   `json:"product_name"`      // 品名
 	Quantity        int      `json:"quantity"`          // 数量
 	Price           float64  `json:"price"`             // 单价

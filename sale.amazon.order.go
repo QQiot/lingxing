@@ -100,8 +100,8 @@ type AmazonOrderDetailItem struct {
 	SID                        int     `json:"sid"`                           // 店铺 ID
 	Title                      string  `json:"title"`                         // 商品标题
 	SellerSKU                  string  `json:"seller_sku"`                    // MSKU
-	Asin                       string  `json:"asin"`                          // ASIN
-	AsinURL                    string  `json:"asin_url"`                      // ASIN URL
+	ASIN                       string  `json:"asin"`                          // ASIN
+	ASINURL                    string  `json:"asin_url"`                      // ASIN URL
 	ProductId                  int     `json:"product_id"`                    // 本地商品ID
 	SKU                        string  `json:"sku"`                           // 本地SKU
 	ProductName                string  `json:"product_name"`                  // 品名

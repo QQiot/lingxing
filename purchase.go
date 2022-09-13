@@ -13,7 +13,7 @@ type purchaseService service
 
 // PurchasePlan 采购计划
 type PurchasePlan struct {
-	PlanSn               string   `json:"plan_sn"`                 // 采购计划编号
+	PlanSN               string   `json:"plan_sn"`                 // 采购计划编号
 	StatusText           string   `json:"status_text"`             // 状态
 	Status               int      `json:"status"`                  // 计划状态码
 	CreatorRealName      string   `json:"creator_real_name"`       // 创建人名称
@@ -124,7 +124,7 @@ func (s purchaseService) Plans(params PurchasePlansQueryParams) (items []Purchas
 // PurchaseOrderItem 采购单子项
 type PurchaseOrderItem struct {
 	ID                string   `json:"id"`                  // 子项 ID
-	PlanSn            string   `json:"plan_sn"`             // 采购计划号
+	PlanSN            string   `json:"plan_sn"`             // 采购计划号
 	ProductId         int      `json:"product_id"`          // 商品 ID
 	ProductName       string   `json:"product_name"`        // 品名
 	SKU               string   `json:"sku"`                 // SKU
@@ -157,12 +157,12 @@ type PurchaseOrderLogisticsInformation struct {
 	LogisticsOrderNo string `json:"logistics_order_no"` // 物流单号
 	PolId            string `json:"pol_id"`             // 物流信息记录ID
 	PurchaseOrderId  string `json:"purchase_order_id"`  // 采购订单唯一ID
-	PurchaseOrderSn  string `json:"purchase_order_sn"`  // 采购订单号（order_sn）
+	PurchaseOrderSN  string `json:"purchase_order_sn"`  // 采购订单号（order_sn）
 }
 
 // PurchaseOrder 采购单
 type PurchaseOrder struct {
-	OrderSn               string                              `json:"order_sn"`               // 采购单号
+	OrderSN               string                              `json:"order_sn"`               // 采购单号
 	SupplierId            int                                 `json:"supplier_id"`            // 供应商 ID
 	SupplierName          string                              `json:"supplier_name"`          // 供应商
 	OptUID                int                                 `json:"opt_uid"`                // 操作员 UID

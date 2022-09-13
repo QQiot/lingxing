@@ -24,8 +24,8 @@ type CustomerServiceReview struct {
 	NegativeRate float64  `json:"negative_rate"` // review中差评率
 	ModifiedNum  float64  `json:"modified_num"`  // review改评数
 	RemoveNum    float64  `json:"remove_num"`    // review删评数
-	Asin         string   `json:"asin"`          // asin
-	AsinURL      string   `json:"asin_url"`      // asin链接
+	ASIN         string   `json:"asin"`          // asin
+	ASINURL      string   `json:"asin_url"`      // asin链接
 	ImageURL     string   `json:"image_url"`     // 图片链接
 	Title        string   `json:"title"`         // 商品标题
 	Country      string   `json:"country"`       // 国家
@@ -36,7 +36,7 @@ type CustomerServiceReview struct {
 		LocalSKU  string `json:"local_sku"`  // SKU
 		LocalName string `json:"local_name"` // 品名
 	} `json:"local_info"`
-	ParentAsin []string `json:"parent_asin"` // 父 SKU
+	ParentASIN []string `json:"parent_asin"` // 父 SKU
 }
 
 type CustomerServiceReviewsQueryParams struct {

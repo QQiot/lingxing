@@ -14,7 +14,7 @@ type fbaShipmentService service
 
 type FBAShipment struct {
 	ID                   int    `json:"id"`                     // 发货单id
-	ShipmentSn           string `json:"shipment_sn"`            // 发货单号
+	ShipmentSN           string `json:"shipment_sn"`            // 发货单号
 	Status               int    `json:"status"`                 // 发货单状态，-1 : 待配货 0：待发货，1：已发货，2：已完成，3：已作废
 	ShipmentTime         string `json:"shipment_time"`          // 发货时间
 	WName                string `json:"wname"`                  // 仓库名称
@@ -44,7 +44,7 @@ type FBAShipment struct {
 		QuantityShipped                int      `json:"quantity_shipped"`                  // 申报量
 		Id                             int      `json:"id"`                                // 明细id
 		WName                          string   `json:"wname"`                             // 仓库名称
-		ShipmentSn                     string   `json:"shipment_sn"`                       // 发货单号
+		ShipmentSN                     string   `json:"shipment_sn"`                       // 发货单号
 		ShipmentId                     string   `json:"shipment_id"`                       // 货件id
 		Wid                            int      `json:"wid"`                               // 仓库id
 		Pid                            int      `json:"pid"`                               // 货件明细ID
@@ -53,10 +53,10 @@ type FBAShipment struct {
 		Num                            int      `json:"num"`                               // 发货数量
 		PicURL                         string   `json:"pic_url"`                           // 图片url
 		PackingType                    int      `json:"packing_type"`                      // 混装类型 2原装 1原装
-		FulfillmentNetworkSku          string   `json:"fulfillment_network_sku"`           // listing的fnsku
-		Sku                            string   `json:"sku"`                               // sku
-		FnSku                          string   `json:"fnsku"`                             // 仓库fnsku
-		MSku                           string   `json:"msku"`                              // seller_sku
+		FulfillmentNetworkSKU          string   `json:"fulfillment_network_sku"`           // listing的fnsku
+		SKU                            string   `json:"sku"`                               // sku
+		FnSKU                          string   `json:"fnsku"`                             // 仓库fnsku
+		MSKU                           string   `json:"msku"`                              // seller_sku
 		Nation                         string   `json:"nation"`                            // 国家名称
 		ApplyNum                       int      `json:"apply_num"`                         // 关联货件量
 		ProductId                      int      `json:"product_id"`                        // 商品id
@@ -131,7 +131,7 @@ type FBAShipmentDetail struct {
 	ID           int    `json:"id"`            // 发货单ID
 	ZId          int    `json:"zid"`           // ZID
 	TrackingId   int    `json:"tracking_id"`   // 物流追踪(运单)ID
-	ShipmentSn   string `json:"shipment_sn"`   // 发货单号
+	ShipmentSN   string `json:"shipment_sn"`   // 发货单号
 	Status       int    `json:"status"`        // 发货单状态，1 : 待配货 0：待发货，1：已发货，2：已完成，3：已作废
 	ShipmentTime string `json:"shipment_time"` // 发货时间
 	WId          int    `json:"wid"`           // 仓库ID
@@ -170,8 +170,8 @@ type FBAShipmentPlan struct {
 		IspgId               int    `json:"ispg_id"`                // 发货计划组父 ID
 		IspId                int    `json:"isp_id"`                 // 发货计划 ID
 		LogisticsChannelId   int    `json:"logistics_channel_id"`   // 物流 ID
-		Fnsku                string `json:"fnsku"`                  // FNSKU
-		Msku                 string `json:"msku"`                   // MSKU
+		FnSKU                string `json:"fnsku"`                  // FNSKU
+		MSKU                 string `json:"msku"`                   // MSKU
 		WID                  int    `json:"wid"`                    // 仓库 ID
 		WarehouseName        string `json:"wname"`                  // 仓库名称
 		SID                  int    `json:"sid"`                    // 店铺 ID
@@ -206,9 +206,9 @@ type FBAShipmentPlan struct {
 			IsimId               int    `json:"isim_id"`                // 关联货件 ID
 			IsilId               int    `json:"isil_id"`                // 关联发货单 ID
 			IsilmId              int    `json:"isilm_id"`               // 关联发货单明细 ID
-			ShipmentPlanSn       string `json:"shipment_plan_sn"`       // 关联发货计划单号
-			ShipmentMwsSn        string `json:"shipment_mws_sn"`        // 关联货件单号
-			ShipmentListSn       string `json:"shipment_list_sn"`       // 关联发货单单号
+			ShipmentPlanSN       string `json:"shipment_plan_sn"`       // 关联发货计划单号
+			ShipmentMwsSN        string `json:"shipment_mws_sn"`        // 关联货件单号
+			ShipmentListSN       string `json:"shipment_list_sn"`       // 关联发货单单号
 			ShipmentPlanQuantity int    `json:"shipment_plan_quantity"` // 关联发货计划数量
 			ShipmentMwsQuantity  int    `json:"shipment_mws_quantity"`  // 关联货件数量
 			ShipmentListQuantity int    `json:"shipment_list_quantity"` // 关联发货单数量

@@ -17,7 +17,7 @@ type ProductReport struct {
 	ID                          int             `json:"id"`                             // ID
 	GmtModified                 string          `json:"gmt_modified"`                   // 更新时间
 	Price                       float64         `json:"price"`                          // 单价
-	Asin                        string          `json:"asin"`                           // ASIN
+	ASIN                        string          `json:"asin"`                           // ASIN
 	SmallImageUrl               string          `json:"small_image_url"`                // 商品图片链接
 	ItemName                    string          `json:"item_name"`                      // 标题
 	CID                         int             `json:"cid"`                            // 种类 ID
@@ -68,7 +68,7 @@ type ProductReport struct {
 type ProductStatisticQueryParams struct {
 	Paging
 	SID       int    `json:"sid"`                 // 店铺 ID
-	AsinType  int    `json:"asin_type,omitempty"` // 产品表现维度（0：asin、1：父 asin，不填默认为 0）
+	ASINType  int    `json:"asin_type,omitempty"` // 产品表现维度（0：asin、1：父 asin，不填默认为 0）
 	StartDate string `json:"start_date"`          // 报表时间（Y-m-d格式。 eg:2019-07-12，闭区间）
 	EndDate   string `json:"end_date"`            // 报表时间（Y-m-d格式。 eg:2019-07-12，开区间）
 }
@@ -76,7 +76,7 @@ type ProductStatisticQueryParams struct {
 func (m ProductStatisticQueryParams) Validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.SID, validation.Required.Error("店铺 ID 不能为空")),
-		validation.Field(&m.AsinType, validation.When(!validation.IsEmpty(m.AsinType), validation.In(0, 1).Error("无效的产品表现维度"))),
+		validation.Field(&m.ASINType, validation.When(!validation.IsEmpty(m.ASINType), validation.In(0, 1).Error("无效的产品表现维度"))),
 		validation.Field(&m.StartDate,
 			validation.Required.Error("报表开始时间不能为空"),
 			validation.Date(constant.DateFormat).Error("报表开始时间格式有误"),

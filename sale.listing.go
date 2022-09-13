@@ -9,15 +9,15 @@ import (
 
 type Listing struct {
 	ListingId                   string             `json:"listing_id"`                     // 亚马逊定义的listing的id
-	SellerSku                   string             `json:"seller_sku"`                     // MSKU
-	FnSku                       string             `json:"fnsku"`                          // FNSKU
+	SellerSKU                   string             `json:"seller_sku"`                     // MSKU
+	FnSKU                       string             `json:"fnsku"`                          // FNSKU
 	ItemName                    string             `json:"item_name"`                      // 品名
-	LocalSku                    string             `json:"local_sku"`                      // 本地SKU
+	LocalSKU                    string             `json:"local_sku"`                      // 本地SKU
 	LocalName                   string             `json:"local_name"`                     // 本地品名
 	Price                       float64            `json:"price"`                          // 商品的原价
 	Quantity                    int                `json:"quantity"`                       // 商品的数量
-	Asin                        string             `json:"asin"`                           // ASIN
-	ParentAsin                  string             `json:"parent_asin"`                    // 父ASIN
+	ASIN                        string             `json:"asin"`                           // ASIN
+	ParentASIN                  string             `json:"parent_asin"`                    // 父ASIN
 	SmallImageURL               string             `json:"small_image_url"`                // 主图URL
 	Status                      int                `json:"status"`                         // 状态（1：在售，0：下架）
 	IsDelete                    bool               `json:"is_delete"`                      // 是否删除（1：是，0：否）
@@ -95,15 +95,15 @@ func (s listingService) All(params ListingsQueryParams) (items []Listing, nextOf
 type ListingPairRequest struct {
 	SellerId      string `json:"seller_id,omitempty"`      // 店铺id
 	MarketplaceId string `json:"marketplace_id,omitempty"` // 市场id
-	MSku          string `json:"msku"`                     // msku
-	Sku           string `json:"sku"`                      // 本地sku
+	MSKU          string `json:"msku"`                     // msku
+	SKU           string `json:"sku"`                      // 本地sku
 	IsSyncPic     bool   `json:"is_sync_pic"`              // 是否同步listing图片（1：是、0：否）
 }
 
 func (m ListingPairRequest) Validate() error {
 	return validation.ValidateStruct(&m,
-		validation.Field(&m.MSku, validation.Required.Error("msku 不能为空")),
-		validation.Field(&m.Sku, validation.Required.Error("本地 SKU 不能为空")),
+		validation.Field(&m.MSKU, validation.Required.Error("msku 不能为空")),
+		validation.Field(&m.SKU, validation.Required.Error("本地 SKU 不能为空")),
 		validation.Field(&m.IsSyncPic, validation.In(0, 1).Error("是否同步图片标识错误")),
 	)
 }

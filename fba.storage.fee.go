@@ -14,7 +14,7 @@ type FBALongTermStorageFee struct {
 	SnapshotDate                         string `json:"snapshot_date"`                           // 时间
 	SKU                                  string `json:"sku"`                                     // SKU
 	FnSKU                                string `json:"fnsku"`                                   // FNSKU
-	Asin                                 string `json:"asin"`                                    // ASIN
+	ASIN                                 string `json:"asin"`                                    // ASIN
 	ProductName                          string `json:"product_name"`                            // 标题
 	Condition                            string `json:"condition"`                               // 状况
 	QtyCharged12monthsLongTermStorageFee string `json:"qty_charged_12_mo_long_term_storage_fee"` // 12个月以上收费商品量
@@ -80,7 +80,7 @@ func (s fbaStorageFeeService) LongTerm(params FBALongTermStorageFeesQueryParams)
 
 type FBAMonthStorageFee struct {
 	SID                           int     `json:"sid"`                              // 店铺ID
-	Asin                          string  `json:"asin"`                             // ASIN
+	ASIN                          string  `json:"asin"`                             // ASIN
 	FnSKU                         string  `json:"fnsku"`                            // FNSKU
 	ProductName                   string  `json:"product_name"`                     // 标题
 	FulfillmentCenter             string  `json:"fulfillment_center"`               // 仓库编号
