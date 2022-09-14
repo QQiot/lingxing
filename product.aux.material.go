@@ -59,7 +59,7 @@ func (s productAuxMaterialService) All(params ProductAuxMaterialsQueryParams) (i
 
 	if err = jsoniter.Unmarshal(resp.Body(), &res); err == nil {
 		items = res.Data
-		nextOffset = params.NextOffset
+		nextOffset = params.nextOffset
 		isLastPage = len(items) < params.Limit
 	}
 	return

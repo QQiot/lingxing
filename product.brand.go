@@ -44,7 +44,7 @@ func (s productBrandService) All(params BrandsQueryParams) (items []Brand, nextO
 
 	if err = jsoniter.Unmarshal(resp.Body(), &res); err == nil {
 		items = res.Data
-		nextOffset = params.NextOffset
+		nextOffset = params.nextOffset
 		isLastPage = len(items) < params.Limit
 	}
 	return

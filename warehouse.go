@@ -52,7 +52,7 @@ func (s warehouseService) All(params WarehousesQueryParams) (items []Warehouse, 
 
 	if err = jsoniter.Unmarshal(resp.Body(), &res); err == nil {
 		items = res.Data
-		nextOffset = params.NextOffset
+		nextOffset = params.nextOffset
 		isLastPage = len(items) < params.Limit
 	}
 	return
@@ -181,7 +181,7 @@ func (s warehouseService) InboundOrders(params InboundOrdersQueryParams) (items 
 
 	if err = jsoniter.Unmarshal(resp.Body(), &res); err == nil {
 		items = res.Data
-		nextOffset = params.NextOffset
+		nextOffset = params.nextOffset
 		isLastPage = len(items) < params.Limit
 	}
 	return
@@ -295,7 +295,7 @@ func (s warehouseService) OutboundOrders(params OutboundOrdersQueryParams) (item
 
 	if err = jsoniter.Unmarshal(resp.Body(), &res); err == nil {
 		items = res.Data
-		nextOffset = params.NextOffset
+		nextOffset = params.nextOffset
 		isLastPage = len(items) < params.Limit
 	}
 	return

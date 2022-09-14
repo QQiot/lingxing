@@ -65,7 +65,7 @@ func (s reviewService) All(params ReviewsQueryParams) (items []Review, nextOffse
 
 	if err = jsoniter.Unmarshal(resp.Body(), &res); err == nil {
 		items = res.Data
-		nextOffset = params.NextOffset
+		nextOffset = params.nextOffset
 		isLastPage = res.Total <= params.Offset
 	}
 	return

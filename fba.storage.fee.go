@@ -70,7 +70,7 @@ func (s fbaStorageFeeService) LongTerm(params FBALongTermStorageFeesQueryParams)
 
 	if err = jsoniter.Unmarshal(resp.Body(), &res); err == nil {
 		items = res.Data
-		nextOffset = params.NextOffset
+		nextOffset = params.nextOffset
 		isLastPage = len(items) < params.Limit
 	}
 	return
@@ -139,7 +139,7 @@ func (s fbaStorageFeeService) Month(params FBAMonthStorageFeesQueryParams) (item
 
 	if err = jsoniter.Unmarshal(resp.Body(), &res); err == nil {
 		items = res.Data
-		nextOffset = params.NextOffset
+		nextOffset = params.nextOffset
 		isLastPage = len(items) < params.Limit
 	}
 	return

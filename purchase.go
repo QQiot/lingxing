@@ -113,7 +113,7 @@ func (s purchaseService) Plans(params PurchasePlansQueryParams) (items []Purchas
 
 	if err = jsoniter.Unmarshal(resp.Body(), &res); err == nil {
 		items = res.Data
-		nextOffset = params.NextOffset
+		nextOffset = params.nextOffset
 		isLastPage = res.Total <= nextOffset
 	}
 	return
@@ -269,7 +269,7 @@ func (s purchaseService) Orders(params PurchaseOrdersQueryParams) (items []Purch
 
 	if err = jsoniter.Unmarshal(resp.Body(), &res); err == nil {
 		items = res.Data
-		nextOffset = params.NextOffset
+		nextOffset = params.nextOffset
 		isLastPage = res.Total <= nextOffset
 	}
 	return

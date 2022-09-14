@@ -85,7 +85,7 @@ func (s productProductService) All(params ProductsQueryParams) (items []Product,
 
 	if err = jsoniter.Unmarshal(resp.Body(), &res); err == nil {
 		items = res.Data
-		nextOffset = params.NextOffset
+		nextOffset = params.nextOffset
 		isLastPage = res.Total <= nextOffset
 	}
 	return

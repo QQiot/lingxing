@@ -118,7 +118,7 @@ func (s fbaShipmentService) All(params FBAShipmentsQueryParams) (items []FBAShip
 
 	if err = jsoniter.Unmarshal(resp.Body(), &res); err == nil {
 		items = res.Data
-		nextOffset = params.NextOffset
+		nextOffset = params.nextOffset
 		isLastPage = len(items) < params.Limit
 	}
 	return
@@ -300,7 +300,7 @@ func (s fbaShipmentService) Plans(params FBAShipmentPlansQueryParams) (items []F
 
 	if err = jsoniter.Unmarshal(resp.Body(), &res); err == nil {
 		items = res.Data.PlanList
-		nextOffset = params.NextOffset
+		nextOffset = params.nextOffset
 		isLastPage = len(items) < params.Limit
 	}
 	return

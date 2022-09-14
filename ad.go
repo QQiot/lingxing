@@ -98,7 +98,7 @@ func (s adService) Groups(params AdGroupsQueryParams) (items []AdGroup, nextOffs
 
 	if err = jsoniter.Unmarshal(resp.Body(), &res); err == nil {
 		items = res.Data
-		nextOffset = params.NextOffset
+		nextOffset = params.nextOffset
 		isLastPage = res.Total <= nextOffset
 	}
 	return
@@ -194,7 +194,7 @@ func (s adService) QueryWords(params AdQueryWordsQueryParams) (items []AdQueryWo
 
 	if err = jsoniter.Unmarshal(resp.Body(), &res); err == nil {
 		items = res.Data
-		nextOffset = params.NextOffset
+		nextOffset = params.nextOffset
 		isLastPage = res.Total <= nextOffset
 	}
 	return
@@ -289,7 +289,7 @@ func (s adService) ProductTargets(params AdProductTargetsQueryParams) (items []A
 
 	if err = jsoniter.Unmarshal(resp.Body(), &res); err == nil {
 		items = res.Data
-		nextOffset = params.NextOffset
+		nextOffset = params.nextOffset
 		isLastPage = res.Total <= nextOffset
 	}
 	return
