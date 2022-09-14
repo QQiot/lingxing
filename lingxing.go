@@ -78,7 +78,7 @@ func NewLingXing(cfg config.Config) *LingXing {
 		httpClient.SetBaseURL("https://openapi.lingxing.com/erp/sc")
 	}
 
-	httpClient.SetTimeout(10 * time.Second).
+	httpClient.SetTimeout(time.Duration(cfg.Timeout) * time.Second).
 		OnBeforeRequest(func(client *resty.Client, request *resty.Request) error {
 			if err := lingXingClient.accessToken(true); err != nil {
 				logger.Printf("authorization error: %s", err.Error())

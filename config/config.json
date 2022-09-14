@@ -1,14 +1,15 @@
 {
   "debug": true,
+  "timeout": 10,
   "sandbox": false,
   "environment": {
     "dev": {
-      "appId": "",
-      "appSecret": ""
+      "appId": "ak_J52Q5B27vIN1k",
+      "appSecret": "pCAt/jdhLc0ms41Ie4j5LA=="
     },
     "prod": {
-      "appId": "",
-      "appSecret": ""
+      "appId": "ak_r1CFhlKqyKkv3",
+      "appSecret": "Kha3c5Lqu/FCQAVyWFjQJA=="
     }
   }
 }
