@@ -463,6 +463,9 @@ func ErrorWrap(code int, message string) error {
 			}
 		} else {
 			message = strings.TrimSpace(message)
+			if message == "" {
+				message = "Unknown error"
+			}
 		}
 	}
 	return fmt.Errorf("%d: %s", code, message)
