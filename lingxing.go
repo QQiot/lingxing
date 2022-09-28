@@ -434,15 +434,15 @@ func ErrorWrap(code int, message string) error {
 	case ServiceNotFoundError:
 		message = "服务不存在"
 	case AppIdNotExistError:
-		message = "appId 不存在"
+		message = "App ID 不存在"
 	case InvalidAppSecretError:
-		message = "appSecret 不正确或者未编码"
+		message = "App Secret 不正确或者未编码"
 	case AccessTokenExpireError:
 		message = "Token 不存在或者已经过期"
 	case UnauthorizedError:
 		message = "API 未授权"
 	case InvalidAccessTokenError:
-		message = "token 不正确"
+		message = "Token 不正确"
 	case SignError:
 		message = "签名错误"
 	case SignExpiredError:
