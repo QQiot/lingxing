@@ -43,8 +43,9 @@ const (
 	RefreshTokenExpiredError = 2001008 // RefreshToken 过期
 	InvalidRefreshTokenError = 2001009 // 无效的 RefreshToken
 	InvalidQueryParamsError  = 3001001 // 查询参数缺失
-	InvalidIPError           = 3001002 // 应用所在服务器的 ip 不在白名单中
+	InvalidIPError           = 3001002 // 应用所在服务器的 IP 不在白名单中
 	TooManyRequestsError     = 3001008 // 接口请求超请求次数限额
+	TooManyRequestsError2    = 103     // 业务接口限流
 )
 
 const (
@@ -456,10 +457,12 @@ func ErrorWrap(code int, message string) error {
 		message = "应用所在服务器的 IP 不在白名单中"
 	case TooManyRequestsError:
 		message = "接口请求超请求次数限额"
+	case TooManyRequestsError2:
+		message = "业务接口限流"
 	default:
 		if code == InternalError {
 			if message == "" {
-				message = "内部错误"
+				message = "内部错误，请联系领星客服"
 			}
 		} else {
 			message = strings.TrimSpace(message)
