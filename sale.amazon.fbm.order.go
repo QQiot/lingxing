@@ -123,8 +123,8 @@ type FBMOrderDetailItem struct {
 	PicURL          string   `json:"pic_url"`           // 图片连接
 	SKU             string   `json:"sku"`               // SKU
 	ProductName     string   `json:"product_name"`      // 品名
-	Quantity        int      `json:"quantity"`          // 数量
-	Price           float64  `json:"price"`             // 单价
+	Quantity        int      `json:"quality"`           // 数量
+	ItemUnitPrice   float64  `json:"item_unit_price"`   // 单价
 	CurrencyCode    string   `json:"currency_code"`     // 单价币种
 	Customization   string   `json:"customization"`     // 商品备注
 	Attachments     []string `json:"attachments"`       // 商品附件
