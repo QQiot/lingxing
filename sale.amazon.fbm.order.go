@@ -117,6 +117,7 @@ type FBMOrderDetail struct {
 }
 
 type FBMOrderDetailItem struct {
+	OrderItemNo     string   `json:"order_item_no"`     // 订单项序号
 	PlatformOrderId string   `json:"platform_order_id"` // 平台单号
 	MSKU            string   `json:"MSKU"`              // MSKU
 	PicURL          string   `json:"pic_url"`           // 图片连接
@@ -127,6 +128,8 @@ type FBMOrderDetailItem struct {
 	CurrencyCode    string   `json:"currency_code"`     // 单价币种
 	Customization   string   `json:"customization"`     // 商品备注
 	Attachments     []string `json:"attachments"`       // 商品附件
+	ItemImage       string   `json:"item_image"`        // 商品图片（非领星提供的字段）
+	ItemAttachments []string `json:"item_attachments"`  // 商品附件（非领星提供的字段）
 }
 
 func (s fbmOrderService) One(number string) (item FBMOrderDetail, err error) {
@@ -143,6 +146,15 @@ func (s fbmOrderService) One(number string) (item FBMOrderDetail, err error) {
 
 	if err = jsoniter.Unmarshal(resp.Body(), &res); err == nil {
 		item = res.Data
+		for i := range item.OrderItem {
+			itemAttachments := make([]string, 0)
+			attachments := item.OrderItem[i].Attachments
+			if len(attachments) > 0 {
+				item.OrderItem[i].ItemImage = attachments[0]
+				itemAttachments = attachments[1:]
+			}
+			item.OrderItem[i].ItemAttachments = itemAttachments
+		}
 	}
 	return
 }
