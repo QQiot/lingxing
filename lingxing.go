@@ -7,6 +7,7 @@ import (
 	"github.com/go-resty/resty/v2"
 	"github.com/hiscaler/gox/bytex"
 	"github.com/hiscaler/gox/cryptox"
+	"github.com/hiscaler/gox/inx"
 	"github.com/hiscaler/gox/jsonx"
 	"github.com/hiscaler/gox/stringx"
 	"github.com/hiscaler/lingxing/config"
@@ -45,7 +46,7 @@ const (
 	InvalidQueryParamsError  = 3001001 // 查询参数缺失
 	InvalidIPError           = 3001002 // 应用所在服务器的 IP 不在白名单中
 	TooManyRequestsError     = 3001008 // 接口请求超请求次数限额
-	TooManyRequestsError2    = 103     // 业务接口限流
+	APIThrottlingError       = 103     // 业务接口限流
 )
 
 const (
@@ -196,7 +197,7 @@ func NewLingXing(cfg config.Config) *LingXing {
 			retry := response.StatusCode() == http.StatusTooManyRequests
 			if !retry {
 				r := struct{ Code int }{}
-				retry = jsoniter.Unmarshal(response.Body(), &r) == nil && r.Code == TooManyRequestsError
+				retry = jsoniter.Unmarshal(response.Body(), &r) == nil && inx.IntIn(r.Code, TooManyRequestsError, AccessTokenExpireError, InvalidAccessTokenError, APIThrottlingError)
 			}
 			if retry {
 				text := response.Request.URL
@@ -457,7 +458,7 @@ func ErrorWrap(code int, message string) error {
 		message = "应用所在服务器的 IP 不在白名单中"
 	case TooManyRequestsError:
 		message = "接口请求超请求次数限额"
-	case TooManyRequestsError2:
+	case APIThrottlingError:
 		message = "业务接口限流"
 	default:
 		if code == InternalError {
