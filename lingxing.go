@@ -82,7 +82,7 @@ func NewLingXing(cfg config.Config) *LingXing {
 
 	httpClient.SetTimeout(time.Duration(cfg.Timeout) * time.Second).
 		OnBeforeRequest(func(client *resty.Client, request *resty.Request) error {
-			if err := lingXingClient.accessToken(true); err != nil {
+			if err := lingXingClient.accessToken(false); err != nil {
 				logger.Printf("authorization error: %s", err.Error())
 				return err
 			}
@@ -334,7 +334,6 @@ func (ar authorizationResponse) IsExpired() bool {
 
 // accessToken 获取 Token 值
 // force 参数为 true 的情况下，会强制重新获取 token，为 false 的情况下根据已有的 token 数据是否过期而采取重新获取或者续期处理。
-// 当前通过测试发现领星对 token 的过期时间处理并不是很准确，故当前总是重新获取 token.
 func (lx *LingXing) accessToken(force bool) (err error) {
 	auth := lx.authorization
 	if !force && !auth.IsExpired() {
