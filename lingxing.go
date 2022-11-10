@@ -197,7 +197,12 @@ func NewLingXing(cfg config.Config) *LingXing {
 			retry := response.StatusCode() == http.StatusTooManyRequests
 			if !retry {
 				r := struct{ Code int }{}
-				retry = jsoniter.Unmarshal(response.Body(), &r) == nil && inx.IntIn(r.Code, TooManyRequestsError, AccessTokenExpireError, InvalidAccessTokenError, APIThrottlingError)
+				if jsoniter.Unmarshal(response.Body(), &r) == nil {
+					retry = inx.IntIn(r.Code, TooManyRequestsError, AccessTokenExpireError, InvalidAccessTokenError, APIThrottlingError)
+					if inx.IntIn(r.Code, AccessTokenExpireError, InvalidAccessTokenError, RefreshTokenExpiredError, InvalidRefreshTokenError) {
+						lingXingClient.accessToken(true)
+					}
+				}
 			}
 			if retry {
 				text := response.Request.URL
