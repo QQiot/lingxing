@@ -29,11 +29,11 @@ func newHttpClient(c config.Config) *resty.Client {
 
 // GetToken 获取 access-token 和 refresh-token
 // https://openapidoc.lingxing.com/#/docs/Authorization/GetToken
-func (s authorizationService) GetToken() (ar authorizationResponse, err error) {
+func (s authorizationService) GetToken() (ar Token, err error) {
 	result := struct {
-		Code    string                `json:"code"`
-		Message string                `json:"msg"`
-		Data    authorizationResponse `json:"data"`
+		Code    string `json:"code"`
+		Message string `json:"msg"`
+		Data    Token  `json:"data"`
 	}{}
 	resp, err := newHttpClient(*s.config).R().
 		SetResult(&result).
@@ -46,7 +46,7 @@ func (s authorizationService) GetToken() (ar authorizationResponse, err error) {
 		code, _ := strconv.Atoi(result.Code)
 		if err = ErrorWrap(code, result.Message); err == nil {
 			ar = result.Data
-			ar.ExpiresDatetime = time.Now().Unix() + int64(ar.ExpiresIn*5/10) // 剩余 1/2 时间就会要求更换 token
+			ar.ExpiresDatetime = time.Now().Unix() + int64(ar.ExpiresIn*4/5) // 剩余 1/5 时间需要更换 token
 		}
 	} else {
 		err = fmt.Errorf("%s: %s", resp.Status(), bytex.ToString(resp.Body()))
@@ -56,11 +56,11 @@ func (s authorizationService) GetToken() (ar authorizationResponse, err error) {
 
 // RefreshToken 刷新 token（token 续约，每个 refreshToken 只能用一次）
 // https://openapidoc.lingxing.com/#/docs/Authorization/RefreshToken
-func (s authorizationService) RefreshToken(refreshToken string) (ar authorizationResponse, err error) {
+func (s authorizationService) RefreshToken(refreshToken string) (ar Token, err error) {
 	result := struct {
-		Code    string                `json:"code"`
-		Message string                `json:"msg"`
-		Data    authorizationResponse `json:"data"`
+		Code    string `json:"code"`
+		Message string `json:"msg"`
+		Data    Token  `json:"data"`
 	}{}
 	resp, err := newHttpClient(*s.config).R().
 		SetResult(&result).

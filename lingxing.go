@@ -57,10 +57,10 @@ const (
 var ErrNotFound = errors.New("lingxing: not found")
 
 type LingXing struct {
-	config        *config.Config        // 配置
-	httpClient    *resty.Client         // Resty Client
-	authorization authorizationResponse // 认证数据
-	Services      services              // API Services
+	config     *config.Config // 配置
+	httpClient *resty.Client  // Resty Client
+	forceToken bool           // 强制获取 Token
+	Services   services       // API Services
 }
 
 func NewLingXing(cfg config.Config) *LingXing {
@@ -82,16 +82,23 @@ func NewLingXing(cfg config.Config) *LingXing {
 
 	httpClient.SetTimeout(time.Duration(cfg.Timeout) * time.Second).
 		OnBeforeRequest(func(client *resty.Client, request *resty.Request) error {
-			if err := lingXingClient.accessToken(false); err != nil {
-				logger.Printf("authorization error: %s", err.Error())
-				return err
+			fileToken := FileToken{}
+			token, err := fileToken.Read()
+			if lingXingClient.forceToken || err != nil || !token.Valid() {
+				token, err = lingXingClient.Services.Authorization.GetToken()
+				if err != nil {
+					return err
+				}
+				_, err = fileToken.Write(token)
+				if err != nil {
+					return err
+				}
 			}
-
-			client.SetAuthToken(lingXingClient.authorization.AccessToken)
-
+			lingXingClient.forceToken = false
+			client.SetAuthToken(token.AccessToken)
 			appendQueryParams := map[string]string{
 				"app_key":      lingXingClient.config.AppId,
-				"access_token": lingXingClient.authorization.AccessToken,
+				"access_token": token.AccessToken,
 				"timestamp":    strconv.FormatInt(time.Now().Unix(), 10),
 			}
 			params := make(map[string]interface{}, 0)
@@ -200,7 +207,7 @@ func NewLingXing(cfg config.Config) *LingXing {
 				if jsoniter.Unmarshal(response.Body(), &r) == nil {
 					retry = inx.IntIn(r.Code, TooManyRequestsError, AccessTokenExpireError, InvalidAccessTokenError, APIThrottlingError)
 					if inx.IntIn(r.Code, AccessTokenExpireError, InvalidAccessTokenError, RefreshTokenExpiredError, InvalidRefreshTokenError) {
-						lingXingClient.accessToken(true)
+						lingXingClient.forceToken = true
 					}
 				}
 			}
@@ -320,70 +327,6 @@ func (lx *LingXing) SetDebug(v bool) *LingXing {
 
 type NormalResponse struct {
 	Total int `json:"total"`
-}
-
-type authorizationResponse struct {
-	AccessToken     string `json:"access_token"`
-	RefreshToken    string `json:"refresh_token"`
-	ExpiresIn       int    `json:"expires_in"`
-	ExpiresDatetime int64  `json:"expires_datetime"`
-}
-
-// IsExpired 是否过期
-func (ar authorizationResponse) IsExpired() bool {
-	if ar.AccessToken == "" || ar.ExpiresIn == 0 || ar.ExpiresDatetime <= time.Now().Unix() {
-		return true
-	}
-	return false
-}
-
-// accessToken 获取 Token 值
-// force 参数为 true 的情况下，会强制重新获取 token，为 false 的情况下根据已有的 token 数据是否过期而采取重新获取或者续期处理。
-func (lx *LingXing) accessToken(force bool) (err error) {
-	auth := lx.authorization
-	if !force && !auth.IsExpired() {
-		return nil
-	}
-
-	result := struct {
-		Code    string                `json:"code"`
-		Message string                `json:"msg"`
-		Data    authorizationResponse `json:"data"`
-	}{}
-	httpClient := resty.New().
-		SetDebug(lx.config.Debug).
-		SetHeaders(map[string]string{
-			"Content-Type": "application/json",
-			"Accept":       "application/json",
-			"User-Agent":   userAgent,
-		})
-	if lx.config.Sandbox {
-		httpClient.SetBaseURL("https://openapisandbox.lingxing.com")
-	} else {
-		httpClient.SetBaseURL("https://openapi.lingxing.com")
-	}
-
-	url := fmt.Sprintf("/api/auth-server/oauth/access-token?appId=%s&appSecret=%s", lx.config.AppId, url.QueryEscape(lx.config.AppSecret))
-	if !force && auth.RefreshToken != "" && auth.ExpiresDatetime > time.Now().Unix() {
-		url = fmt.Sprintf("/api/auth-server/oauth/refresh?appId=%s&refreshToken=%s", lx.config.AppId, auth.RefreshToken)
-	}
-	resp, err := httpClient.R().SetResult(&result).Post(url)
-	if err != nil {
-		return
-	}
-
-	if resp.IsSuccess() {
-		code, _ := strconv.ParseInt(result.Code, 10, 32)
-		err = ErrorWrap(int(code), result.Message)
-		if err == nil {
-			ar := result.Data
-			ar.ExpiresDatetime = time.Now().Unix() + int64(ar.ExpiresIn*5/10) // 剩余 1/2 时间就会要求更换 token
-			lx.authorization = ar
-		}
-	} else {
-		err = fmt.Errorf("%s: %s", resp.Status(), bytex.ToString(resp.Body()))
-	}
-	return
 }
 
 // 生成签名
