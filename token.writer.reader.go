@@ -9,11 +9,14 @@ import (
 	"path"
 )
 
+// TokenWriterReader You must implement TokenWriterReader interface methods(Read() and Write()),
+// you can use any storage type, like file/redis
 type TokenWriterReader interface {
 	Read() (Token, error)
 	Write(token Token) (bool, error)
 }
 
+// FileToken file token write and read
 type FileToken struct {
 	Path  string
 	Token Token
