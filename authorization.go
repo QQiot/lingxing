@@ -13,7 +13,9 @@ import (
 type authorizationService service
 
 func newHttpClient(c config.Config) *resty.Client {
-	httpClient := resty.New().SetDebug(c.Debug).
+	httpClient := resty.
+		New().
+		SetDebug(c.Debug).
 		SetHeaders(map[string]string{
 			"Content-Type": "application/json",
 			"Accept":       "application/json",
@@ -35,7 +37,9 @@ func (s authorizationService) GetToken() (ar Token, err error) {
 		Message string `json:"msg"`
 		Data    Token  `json:"data"`
 	}{}
-	resp, err := newHttpClient(*s.config).R().
+	resp, err := newHttpClient(*s.config).
+		SetLogger(s.logger).
+		R().
 		SetResult(&result).
 		Post(fmt.Sprintf("/api/auth-server/oauth/access-token?appId=%s&appSecret=%s", s.config.AppId, url.QueryEscape(s.config.AppSecret)))
 	if err != nil {
@@ -62,7 +66,9 @@ func (s authorizationService) RefreshToken(refreshToken string) (ar Token, err e
 		Message string `json:"msg"`
 		Data    Token  `json:"data"`
 	}{}
-	resp, err := newHttpClient(*s.config).R().
+	resp, err := newHttpClient(*s.config).
+		SetLogger(s.logger).
+		R().
 		SetResult(&result).
 		Post(fmt.Sprintf("/api/auth-server/oauth/refresh?appId=%s&refreshToken=%s", s.config.AppId, refreshToken))
 	if err != nil {

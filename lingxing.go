@@ -14,10 +14,8 @@ import (
 	jsoniter "github.com/json-iterator/go"
 	"github.com/json-iterator/go/extra"
 	"github.com/spf13/cast"
-	"log"
 	"net/http"
 	"net/url"
-	"os"
 	"sort"
 	"strconv"
 	"strings"
@@ -58,17 +56,20 @@ var ErrNotFound = errors.New("lingxing: not found")
 
 type LingXing struct {
 	config     *config.Config // 配置
+	logger     Logger         // 日志
 	httpClient *resty.Client  // Resty Client
 	forceToken bool           // 强制获取 Token
 	Services   services       // API Services
 }
 
 func NewLingXing(cfg config.Config) *LingXing {
-	logger := log.New(os.Stdout, "[ LingXing ] ", log.LstdFlags|log.Llongfile)
 	lingXingClient := &LingXing{
 		config: &cfg,
+		logger: createLogger(),
 	}
-	httpClient := resty.New().SetDebug(lingXingClient.config.Debug).
+	httpClient := resty.
+		New().
+		SetDebug(lingXingClient.config.Debug).
 		SetHeaders(map[string]string{
 			"Content-Type": "application/json",
 			"Accept":       "application/json",
@@ -80,19 +81,27 @@ func NewLingXing(cfg config.Config) *LingXing {
 		httpClient.SetBaseURL("https://openapi.lingxing.com/erp/sc")
 	}
 
-	httpClient.SetTimeout(time.Duration(cfg.Timeout) * time.Second).
+	httpClient.
+		SetTimeout(time.Duration(cfg.Timeout) * time.Second).
 		OnBeforeRequest(func(client *resty.Client, request *resty.Request) error {
 			fileToken := FileToken{}
 			token, err := fileToken.Read()
+			if err != nil {
+				lingXingClient.logger.Errorf("Read token error: %s", err.Error())
+			}
 			if lingXingClient.forceToken || err != nil || !token.Valid() {
+				lingXingClient.logger.Debugf("Try get token...")
 				token, err = lingXingClient.Services.Authorization.GetToken()
 				if err != nil {
+					lingXingClient.logger.Errorf("Get token error: %s", err.Error())
 					return err
 				}
 				_, err = fileToken.Write(token)
 				if err != nil {
+					lingXingClient.logger.Errorf("Write token error: %s", err.Error())
 					return err
 				}
+				lingXingClient.logger.Debugf("Get token successful")
 			}
 			lingXingClient.forceToken = false
 			client.SetAuthToken(token.AccessToken)
@@ -121,16 +130,20 @@ func NewLingXing(cfg config.Config) *LingXing {
 					params[k] = v
 				}
 			}
-			if lingXingClient.config.Debug {
-				logger.Printf("Signature params: %+v", params)
-			}
-			sign, err := generateSignature(lingXingClient.config.AppId, params)
+			sign, err := generateSignature(lingXingClient.config.AppId, params, lingXingClient.logger, lingXingClient.config.Debug)
 			if err != nil {
+				if lingXingClient.config.Debug {
+					lingXingClient.logger.Errorf("Generate signature error: %s", err.Error())
+				}
 				return err
 			}
 
 			appendQueryParams["sign"] = url.QueryEscape(sign)
 			request.SetQueryParams(appendQueryParams)
+			if lingXingClient.config.Debug {
+				lingXingClient.logger.Debugf(`Query Params:
+%s`, jsonx.ToPrettyJson(request.QueryParam))
+			}
 			return nil
 		}).
 		OnAfterResponse(func(client *resty.Client, response *resty.Response) (err error) {
@@ -185,11 +198,11 @@ func NewLingXing(cfg config.Config) *LingXing {
 					}
 				}
 			} else {
-				logger.Printf("JSON Unmarshal error: %s", err.Error())
+				lingXingClient.logger.Errorf("JSON Unmarshal error: %s", err.Error())
 			}
 
 			if err != nil {
-				logger.Printf("OnAfterResponse error: %s", err.Error())
+				lingXingClient.logger.Errorf("OnAfterResponse error: %s", err.Error())
 			}
 			return
 		}).
@@ -216,7 +229,7 @@ func NewLingXing(cfg config.Config) *LingXing {
 				if err != nil {
 					text += fmt.Sprintf(", error: %s", err.Error())
 				}
-				logger.Printf("Retry request: %s", text)
+				lingXingClient.logger.Debugf("Retry request: %s", text)
 			}
 			return retry
 		})
@@ -281,7 +294,7 @@ func NewLingXing(cfg config.Config) *LingXing {
 	lingXingClient.httpClient = httpClient
 	xService := service{
 		config:     &cfg,
-		logger:     logger,
+		logger:     lingXingClient.logger,
 		httpClient: lingXingClient.httpClient,
 	}
 	lingXingClient.Services = services{
@@ -325,12 +338,22 @@ func (lx *LingXing) SetDebug(v bool) *LingXing {
 	return lx
 }
 
+// SetLogger 设置日志器
+func (lx *LingXing) SetLogger(logger Logger) *LingXing {
+	lx.logger = logger
+	return lx
+}
+
 type NormalResponse struct {
 	Total int `json:"total"`
 }
 
 // 生成签名
-func generateSignature(appId string, params map[string]interface{}) (sign string, err error) {
+func generateSignature(appId string, params map[string]interface{}, logger Logger, debug bool) (sign string, err error) {
+	if debug {
+		logger.Debugf(`Signature params:
+%s`, jsonx.ToPrettyJson(params))
+	}
 	keys := make([]string, len(params))
 	i := 0
 	for k := range params {
@@ -363,7 +386,11 @@ func generateSignature(appId string, params map[string]interface{}) (sign string
 	}
 
 	aesTool := NewAesTool(stringx.ToBytes(appId), len(appId))
-	aesEncrypted, err := aesTool.ECBEncrypt(stringx.ToBytes(strings.ToUpper(cryptox.Md5(s))))
+	md5Value := strings.ToUpper(cryptox.Md5(s))
+	if debug {
+		logger.Debugf("Signature params MD5: %s => %s", s, md5Value)
+	}
+	aesEncrypted, err := aesTool.ECBEncrypt(stringx.ToBytes(md5Value))
 	if err != nil {
 		return
 	}
