@@ -111,17 +111,23 @@ func NewLingXing(cfg config.Config) *LingXing {
 				"timestamp":    strconv.FormatInt(time.Now().Unix(), 10),
 			}
 			params := make(map[string]interface{}, 0)
-			for k, v := range appendQueryParams {
-				params[k] = v
-			}
 			// 获取 URL 请求参数
 			if u, err := url.Parse(request.URL); err == nil && len(u.Query()) > 0 {
 				for k := range u.Query() {
+					if strings.EqualFold(k, "sign") {
+						continue
+					}
 					params[k] = u.Query().Get(k)
 				}
 			}
 			for k := range request.QueryParam {
+				if strings.EqualFold(k, "sign") {
+					continue
+				}
 				params[k] = request.QueryParam.Get(k)
+			}
+			for k, v := range appendQueryParams {
+				params[k] = v
 			}
 
 			if request.Method == http.MethodPost {
