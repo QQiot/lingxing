@@ -11,7 +11,7 @@ import (
 
 type productProductService service
 
-// SupplierQuote 供应商报价发
+// SupplierQuote 供应商报价
 type SupplierQuote struct {
 	PsqId              int                 `json:"psq_id"`
 	ProductId          int                 `json:"product_id"`           // 产品 ID
