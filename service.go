@@ -23,4 +23,5 @@ type services struct {
 	Ad              adService              // 广告
 	Purchase        purchaseService        // 采购
 	Warehouse       warehouseService       // 仓库
+	MultiPlatform   multiPlatformService   // 多平台
 }
