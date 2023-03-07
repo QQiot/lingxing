@@ -335,6 +335,7 @@ func NewLingXing(cfg config.Config) *LingXing {
 		Warehouse: (warehouseService)(xService),
 		MultiPlatform: multiPlatformService{
 			Seller: (multiPlatformSellerService)(xService),
+			Order:  (multiPlatformOrderService)(xService),
 		},
 	}
 	return lingXingClient
