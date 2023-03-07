@@ -6,6 +6,7 @@ import (
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/hiscaler/lingxing/constant"
 	jsoniter "github.com/json-iterator/go"
+	"time"
 )
 
 // https://openapidoc.lingxing.com/#/docs/MultiPlatform/MultiPlatOrder
@@ -193,7 +194,23 @@ func (m MultiPlatformOrdersQueryParams) Validate() error {
 			validation.Date(constant.DatetimeFormat).Error("无效的开始时间"),
 		),
 		validation.Field(&m.EndTime, validation.Required.Error("请输入结束时间"),
-			validation.Date(constant.DatetimeFormat).Error("无效的开始时间"),
+			validation.Date(constant.DatetimeFormat).Error("无效的结束时间"),
+			validation.By(func(value interface{}) error {
+				d1 := m.StartTime
+				d2 := value.(string)
+				startTime, err := time.Parse(constant.DatetimeFormat, d1)
+				if err != nil {
+					return err
+				}
+				endTime, err := time.Parse(constant.DatetimeFormat, d2)
+				if err != nil {
+					return err
+				}
+				if startTime.After(endTime) {
+					return fmt.Errorf("结束时间不能小于 %s", d1)
+				}
+				return nil
+			}),
 		),
 	)
 }
