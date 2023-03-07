@@ -162,11 +162,11 @@ type MultiPlatformOrder struct {
 
 type MultiPlatformOrdersQueryParams struct {
 	Paging
-	DateType     string   `json:"date_type,omitempty"` // 平台代码
-	PlatformCode []string `json:"platform_code"`       // 平台 Code
-	StartTime    string   `json:"start_time"`          // 开始时间（Y-m-d H:i:s 格式）
-	EndTime      string   `json:"end_time"`            // 结束时间（Y-m-d H:i:s 格式）
-	StoreId      []string `json:"store_id"`            // 店铺 ID
+	DateType     string   `json:"date_type,omitempty"`     // 时间类型（更新时间：update_time、订购时间：global_purchase_time、发货时间：global_delivery_time）
+	PlatformCode []string `json:"platform_code,omitempty"` // 平台 Code
+	StartTime    string   `json:"start_time"`              // 开始时间（Y-m-d H:i:s 格式）
+	EndTime      string   `json:"end_time"`                // 结束时间（Y-m-d H:i:s 格式）
+	StoreId      []string `json:"store_id,omitempty"`      // 店铺 ID
 }
 
 func (m MultiPlatformOrdersQueryParams) Validate() error {
